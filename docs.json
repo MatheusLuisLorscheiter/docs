@@ -90,7 +90,7 @@
     }
   },
   "modeToggle": {
-    "default": "light"
+    "default": "dark"
   },
   "openapi": {
     "title": "API Disparador",

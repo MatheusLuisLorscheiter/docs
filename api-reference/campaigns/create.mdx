@@ -7,7 +7,7 @@ description: "Cria uma nova campanha com disparo imediato ou agendado"
 Cria uma nova campanha de disparo de mensagens via WhatsApp. A campanha pode ser executada imediatamente ou agendada para uma data futura.
 
 <Note>
-Você precisa de um access token válido no header X-Access-Token para usar este endpoint.
+  Você precisa de um access token válido no header X-Access-Token para usar este endpoint.
 </Note>
 
 ## Headers
@@ -40,6 +40,7 @@ Você precisa de um access token válido no header X-Access-Token para usar este
 
 <ParamField body="contacts" type="array" required>
   Lista de contatos que receberão a mensagem
+
   <Expandable title="contacts[]">
     <ParamField body="phoneNumber" type="string" required>
       Número de telefone no formato 5511999999999
@@ -95,6 +96,7 @@ curl -X POST https://{url-key}/api/campaigns \
   }'
 ```
 
+
 ```javascript JavaScript
 const response = await fetch('https://{url-key}/api/campaigns', {
   method: 'POST',
@@ -120,6 +122,7 @@ const response = await fetch('https://{url-key}/api/campaigns', {
 const result = await response.json();
 console.log('Resultado:', result);
 ```
+
 
 ```python Python
 import requests
@@ -152,6 +155,7 @@ response = requests.post(
 result = response.json()
 print('Resultado:', result)
 ```
+
 
 ```php PHP
 <?php
@@ -207,6 +211,7 @@ print_r($result);
   "message": null
 }
 ```
+
 
 ```json Erro (400 Bad Request)
 {
@@ -264,17 +269,18 @@ Você pode usar variáveis na mensagem que serão substituídas pelos dados do c
 - `{{phoneNumber}}` - Número do telefone
 
 **Exemplo:**
+
 ```
 Olá {{name}}! Seu número é {{phoneNumber}}.
 ```
 
 ## Tipos de Mídia Suportados
 
-| Tipo | Descrição | Extensões |
-|------|-----------|-----------|
-| image | Imagens | jpg, jpeg, png, gif |
-| video | Vídeos | mp4, avi, mov |
-| audio | Áudios | mp3, wav, ogg |
+| Tipo     | Descrição  | Extensões           |
+| -------- | ---------- | ------------------- |
+| image    | Imagens    | jpg, jpeg, png, gif |
+| video    | Vídeos     | mp4, avi, mov       |
+| audio    | Áudios     | mp3, wav, ogg       |
 | document | Documentos | pdf, doc, docx, txt |
 
 ## Validações

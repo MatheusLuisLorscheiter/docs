@@ -3,76 +3,210 @@ title: "API Disparador - Documentação"
 description: "Sistema simplificado de disparo de mensagens via WhatsApp"
 ---
 
-# API Disparador
-
+<Note>
 Sistema simplificado e robusto para disparo de mensagens via WhatsApp através da Evolution API.
+</Note>
 
-## 🚀 Características Principais
+## Características Principais
 
-- **Disparo em Massa**: Envie mensagens para milhares de contatos simultaneamente
-- **Agendamento**: Programe campanhas para execução futura
-- **Múltiplos Tipos de Mídia**: Suporte a texto, imagens, vídeos, áudios e documentos
-- **Variáveis Personalizadas**: Personalize mensagens com dados dos contatos
-- **Controle de Status**: Pause, retome ou cancele campanhas em execução
-- **Métricas em Tempo Real**: Acompanhe o progresso das campanhas
-- **Retry Automático**: Sistema de retry inteligente para mensagens falhadas
+A API Disparador oferece funcionalidades completas para envio de mensagens em massa:
 
-## 🏗️ Arquitetura
+<CardGroup cols={2}>
+  <Card title="Disparo em Massa" icon="users" color="#16a34a">
+    Envie mensagens para milhares de contatos simultaneamente
+  </Card>
+  <Card title="Agendamento" icon="clock" color="#eab308">
+    Programe campanhas para execução futura
+  </Card>
+  <Card title="Múltiplos Tipos de Mídia" icon="image" color="#6366f1">
+    Suporte a texto, imagens, vídeos, áudios e documentos
+  </Card>
+  <Card title="Variáveis Personalizadas" icon="brackets-curly" color="#8b5cf6">
+    Personalize mensagens com dados dos contatos
+  </Card>
+  <Card title="Controle de Status" icon="settings" color="#f59e0b">
+    Pause, retome ou cancele campanhas em execução
+  </Card>
+  <Card title="Métricas em Tempo Real" icon="chart-bar" color="#10b981">
+    Acompanhe o progresso das campanhas
+  </Card>
+  <Card title="Retry Automático" icon="refresh-cw" color="#ef4444">
+    Sistema de retry inteligente para mensagens falhadas
+  </Card>
+  <Card title="API REST" icon="code" color="#06b6d4">
+    Interface REST completa e documentada
+  </Card>
+</CardGroup>
 
-A API Disparador é construída com tecnologias modernas:
+## Arquitetura
 
-- **Backend**: Spring Boot 3.2.0 com Java 17
-- **Banco de Dados**: PostgreSQL para persistência
-- **Cache**: Redis para filas e cache
-- **WhatsApp**: Integração via Evolution API
-- **Documentação**: Swagger/OpenAPI
+A API Disparador é construída com tecnologias modernas para garantir performance e confiabilidade:
 
-## 📋 Pré-requisitos
+<CardGroup cols={2}>
+  <Card title="Backend" icon="server" color="#16a34a">
+    Spring Boot 3.2.0 com Java 17
+  </Card>
+  <Card title="Banco de Dados" icon="database" color="#6366f1">
+    PostgreSQL para persistência de dados
+  </Card>
+  <Card title="Cache" icon="zap" color="#ef4444">
+    Redis para filas e cache de alta performance
+  </Card>
+  <Card title="WhatsApp" icon="message-circle" color="#25d366">
+    Integração via Evolution API
+  </Card>
+</CardGroup>
+
+## Pré-requisitos
+
+<Warning>
+Certifique-se de ter todos os pré-requisitos configurados antes de começar.
+</Warning>
 
 Para usar a API Disparador, você precisa:
 
-1. **Evolution API**: Uma instância da Evolution API configurada
-2. **Credenciais**: API Key e URL da sua Evolution API
-3. **Instância**: Nome da instância do WhatsApp conectada
+<ParamField body="evolutionApi" type="instance" required>
+  Uma instância da Evolution API configurada e funcionando
+</ParamField>
 
-## 🔐 Autenticação
+<ParamField body="credentials" type="object" required>
+  API Key e URL da sua Evolution API para autenticação
+</ParamField>
+
+<ParamField body="whatsappInstance" type="string" required>
+  Nome da instância do WhatsApp conectada na Evolution API
+</ParamField>
+
+## Autenticação
 
 A API utiliza um sistema de autenticação simples baseado em tokens:
 
-- Registre sua empresa para obter um access token
-- Use o token no header `X-Access-Token` em todas as requisições
-- Tokens não expiram (você pode regenerar quando necessário)
+<CardGroup cols={3}>
+  <Card title="Registro" icon="user-plus" color="#16a34a">
+    Registre sua empresa para obter um access token
+  </Card>
+  <Card title="Token Header" icon="key" color="#eab308">
+    Use o token no header X-Access-Token
+  </Card>
+  <Card title="Sem Expiração" icon="infinity" color="#6366f1">
+    Tokens não expiram automaticamente
+  </Card>
+</CardGroup>
 
-## 📱 Tipos de Mensagem Suportados
+<RequestExample>
 
-| Tipo         | Descrição                  | Campos Obrigatórios                |
-| ------------ | -------------------------- | ---------------------------------- |
-| **TEXT**     | Mensagem de texto simples  | `message`                          |
-| **MEDIA**    | Imagem, vídeo ou documento | `message`, `mediaUrl`, `mediaType` |
-| **AUDIO**    | Áudio/arquivo de voz       | `message`, `mediaUrl`              |
-| **LIST**     | Lista interativa           | `message`                          |
-| **BUTTON**   | Botões interativos         | `message`                          |
-| **TEMPLATE** | Templates aprovados        | `message`                          |
+```bash Exemplo de Autenticação
+curl -X POST https://{url-key}/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Minha Empresa",
+    "email": "contato@empresa.com",
+    "password": "senha123"
+  }'
+```
 
-## 🎯 Fluxo Básico
+</RequestExample>
 
-1. **Registre sua empresa** para obter um access token
-2. **Crie uma campanha** com contatos e mensagem
-3. **Acompanhe o progresso** através dos endpoints de status
-4. **Gerencie campanhas** (pause, retome, cancele)
+<ResponseExample>
 
-## 📊 Métricas e Monitoramento
+```json Resposta de Registro
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "companyId": 1,
+  "message": null
+}
+```
 
-A API fornece métricas detalhadas:
+</ResponseExample>
 
-- **Mensagens Enviadas**: Contador de sucessos
-- **Mensagens Falhadas**: Contador de falhas com detalhes
-- **Status de Campanhas**: Progresso em tempo real
-- **Filas**: Status das filas de processamento
+## Tipos de Mensagem Suportados
 
-## 🔧 Configuração Rápida
+A API suporta diversos tipos de mensagem para atender diferentes necessidades:
 
-```bash
+| Tipo | Descrição | Campos Obrigatórios |
+|------|-----------|-------------------|
+| **TEXT** | Mensagem de texto simples | `message` |
+| **MEDIA** | Imagem, vídeo ou documento | `message`, `mediaUrl`, `mediaType` |
+| **AUDIO** | Áudio/arquivo de voz | `message`, `mediaUrl` |
+| **LIST** | Lista interativa | `message` |
+| **BUTTON** | Botões interativos | `message` |
+| **TEMPLATE** | Templates aprovados | `message` |
+
+<CardGroup cols={3}>
+  <Card title="Texto" icon="type" color="#16a34a">
+    Mensagens de texto puro com suporte a variáveis
+  </Card>
+  <Card title="Mídia" icon="image" color="#6366f1">
+    Imagens, vídeos e documentos com legendas
+  </Card>
+  <Card title="Interativo" icon="cursor-click" color="#8b5cf6">
+    Listas e botões para maior engajamento
+  </Card>
+</CardGroup>
+
+## Fluxo Básico
+
+Siga estes passos para começar a usar a API:
+
+<CardGroup cols={2}>
+  <Card title="1. Registre sua empresa" icon="user-plus" href="/api-reference/auth/register">
+    Obtenha um access token para autenticação
+  </Card>
+  <Card title="2. Crie uma campanha" icon="plus" href="/api-reference/campaigns/create">
+    Configure contatos, mensagem e parâmetros
+  </Card>
+  <Card title="3. Acompanhe o progresso" icon="chart-line" href="/api-reference/campaigns/get">
+    Monitore o status e métricas em tempo real
+  </Card>
+  <Card title="4. Gerencie campanhas" icon="settings" href="/api-reference/campaigns/pause">
+    Pause, retome ou cancele conforme necessário
+  </Card>
+</CardGroup>
+
+## Métricas e Monitoramento
+
+A API fornece métricas detalhadas para acompanhamento das campanhas:
+
+<ResponseExample>
+
+```json Exemplo de Métricas
+{
+  "id": 1,
+  "name": "Campanha Marketing",
+  "status": "ACTIVE",
+  "totalContacts": 1000,
+  "sentMessages": 750,
+  "failedMessages": 50,
+  "remainingMessages": 200,
+  "createdAt": "2024-01-15T10:30:00",
+  "message": null
+}
+```
+
+</ResponseExample>
+
+<CardGroup cols={2}>
+  <Card title="Mensagens Enviadas" icon="check-circle" color="#16a34a">
+    Contador de mensagens enviadas com sucesso
+  </Card>
+  <Card title="Mensagens Falhadas" icon="x-circle" color="#ef4444">
+    Contador de falhas com detalhes do erro
+  </Card>
+  <Card title="Status de Campanhas" icon="activity" color="#6366f1">
+    Progresso em tempo real das campanhas
+  </Card>
+  <Card title="Filas de Processamento" icon="layers" color="#8b5cf6">
+    Status das filas de mensagens pendentes
+  </Card>
+</CardGroup>
+
+## Configuração Rápida
+
+Para desenvolvedores que desejam executar a API localmente:
+
+<RequestExample>
+
+```bash Configuração Local
 # Clone o repositório
 git clone https://github.com/matheusluislorscheiter/api-disparador
 
@@ -89,9 +223,60 @@ export REDIS_PORT=6379
 ./mvnw spring-boot:run
 ```
 
-## 📚 Próximos Passos
+</RequestExample>
 
-- [Quickstart](/quickstart) - Comece rapidamente
-- [Autenticação](/authentication) - Configure sua conta
-- [Criando Campanhas](/campaigns/creating) - Primeira campanha
-- [API Reference](/api-reference/auth/register) - Documentação completa da API
+<Note>
+A aplicação estará disponível em `http://localhost:8080` após a inicialização.
+</Note>
+
+## Status de Campanhas
+
+As campanhas podem ter os seguintes status:
+
+<CardGroup cols={2}>
+  <Card title="ACTIVE" icon="play" color="#16a34a">
+    Campanha em execução, enviando mensagens
+  </Card>
+  <Card title="PAUSED" icon="pause" color="#eab308">
+    Campanha pausada temporariamente
+  </Card>
+  <Card title="CANCELLED" icon="stop" color="#ef4444">
+    Campanha cancelada permanentemente
+  </Card>
+  <Card title="COMPLETED" icon="check" color="#6366f1">
+    Campanha finalizada com sucesso
+  </Card>
+</CardGroup>
+
+## Próximos Passos
+
+Explore a documentação para começar:
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Comece rapidamente com exemplos práticos
+  </Card>
+  <Card title="Autenticação" icon="shield" href="/authentication">
+    Configure sua conta e obtenha tokens
+  </Card>
+  <Card title="Criando Campanhas" icon="plus-circle" href="/campaigns/creating">
+    Aprenda a criar sua primeira campanha
+  </Card>
+  <Card title="API Reference" icon="book" href="/api-reference/auth/register">
+    Documentação completa de todos os endpoints
+  </Card>
+</CardGroup>
+
+## Suporte e Recursos
+
+<CardGroup cols={3}>
+  <Card title="Documentação" icon="book-open" href="/api-reference/auth/register">
+    Consulte a documentação completa da API
+  </Card>
+  <Card title="GitHub" icon="github" href="https://github.com/matheusluislorscheiter/api-disparador">
+    Acesse o código fonte e reporte issues
+  </Card>
+  <Card title="Suporte" icon="help-circle">
+    Entre em contato para suporte técnico
+  </Card>
+</CardGroup>
