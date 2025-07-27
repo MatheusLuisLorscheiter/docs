@@ -88,5 +88,12 @@
     "socials": {
       "github": "https://github.com/matheusluislorscheiter/api-disparador"
     }
+  },
+  "modeToggle": {
+    "default": "light"
+  },
+  "openapi": {
+    "title": "API Disparador",
+    "description": "Sistema simplificado de disparo de mensagens via WhatsApp"
   }
 }
