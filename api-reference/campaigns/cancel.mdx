@@ -5,11 +5,7 @@ description: 'Cancela uma campanha permanentemente'
 
 # Cancelar Campanha
 
-Cancela uma campanha permanentemente. Após cancelada, a campanha não pode ser retomada.
-
-<Warning>
-  Esta ação é irreversível. Uma campanha cancelada não pode ser retomada.
-</Warning>
+Cancela uma campanha permanentemente, interrompendo definitivamente o envio de mensagens. Esta ação não pode ser desfeita.
 
 <Note>
   Você precisa de um access token válido no header `X-Access-Token` para usar este endpoint.
@@ -23,9 +19,9 @@ PUT /api/campaigns/{id}/cancel
 
 ## Parâmetros da URL
 
-<ParamField body="id" type="number" required={true}>
-  ID único da campanha que deseja cancelar.
-</ParamField>
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `id` | number | Sim | ID único da campanha que deseja cancelar. |
 
 ## Headers
 
@@ -127,99 +123,14 @@ headers = {
     'X-Access-Token': 'seu-access-token'
 }
 
-response = requests.put(f'https://api.disparador.com/api/campaigns/{campaign_id}/cancel', headers=headers)
+response = requests.put(
+    f'https://api.disparador.com/api/campaigns/{campaign_id}/cancel',
+    headers=headers
+)
+
 result = response.json()
 print('Resultado:', result)
 ```
-
-### PHP
-
-```php
-$campaign_id = 1;
-$headers = [
-    'X-Access-Token: seu-access-token'
-];
-
-$response = file_get_contents("https://api.disparador.com/api/campaigns/{$campaign_id}/cancel", false, stream_context_create([
-    'http' => [
-        'method' => 'PUT',
-        'header' => implode("\r\n", $headers)
-    ]
-]));
-
-$result = json_decode($response, true);
-echo 'Resultado: ' . print_r($result, true);
-```
-
-## Fluxo de Gerenciamento
-
-```mermaid
-graph TD
-    A[Campanha Criada] --> B[ACTIVE]
-    B --> C[PAUSED]
-    C --> B
-    B --> D[CANCELLED]
-    B --> E[COMPLETED]
-    C --> D
-```
-
-## Exemplos de Erro
-
-### Campanha já cancelada
-```json
-{
-  "id": null,
-  "name": null,
-  "status": null,
-  "totalContacts": 0,
-  "sentMessages": 0,
-  "failedMessages": 0,
-  "message": "Campanha já foi cancelada"
-}
-```
-
-### Campanha finalizada
-```json
-{
-  "id": null,
-  "name": null,
-  "status": null,
-  "totalContacts": 0,
-  "sentMessages": 0,
-  "failedMessages": 0,
-  "message": "Campanha já foi finalizada"
-}
-```
-
-### Campanha não encontrada
-```json
-{
-  "id": null,
-  "name": null,
-  "status": null,
-  "totalContacts": 0,
-  "sentMessages": 0,
-  "failedMessages": 0,
-  "message": "Campanha não encontrada"
-}
-```
-
-## Comportamento após cancelar
-
-Quando uma campanha é cancelada:
-
-1. **Status muda** para `CANCELLED`
-2. **Processamento para** imediatamente
-3. **Mensagens restantes** não são enviadas
-4. **Métricas** são preservadas (mensagens já enviadas)
-5. **Não pode ser retomada** - ação irreversível
-
-## Diferenças entre Cancelar e Pausar
-
-| Ação | Reversível | Mensagens Restantes | Status Final |
-|------|------------|-------------------|--------------|
-| **Pausar** | ✅ Sim | ✅ Preservadas | `PAUSED` |
-| **Cancelar** | ❌ Não | ❌ Perdidas | `CANCELLED` |
 
 ## Próximos Passos
 

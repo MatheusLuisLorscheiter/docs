@@ -1,11 +1,11 @@
 ---
 title: 'Consultar Campanha'
-description: 'Obtém informações detalhadas de uma campanha específica'
+description: 'Consulta os detalhes de uma campanha específica'
 ---
 
 # Consultar Campanha
 
-Retorna informações detalhadas de uma campanha específica da empresa autenticada.
+Retorna os detalhes completos de uma campanha específica, incluindo status atual e progresso.
 
 <Note>
   Você precisa de um access token válido no header `X-Access-Token` para usar este endpoint.
@@ -19,9 +19,9 @@ GET /api/campaigns/{id}
 
 ## Parâmetros da URL
 
-<ParamField body="id" type="number" required={true}>
-  ID único da campanha que deseja consultar.
-</ParamField>
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `id` | number | Sim | ID único da campanha que deseja consultar. |
 
 ## Headers
 
@@ -118,7 +118,7 @@ const response = await fetch(`https://api.disparador.com/api/campaigns/${campaig
 });
 
 const campaign = await response.json();
-console.log('Campanha:', campaign);
+console.log(campaign);
 ```
 
 ### Python
@@ -131,57 +131,20 @@ headers = {
     'X-Access-Token': 'seu-access-token'
 }
 
-response = requests.get(f'https://api.disparador.com/api/campaigns/{campaign_id}', headers=headers)
+response = requests.get(
+    f'https://api.disparador.com/api/campaigns/{campaign_id}',
+    headers=headers
+)
+
 campaign = response.json()
-print('Campanha:', campaign)
-```
-
-### PHP
-
-```php
-$campaign_id = 1;
-$headers = [
-    'X-Access-Token: seu-access-token'
-];
-
-$response = file_get_contents("https://api.disparador.com/api/campaigns/{$campaign_id}", false, stream_context_create([
-    'http' => [
-        'method' => 'GET',
-        'header' => implode("\r\n", $headers)
-    ]
-]));
-
-$campaign = json_decode($response, true);
-echo 'Campanha: ' . print_r($campaign, true);
-```
-
-## Monitoramento de Progresso
-
-Use este endpoint para monitorar o progresso de uma campanha:
-
-```javascript
-// Verificar progresso a cada 30 segundos
-setInterval(async () => {
-  const response = await fetch(`https://api.disparador.com/api/campaigns/${campaignId}`, {
-    headers: { 'X-Access-Token': token }
-  });
-  
-  const campaign = await response.json();
-  
-  console.log(`Progresso: ${campaign.sentMessages}/${campaign.totalContacts} mensagens enviadas`);
-  
-  if (campaign.status === 'COMPLETED') {
-    console.log('Campanha finalizada!');
-    clearInterval(interval);
-  }
-}, 30000);
+print(campaign)
 ```
 
 ## Próximos Passos
 
 Após consultar a campanha:
 
-1. [Pausar Campanha](/api-reference/campaigns/pause) - Pause a campanha
-2. [Retomar Campanha](/api-reference/campaigns/resume) - Retome uma campanha pausada
-3. [Cancelar Campanha](/api-reference/campaigns/cancel) - Cancele a campanha
-4. [Listar Campanhas](/api-reference/campaigns/list) - Veja todas as campanhas 
+1. [Listar Campanhas](/api-reference/campaigns/list) - Veja todas as campanhas
+2. [Pausar Campanha](/api-reference/campaigns/pause) - Pause a campanha se necessário
+3. [Retomar Campanha](/api-reference/campaigns/resume) - Retome uma campanha pausada
+4. [Cancelar Campanha](/api-reference/campaigns/cancel) - Cancele uma campanha 

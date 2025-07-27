@@ -1,11 +1,11 @@
 ---
 title: 'Pausar Campanha'
-description: 'Pausa uma campanha em execução'
+description: 'Pausa uma campanha ativa temporariamente'
 ---
 
 # Pausar Campanha
 
-Pausa uma campanha que está atualmente em execução. A campanha pode ser retomada posteriormente.
+Pausa uma campanha ativa, interrompendo temporariamente o envio de mensagens. A campanha pode ser retomada posteriormente.
 
 <Note>
   Você precisa de um access token válido no header `X-Access-Token` para usar este endpoint.
@@ -19,9 +19,9 @@ PUT /api/campaigns/{id}/pause
 
 ## Parâmetros da URL
 
-<ParamField body="id" type="number" required={true}>
-  ID único da campanha que deseja pausar.
-</ParamField>
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `id` | number | Sim | ID único da campanha que deseja pausar. |
 
 ## Headers
 
@@ -122,81 +122,13 @@ headers = {
     'X-Access-Token': 'seu-access-token'
 }
 
-response = requests.put(f'https://api.disparador.com/api/campaigns/{campaign_id}/pause', headers=headers)
+response = requests.put(
+    f'https://api.disparador.com/api/campaigns/{campaign_id}/pause',
+    headers=headers
+)
+
 result = response.json()
 print('Resultado:', result)
-```
-
-### PHP
-
-```php
-$campaign_id = 1;
-$headers = [
-    'X-Access-Token: seu-access-token'
-];
-
-$response = file_get_contents("https://api.disparador.com/api/campaigns/{$campaign_id}/pause", false, stream_context_create([
-    'http' => [
-        'method' => 'PUT',
-        'header' => implode("\r\n", $headers)
-    ]
-]));
-
-$result = json_decode($response, true);
-echo 'Resultado: ' . print_r($result, true);
-```
-
-## Fluxo de Gerenciamento
-
-```mermaid
-graph TD
-    A[Campanha Criada] --> B[ACTIVE]
-    B --> C[PAUSED]
-    C --> B
-    B --> D[CANCELLED]
-    B --> E[COMPLETED]
-    C --> D
-```
-
-## Exemplos de Erro
-
-### Campanha já pausada
-```json
-{
-  "id": null,
-  "name": null,
-  "status": null,
-  "totalContacts": 0,
-  "sentMessages": 0,
-  "failedMessages": 0,
-  "message": "Campanha já está pausada"
-}
-```
-
-### Campanha finalizada
-```json
-{
-  "id": null,
-  "name": null,
-  "status": null,
-  "totalContacts": 0,
-  "sentMessages": 0,
-  "failedMessages": 0,
-  "message": "Campanha já foi finalizada"
-}
-```
-
-### Campanha não encontrada
-```json
-{
-  "id": null,
-  "name": null,
-  "status": null,
-  "totalContacts": 0,
-  "sentMessages": 0,
-  "failedMessages": 0,
-  "message": "Campanha não encontrada"
-}
 ```
 
 ## Próximos Passos
@@ -204,6 +136,5 @@ graph TD
 Após pausar a campanha:
 
 1. [Retomar Campanha](/api-reference/campaigns/resume) - Retome a campanha pausada
-2. [Cancelar Campanha](/api-reference/campaigns/cancel) - Cancele a campanha
-3. [Consultar Status](/api-reference/campaigns/get) - Verifique o status atual
-4. [Listar Campanhas](/api-reference/campaigns/list) - Veja todas as campanhas 
+2. [Consultar Status](/api-reference/campaigns/get) - Verifique o status atual
+3. [Cancelar Campanha](/api-reference/campaigns/cancel) - Cancele a campanha se necessário 

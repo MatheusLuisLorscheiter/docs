@@ -5,7 +5,7 @@ description: 'Retoma uma campanha pausada'
 
 # Retomar Campanha
 
-Retoma uma campanha que foi pausada anteriormente. A campanha voltará a enviar mensagens automaticamente.
+Retoma uma campanha que foi pausada anteriormente, reiniciando o envio de mensagens.
 
 <Note>
   Você precisa de um access token válido no header `X-Access-Token` para usar este endpoint.
@@ -19,9 +19,9 @@ PUT /api/campaigns/{id}/resume
 
 ## Parâmetros da URL
 
-<ParamField body="id" type="number" required={true}>
-  ID único da campanha que deseja retomar.
-</ParamField>
+| Parâmetro | Tipo | Obrigatório | Descrição |
+|-----------|------|-------------|-----------|
+| `id` | number | Sim | ID único da campanha que deseja retomar. |
 
 ## Headers
 
@@ -122,111 +122,19 @@ headers = {
     'X-Access-Token': 'seu-access-token'
 }
 
-response = requests.put(f'https://api.disparador.com/api/campaigns/{campaign_id}/resume', headers=headers)
+response = requests.put(
+    f'https://api.disparador.com/api/campaigns/{campaign_id}/resume',
+    headers=headers
+)
+
 result = response.json()
 print('Resultado:', result)
 ```
-
-### PHP
-
-```php
-$campaign_id = 1;
-$headers = [
-    'X-Access-Token: seu-access-token'
-];
-
-$response = file_get_contents("https://api.disparador.com/api/campaigns/{$campaign_id}/resume", false, stream_context_create([
-    'http' => [
-        'method' => 'PUT',
-        'header' => implode("\r\n", $headers)
-    ]
-]));
-
-$result = json_decode($response, true);
-echo 'Resultado: ' . print_r($result, true);
-```
-
-## Fluxo de Gerenciamento
-
-```mermaid
-graph TD
-    A[Campanha Criada] --> B[ACTIVE]
-    B --> C[PAUSED]
-    C --> B
-    B --> D[CANCELLED]
-    B --> E[COMPLETED]
-    C --> D
-```
-
-## Exemplos de Erro
-
-### Campanha já ativa
-```json
-{
-  "id": null,
-  "name": null,
-  "status": null,
-  "totalContacts": 0,
-  "sentMessages": 0,
-  "failedMessages": 0,
-  "message": "Campanha já está ativa"
-}
-```
-
-### Campanha cancelada
-```json
-{
-  "id": null,
-  "name": null,
-  "status": null,
-  "totalContacts": 0,
-  "sentMessages": 0,
-  "failedMessages": 0,
-  "message": "Campanha cancelada não pode ser retomada"
-}
-```
-
-### Campanha finalizada
-```json
-{
-  "id": null,
-  "name": null,
-  "status": null,
-  "totalContacts": 0,
-  "sentMessages": 0,
-  "failedMessages": 0,
-  "message": "Campanha já foi finalizada"
-}
-```
-
-### Campanha não encontrada
-```json
-{
-  "id": null,
-  "name": null,
-  "status": null,
-  "totalContacts": 0,
-  "sentMessages": 0,
-  "failedMessages": 0,
-  "message": "Campanha não encontrada"
-}
-```
-
-## Comportamento após retomar
-
-Quando uma campanha é retomada:
-
-1. **Status muda** para `ACTIVE`
-2. **Processamento continua** de onde parou
-3. **Mensagens restantes** são enviadas automaticamente
-4. **Intervalos** são respeitados entre as mensagens
-5. **Métricas** continuam sendo atualizadas
 
 ## Próximos Passos
 
 Após retomar a campanha:
 
-1. [Pausar Campanha](/api-reference/campaigns/pause) - Pause novamente se necessário
-2. [Cancelar Campanha](/api-reference/campaigns/cancel) - Cancele a campanha
-3. [Consultar Status](/api-reference/campaigns/get) - Verifique o progresso
-4. [Listar Campanhas](/api-reference/campaigns/list) - Veja todas as campanhas 
+1. [Consultar Status](/api-reference/campaigns/get) - Verifique o status atual
+2. [Pausar Campanha](/api-reference/campaigns/pause) - Pause novamente se necessário
+3. [Cancelar Campanha](/api-reference/campaigns/cancel) - Cancele a campanha se necessário 

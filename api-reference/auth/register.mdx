@@ -25,17 +25,11 @@ POST /api/auth/register
 
 ## Request Body
 
-<ParamField body="name" type="string" required={false}>
-  Nome da empresa (opcional). Se não fornecido, será usado o nome do email.
-</ParamField>
-
-<ParamField body="email" type="string" required={true}>
-  Email da empresa. Deve ser um email válido e único.
-</ParamField>
-
-<ParamField body="password" type="string" required={true}>
-  Senha da empresa. Deve ter pelo menos 6 caracteres.
-</ParamField>
+| Campo | Tipo | Obrigatório | Descrição |
+|-------|------|-------------|-----------|
+| `name` | string | Não | Nome da empresa (opcional). Se não fornecido, será usado o nome do email. |
+| `email` | string | Sim | Email da empresa. Deve ser um email válido e único. |
+| `password` | string | Sim | Senha da empresa. Deve ter pelo menos 6 caracteres. |
 
 ## Exemplo de Request
 
