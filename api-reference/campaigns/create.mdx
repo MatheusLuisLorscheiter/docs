@@ -1,6 +1,6 @@
 ---
-title: 'Criar Campanha'
-description: 'Cria uma nova campanha com disparo imediato ou agendado'
+title: "Criar Campanha"
+description: "Cria uma nova campanha com disparo imediato ou agendado"
 ---
 
 # Criar Campanha
@@ -29,17 +29,17 @@ POST /api/campaigns
 | Campo | Tipo | Obrigatório | Descrição |
 |-------|------|-------------|-----------|
 | `name` | string | Sim | Nome da campanha. Deve ter entre 2 e 100 caracteres |
-| `evolutionUrl` | string | Sim | URL completa da sua Evolution API (ex: https://sua-evolution-api.com) |
+| `evolutionUrl` | string | Sim | URL completa da sua Evolution API |
 | `evolutionApiKey` | string | Sim | API Key da sua Evolution API |
 | `evolutionInstance` | string | Sim | Nome da instância do WhatsApp conectada na Evolution API |
 | `contacts` | array | Sim | Lista de contatos que receberão a mensagem |
-| `contacts[].phoneNumber` | string | Sim | Número de telefone do contato (formato: 5511999999999) |
-| `contacts[].name` | string | Não | Nome do contato (usado para variáveis na mensagem) |
-| `message` | string | Sim | Conteúdo da mensagem. Suporta variáveis como {{name}} |
-| `mediaUrl` | string | Não | URL do arquivo de mídia (imagem, vídeo, áudio, documento) |
+| `contacts[].phoneNumber` | string | Sim | Número de telefone do contato no formato 5511999999999 |
+| `contacts[].name` | string | Não | Nome do contato usado para variáveis na mensagem |
+| `message` | string | Sim | Conteúdo da mensagem. Suporta variáveis como name |
+| `mediaUrl` | string | Não | URL do arquivo de mídia |
 | `mediaType` | string | Não | Tipo de mídia: image, video, audio, document |
-| `caption` | string | Não | Legenda para mídia (quando mediaUrl for fornecido) |
-| `scheduledFor` | datetime | Não | Data e hora para agendamento (formato: YYYY-MM-DDTHH:mm:ss) |
+| `caption` | string | Não | Legenda para mídia quando mediaUrl for fornecido |
+| `scheduledFor` | datetime | Não | Data e hora para agendamento no formato YYYY-MM-DDTHH:mm:ss |
 
 ## Exemplo de Request
 
@@ -177,8 +177,8 @@ curl -X POST https://api.disparador.com/api/campaigns \
 
 Você pode usar variáveis na mensagem que serão substituídas pelos dados do contato:
 
-- `{{name}}` - Nome do contato
-- `{{phoneNumber}}` - Número do telefone
+- `name` - Nome do contato
+- `phoneNumber` - Número do telefone
 
 **Exemplo:**
 ```
