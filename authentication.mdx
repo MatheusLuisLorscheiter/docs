@@ -1,0 +1,200 @@
+---
+title: 'Autenticação'
+description: 'Como autenticar na API Disparador'
+---
+
+# Autenticação
+
+A API Disparador utiliza um sistema de autenticação simples baseado em tokens de acesso.
+
+## Visão Geral
+
+1. **Registre sua empresa** para obter um access token
+2. **Use o token** no header `X-Access-Token` em todas as requisições
+3. **Tokens não expiram** - você pode regenerar quando necessário
+
+## Registro de Empresa
+
+Para começar a usar a API, você precisa registrar sua empresa:
+
+```bash
+curl -X POST https://api.disparador.com/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Minha Empresa LTDA",
+    "email": "contato@minhaempresa.com",
+    "password": "senha123"
+  }'
+```
+
+**Resposta:**
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "companyId": 1,
+  "message": null
+}
+```
+
+## Usando o Access Token
+
+Após obter o access token, use-o no header `X-Access-Token` em todas as requisições:
+
+```bash
+curl -X GET https://api.disparador.com/api/campaigns \
+  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+## Exemplos por Linguagem
+
+### JavaScript
+
+```javascript
+const headers = {
+  'Content-Type': 'application/json',
+  'X-Access-Token': 'seu-access-token'
+};
+
+const response = await fetch('https://api.disparador.com/api/campaigns', {
+  method: 'GET',
+  headers
+});
+```
+
+### Python
+
+```python
+import requests
+
+headers = {
+    'Content-Type': 'application/json',
+    'X-Access-Token': 'seu-access-token'
+}
+
+response = requests.get('https://api.disparador.com/api/campaigns', headers=headers)
+```
+
+### PHP
+
+```php
+$headers = [
+    'Content-Type: application/json',
+    'X-Access-Token: seu-access-token'
+];
+
+$response = file_get_contents('https://api.disparador.com/api/campaigns', false, stream_context_create([
+    'http' => [
+        'method' => 'GET',
+        'header' => implode("\r\n", $headers)
+    ]
+]));
+```
+
+### cURL
+
+```bash
+curl -X GET https://api.disparador.com/api/campaigns \
+  -H "X-Access-Token: seu-access-token"
+```
+
+## Validações
+
+### Email
+- Deve ser um email válido
+- Deve ser único no sistema
+- Formato: `usuario@dominio.com`
+
+### Senha
+- Mínimo 6 caracteres
+- Recomendado: incluir letras, números e símbolos
+
+### Nome da Empresa
+- Opcional
+- Máximo 100 caracteres
+- Se não fornecido, será usado o nome do email
+
+## Códigos de Erro
+
+| Código | Descrição |
+|--------|-----------|
+| `400` | Dados inválidos ou email já em uso |
+| `401` | Access token inválido ou ausente |
+| `500` | Erro interno do servidor |
+
+## Exemplos de Erro
+
+### Email já em uso
+```json
+{
+  "accessToken": null,
+  "companyId": null,
+  "message": "Email já está em uso"
+}
+```
+
+### Email inválido
+```json
+{
+  "accessToken": null,
+  "companyId": null,
+  "message": "Email deve ter formato válido"
+}
+```
+
+### Senha muito curta
+```json
+{
+  "accessToken": null,
+  "companyId": null,
+  "message": "Senha deve ter pelo menos 6 caracteres"
+}
+```
+
+### Token inválido
+```json
+{
+  "id": null,
+  "name": null,
+  "status": null,
+  "totalContacts": 0,
+  "sentMessages": 0,
+  "failedMessages": 0,
+  "message": "Access token inválido"
+}
+```
+
+## Segurança
+
+### Boas Práticas
+
+1. **Mantenha o token seguro** - Não compartilhe em código público
+2. **Use HTTPS** - Sempre use conexões seguras
+3. **Regenere quando necessário** - Se suspeitar de comprometimento
+4. **Monitore o uso** - Acompanhe as atividades da sua conta
+
+### Armazenamento Seguro
+
+```javascript
+// ✅ Correto - Variável de ambiente
+const token = process.env.API_TOKEN;
+
+// ❌ Incorreto - Hardcoded
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+```
+
+```python
+# ✅ Correto - Variável de ambiente
+import os
+token = os.environ.get('API_TOKEN')
+
+# ❌ Incorreto - Hardcoded
+token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+```
+
+## Próximos Passos
+
+Após configurar a autenticação:
+
+1. [Criar Campanha](/api-reference/campaigns/create) - Primeira campanha
+2. [Listar Campanhas](/api-reference/campaigns/list) - Ver suas campanhas
+3. [API Reference](/api-reference/auth/register) - Documentação completa 

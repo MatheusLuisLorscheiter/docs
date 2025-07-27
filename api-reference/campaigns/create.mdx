@@ -1,0 +1,236 @@
+---
+title: 'Criar Campanha'
+description: 'Cria uma nova campanha com disparo imediato ou agendado'
+---
+
+# Criar Campanha
+
+Cria uma nova campanha de disparo de mensagens via WhatsApp. A campanha pode ser executada imediatamente ou agendada para uma data futura.
+
+<Note>
+  Você precisa de um access token válido no header `X-Access-Token` para usar este endpoint.
+</Note>
+
+## Endpoint
+
+```http
+POST /api/campaigns
+```
+
+## Headers
+
+| Header | Tipo | Obrigatório | Descrição |
+|--------|------|-------------|-----------|
+| `Content-Type` | string | Sim | `application/json` |
+| `X-Access-Token` | string | Sim | Token de acesso obtido no registro |
+
+## Request Body
+
+<ParamField body="name" type="string" required={true}>
+  Nome da campanha. Deve ter entre 2 e 100 caracteres.
+</ParamField>
+
+<ParamField body="evolutionUrl" type="string" required={true}>
+  URL completa da sua Evolution API (ex: https://sua-evolution-api.com).
+</ParamField>
+
+<ParamField body="evolutionApiKey" type="string" required={true}>
+  API Key da sua Evolution API.
+</ParamField>
+
+<ParamField body="evolutionInstance" type="string" required={true}>
+  Nome da instância do WhatsApp conectada na Evolution API.
+</ParamField>
+
+<ParamField body="contacts" type="array" required={true}>
+  Lista de contatos que receberão a mensagem.
+</ParamField>
+
+<ParamField body="contacts[].phoneNumber" type="string" required={true}>
+  Número de telefone do contato (formato: 5511999999999).
+</ParamField>
+
+<ParamField body="contacts[].name" type="string" required={false}>
+  Nome do contato (usado para variáveis na mensagem).
+</ParamField>
+
+<ParamField body="message" type="string" required={true}>
+  Conteúdo da mensagem. Suporta variáveis como {{name}}.
+</ParamField>
+
+<ParamField body="mediaUrl" type="string" required={false}>
+  URL do arquivo de mídia (imagem, vídeo, áudio, documento).
+</ParamField>
+
+<ParamField body="mediaType" type="string" required={false}>
+  Tipo de mídia: image, video, audio, document.
+</ParamField>
+
+<ParamField body="caption" type="string" required={false}>
+  Legenda para mídia (quando mediaUrl for fornecido).
+</ParamField>
+
+<ParamField body="scheduledFor" type="datetime" required={false}>
+  Data e hora para agendamento (formato: YYYY-MM-DDTHH:mm:ss).
+</ParamField>
+
+## Exemplo de Request
+
+### Campanha de Texto Simples
+
+```bash
+curl -X POST https://api.disparador.com/api/campaigns \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -d '{
+    "name": "Campanha de Boas-vindas",
+    "evolutionUrl": "https://sua-evolution-api.com",
+    "evolutionApiKey": "sua-api-key",
+    "evolutionInstance": "minha-instancia",
+    "message": "Olá {{name}}! Bem-vindo à nossa empresa!",
+    "contacts": [
+      {
+        "phoneNumber": "5511999999999",
+        "name": "João Silva"
+      },
+      {
+        "phoneNumber": "5511888888888",
+        "name": "Maria Santos"
+      }
+    ]
+  }'
+```
+
+### Campanha com Mídia
+
+```bash
+curl -X POST https://api.disparador.com/api/campaigns \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -d '{
+    "name": "Campanha com Imagem",
+    "evolutionUrl": "https://sua-evolution-api.com",
+    "evolutionApiKey": "sua-api-key",
+    "evolutionInstance": "minha-instancia",
+    "message": "Confira nossa nova promoção!",
+    "mediaUrl": "https://exemplo.com/imagem.jpg",
+    "mediaType": "image",
+    "caption": "Oferta especial para você!",
+    "contacts": [
+      {
+        "phoneNumber": "5511999999999",
+        "name": "João Silva"
+      }
+    ]
+  }'
+```
+
+### Campanha Agendada
+
+```bash
+curl -X POST https://api.disparador.com/api/campaigns \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -d '{
+    "name": "Campanha Agendada",
+    "evolutionUrl": "https://sua-evolution-api.com",
+    "evolutionApiKey": "sua-api-key",
+    "evolutionInstance": "minha-instancia",
+    "message": "Lembrete: Reunião amanhã às 10h!",
+    "scheduledFor": "2024-01-16T09:00:00",
+    "contacts": [
+      {
+        "phoneNumber": "5511999999999",
+        "name": "João Silva"
+      }
+    ]
+  }'
+```
+
+## Response
+
+### Sucesso (200 OK)
+
+```json
+{
+  "id": 1,
+  "name": "Campanha de Boas-vindas",
+  "status": "ACTIVE",
+  "totalContacts": 2,
+  "sentMessages": 0,
+  "failedMessages": 0,
+  "createdAt": "2024-01-15T10:30:00",
+  "message": null
+}
+```
+
+### Erro (400 Bad Request)
+
+```json
+{
+  "id": null,
+  "name": null,
+  "status": null,
+  "totalContacts": 0,
+  "sentMessages": 0,
+  "failedMessages": 0,
+  "message": "Access token inválido"
+}
+```
+
+## Campos da Resposta
+
+| Campo | Tipo | Descrição |
+|-------|------|-----------|
+| `id` | number | ID único da campanha criada |
+| `name` | string | Nome da campanha |
+| `status` | string | Status atual: ACTIVE, PAUSED, CANCELLED, COMPLETED |
+| `totalContacts` | number | Total de contatos na campanha |
+| `sentMessages` | number | Mensagens enviadas com sucesso |
+| `failedMessages` | number | Mensagens que falharam |
+| `createdAt` | datetime | Data e hora de criação |
+| `message` | string | Mensagem de erro (null em caso de sucesso) |
+
+## Códigos de Erro
+
+| Código | Descrição |
+|--------|-----------|
+| `400` | Dados inválidos ou access token inválido |
+| `500` | Erro interno do servidor |
+
+## Validações
+
+- **Nome**: 2-100 caracteres
+- **URL Evolution**: Deve ser uma URL válida
+- **Contatos**: Mínimo 1 contato
+- **Telefone**: Formato 5511999999999 (com código do país)
+- **Agendamento**: Se fornecido, deve ser uma data futura
+
+## Variáveis na Mensagem
+
+Você pode usar variáveis na mensagem que serão substituídas pelos dados do contato:
+
+- `{{name}}` - Nome do contato
+- `{{phoneNumber}}` - Número do telefone
+
+**Exemplo:**
+```
+Olá {{name}}! Seu número é {{phoneNumber}}.
+```
+
+## Tipos de Mídia Suportados
+
+| Tipo | Descrição | Extensões |
+|------|-----------|-----------|
+| `image` | Imagens | jpg, jpeg, png, gif |
+| `video` | Vídeos | mp4, avi, mov |
+| `audio` | Áudios | mp3, wav, ogg |
+| `document` | Documentos | pdf, doc, docx, txt |
+
+## Próximos Passos
+
+Após criar a campanha:
+
+1. [Consultar Status](/api-reference/campaigns/get) - Acompanhe o progresso
+2. [Listar Campanhas](/api-reference/campaigns/list) - Veja todas as campanhas
+3. [Gerenciar Campanha](/api-reference/campaigns/pause) - Pause, retome ou cancele 

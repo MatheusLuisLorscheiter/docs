@@ -1,97 +1,97 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: 'API Disparador - Documentação'
+description: 'Sistema simplificado de disparo de mensagens via WhatsApp'
 ---
 
-## Setting up
+# API Disparador
 
-Get your documentation site up and running in minutes.
+Sistema simplificado e robusto para disparo de mensagens via WhatsApp através da Evolution API.
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+## 🚀 Características Principais
 
-## Make it yours
+- **Disparo em Massa**: Envie mensagens para milhares de contatos simultaneamente
+- **Agendamento**: Programe campanhas para execução futura
+- **Múltiplos Tipos de Mídia**: Suporte a texto, imagens, vídeos, áudios e documentos
+- **Variáveis Personalizadas**: Personalize mensagens com dados dos contatos
+- **Controle de Status**: Pause, retome ou cancele campanhas em execução
+- **Métricas em Tempo Real**: Acompanhe o progresso das campanhas
+- **Retry Automático**: Sistema de retry inteligente para mensagens falhadas
 
-Design a docs site that looks great and empowers your users.
+## 🏗️ Arquitetura
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+A API Disparador é construída com tecnologias modernas:
 
-## Create beautiful pages
+- **Backend**: Spring Boot 3.2.0 com Java 17
+- **Banco de Dados**: PostgreSQL para persistência
+- **Cache**: Redis para filas e cache
+- **WhatsApp**: Integração via Evolution API
+- **Documentação**: Swagger/OpenAPI
 
-Everything you need to create world-class documentation.
+## 📋 Pré-requisitos
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
+Para usar a API Disparador, você precisa:
 
-## Need inspiration?
+1. **Evolution API**: Uma instância da Evolution API configurada
+2. **Credenciais**: API Key e URL da sua Evolution API
+3. **Instância**: Nome da instância do WhatsApp conectada
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+## 🔐 Autenticação
+
+A API utiliza um sistema de autenticação simples baseado em tokens:
+
+- Registre sua empresa para obter um access token
+- Use o token no header `X-Access-Token` em todas as requisições
+- Tokens não expiram (você pode regenerar quando necessário)
+
+## 📱 Tipos de Mensagem Suportados
+
+| Tipo | Descrição | Campos Obrigatórios |
+|------|-----------|---------------------|
+| **TEXT** | Mensagem de texto simples | `message` |
+| **MEDIA** | Imagem, vídeo ou documento | `message`, `mediaUrl`, `mediaType` |
+| **AUDIO** | Áudio/arquivo de voz | `message`, `mediaUrl` |
+| **LIST** | Lista interativa | `message` |
+| **BUTTON** | Botões interativos | `message` |
+| **TEMPLATE** | Templates aprovados | `message` |
+
+## 🎯 Fluxo Básico
+
+1. **Registre sua empresa** para obter um access token
+2. **Crie uma campanha** com contatos e mensagem
+3. **Acompanhe o progresso** através dos endpoints de status
+4. **Gerencie campanhas** (pause, retome, cancele)
+
+## 📊 Métricas e Monitoramento
+
+A API fornece métricas detalhadas:
+
+- **Mensagens Enviadas**: Contador de sucessos
+- **Mensagens Falhadas**: Contador de falhas com detalhes
+- **Status de Campanhas**: Progresso em tempo real
+- **Filas**: Status das filas de processamento
+
+## 🔧 Configuração Rápida
+
+```bash
+# Clone o repositório
+git clone https://github.com/matheusluislorscheiter/api-disparador
+
+# Configure as variáveis de ambiente
+export DB_HOST=localhost
+export DB_PORT=5432
+export DB_NAME=api-disparador
+export DB_USER=postgres
+export DB_PASSWORD=password
+export REDIS_HOST=localhost
+export REDIS_PORT=6379
+
+# Execute a aplicação
+./mvnw spring-boot:run
+```
+
+## 📚 Próximos Passos
+
+- [Quickstart](/quickstart) - Comece rapidamente
+- [Autenticação](/authentication) - Configure sua conta
+- [Criando Campanhas](/campaigns/creating) - Primeira campanha
+- [API Reference](/api-reference/auth/register) - Documentação completa da API

@@ -1,80 +1,196 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: 'Quickstart'
+description: 'Comece a usar a API Disparador em 5 minutos'
 ---
 
-## Get started in three steps
+# Quickstart
 
-Get your documentation site running locally and make your first customization.
+Este guia te ajudará a começar com a API Disparador em poucos minutos.
 
-### Step 1: Set up your local environment
+## 1. Registre sua empresa
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+Primeiro, você precisa registrar sua empresa para obter um access token:
 
-### Step 2: Deploy your changes
+```bash
+curl -X POST https://api.disparador.com/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Minha Empresa",
+    "email": "contato@minhaempresa.com",
+    "password": "senha123"
+  }'
+```
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+**Resposta:**
+```json
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "companyId": 1,
+  "message": null
+}
+```
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+## 2. Configure sua Evolution API
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+Certifique-se de que sua Evolution API está configurada e funcionando. Você precisará de:
 
-### Step 3: Go live
+- **URL da Evolution API**: `https://sua-evolution-api.com`
+- **API Key**: Sua chave de API da Evolution
+- **Instância**: Nome da instância do WhatsApp conectada
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+## 3. Crie sua primeira campanha
 
-## Next steps
+Agora vamos criar uma campanha simples de texto:
 
-Now that you have your docs running, explore these key features:
+```bash
+curl -X POST https://api.disparador.com/api/campaigns \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -d '{
+    "name": "Campanha de Boas-vindas",
+    "evolutionUrl": "https://sua-evolution-api.com",
+    "evolutionApiKey": "sua-api-key",
+    "evolutionInstance": "minha-instancia",
+    "message": "Olá {{name}}! Bem-vindo à nossa empresa!",
+    "contacts": [
+      {
+        "phoneNumber": "5511999999999",
+        "name": "João Silva"
+      },
+      {
+        "phoneNumber": "5511888888888",
+        "name": "Maria Santos"
+      }
+    ]
+  }'
+```
 
-<CardGroup cols={2}>
+**Resposta:**
+```json
+{
+  "id": 1,
+  "name": "Campanha de Boas-vindas",
+  "status": "ACTIVE",
+  "totalContacts": 2,
+  "sentMessages": 0,
+  "failedMessages": 0,
+  "message": null
+}
+```
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
+## 4. Acompanhe o progresso
 
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
+Verifique o status da sua campanha:
 
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
+```bash
+curl -X GET https://api.disparador.com/api/campaigns/1 \
+  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
 
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
+**Resposta:**
+```json
+{
+  "id": 1,
+  "name": "Campanha de Boas-vindas",
+  "status": "ACTIVE",
+  "totalContacts": 2,
+  "sentMessages": 2,
+  "failedMessages": 0,
+  "createdAt": "2024-01-15T10:30:00",
+  "message": null
+}
+```
 
-</CardGroup>
+## 5. Exemplo com mídia
 
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+Crie uma campanha com imagem:
+
+```bash
+curl -X POST https://api.disparador.com/api/campaigns \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -d '{
+    "name": "Campanha com Imagem",
+    "evolutionUrl": "https://sua-evolution-api.com",
+    "evolutionApiKey": "sua-api-key",
+    "evolutionInstance": "minha-instancia",
+    "message": "Confira nossa nova promoção!",
+    "mediaUrl": "https://exemplo.com/imagem.jpg",
+    "mediaType": "image",
+    "caption": "Oferta especial para você!",
+    "contacts": [
+      {
+        "phoneNumber": "5511999999999",
+        "name": "João Silva"
+      }
+    ]
+  }'
+```
+
+## 6. Agendamento
+
+Agende uma campanha para execução futura:
+
+```bash
+curl -X POST https://api.disparador.com/api/campaigns \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." \
+  -d '{
+    "name": "Campanha Agendada",
+    "evolutionUrl": "https://sua-evolution-api.com",
+    "evolutionApiKey": "sua-api-key",
+    "evolutionInstance": "minha-instancia",
+    "message": "Lembrete: Reunião amanhã às 10h!",
+    "scheduledFor": "2024-01-16T09:00:00",
+    "contacts": [
+      {
+        "phoneNumber": "5511999999999",
+        "name": "João Silva"
+      }
+    ]
+  }'
+```
+
+## 7. Gerenciamento de campanhas
+
+### Pausar campanha
+```bash
+curl -X PUT https://api.disparador.com/api/campaigns/1/pause \
+  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### Retomar campanha
+```bash
+curl -X PUT https://api.disparador.com/api/campaigns/1/resume \
+  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### Cancelar campanha
+```bash
+curl -X PUT https://api.disparador.com/api/campaigns/1/cancel \
+  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+## 8. Listar campanhas
+
+Veja todas as suas campanhas:
+
+```bash
+curl -X GET https://api.disparador.com/api/campaigns \
+  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+## 🎉 Próximos passos
+
+Agora que você conhece o básico, explore:
+
+- [Tipos de Mensagem](/campaigns/message-types) - Todos os tipos suportados
+- [Variáveis Personalizadas](/integration/variables) - Personalize suas mensagens
+- [Agendamento](/integration/scheduling) - Configure campanhas futuras
+- [API Reference](/api-reference/auth/register) - Documentação completa
+
+## 🆘 Precisa de ajuda?
+
+- **Email**: suporte@disparador.com
+- **GitHub**: [Issues](https://github.com/matheusluislorscheiter/api-disparador/issues)
+- **Documentação**: [API Reference](/api-reference/auth/register)
