@@ -272,17 +272,22 @@ print_r($result);
 Você pode usar variáveis na mensagem que serão substituídas pelos dados do contato:
 
 <CardGroup cols={2}>
-  <Card title="{{name}}" icon="user" color="#16a34a">
-    Nome do contato fornecido na lista
+  <Card title="{{PrimeiroNome}}" icon="user" color="#16a34a">
+    Primeiro nome do contato
   </Card>
-  <Card title="{{phoneNumber}}" icon="phone" color="#6366f1">
-    Número do telefone do contato
+  <Card title="{{NomeCompleto}}" icon="users" color="#6366f1">
+    Nome completo do contato
   </Card>
 </CardGroup>
 
-**Exemplo de uso:**
+**Exemplos de uso:**
+
 ```
-Olá {{name}}! Seu número é {{phoneNumber}}.
+Olá {{PrimeiroNome}}! Como você está?
+```
+
+```
+Prezado(a) {{NomeCompleto}}, temos uma oferta especial para você!
 ```
 
 ## Tipos de Mídia Suportados
