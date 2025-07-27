@@ -4,11 +4,13 @@ api: "GET /api/campaigns"
 description: "Lista todas as campanhas da empresa"
 ---
 
-Retorna uma lista de todas as campanhas da empresa autenticada.
-
 <Note>
-Você precisa de um access token válido no header X-Access-Token para usar este endpoint.
+Retorna uma lista de todas as campanhas da empresa autenticada, ordenadas por data de criação.
 </Note>
+
+<Warning>
+Você precisa de um access token válido no header X-Access-Token para usar este endpoint.
+</Warning>
 
 ## Headers
 
@@ -64,7 +66,7 @@ $response = curl_exec($curl);
 curl_close($curl);
 
 $campaigns = json_decode($response, true);
-echo 'Campanhas: ' . print_r($campaigns, true);
+print_r($campaigns);
 ?>
 ```
 
@@ -108,7 +110,14 @@ echo 'Campanhas: ' . print_r($campaigns, true);
 ```
 
 ```json Erro (400 Bad Request)
-null
+{
+  "error": "Invalid access token",
+  "message": "Access token is required or invalid"
+}
+```
+
+```json Array Vazio (200 OK)
+[]
 ```
 
 </ResponseExample>
@@ -149,6 +158,14 @@ Retorna um array de objetos com as seguintes propriedades:
   Mensagem de erro (null em caso de sucesso)
 </ResponseField>
 
+## Códigos de Erro
+
+| Código | Descrição |
+|--------|-----------|
+| 400 | Access token inválido ou não fornecido |
+| 401 | Token de acesso não autorizado |
+| 500 | Erro interno do servidor |
+
 ## Status das Campanhas
 
 <CardGroup cols={2}>
@@ -159,38 +176,86 @@ Retorna um array de objetos com as seguintes propriedades:
     Campanha pausada temporariamente
   </Card>
   <Card title="CANCELLED" icon="stop" color="#dc2626">
-    Campanha cancelada
+    Campanha cancelada permanentemente
   </Card>
   <Card title="COMPLETED" icon="check" color="#6366f1">
     Campanha finalizada (todas as mensagens processadas)
   </Card>
 </CardGroup>
 
-## Códigos de Erro
+## Ordenação e Filtros
 
-| Código | Descrição |
-|--------|-----------|
-| 400 | Access token inválido |
-| 500 | Erro interno do servidor |
+<Note>
+A API retorna todas as campanhas da empresa em ordem cronológica (mais recentes primeiro).
+</Note>
 
-## Filtros e Ordenação
-
-<Info>
-Atualmente, a API retorna todas as campanhas da empresa em ordem cronológica (mais recentes primeiro).
-</Info>
-
-**Futuras versões incluirão:**
+**Funcionalidades futuras planejadas:**
 
 <CardGroup cols={2}>
-  <Card title="Filtros" icon="filter">
-    - Filtro por status
-    - Filtro por data
+  <Card title="Filtros Avançados" icon="filter" color="#8b5cf6">
+    Filtro por status, data de criação e nome
   </Card>
-  <Card title="Controles" icon="settings">
-    - Paginação
-    - Ordenação personalizada
+  <Card title="Controles de Lista" icon="settings" color="#f59e0b">
+    Paginação e ordenação personalizada
   </Card>
 </CardGroup>
+
+## Exemplo de Uso Prático
+
+Para monitorar campanhas ativas:
+
+<RequestExample>
+
+```javascript Monitoramento de Campanhas
+// Função para monitorar campanhas ativas
+async function monitorarCampanhas() {
+  const response = await fetch('https://{url-key}/api/campaigns', {
+    headers: {
+      'X-Access-Token': '{access_token}'
+    }
+  });
+  
+  const campaigns = await response.json();
+  
+  // Filtrar apenas campanhas ativas
+  const activeCampaigns = campaigns.filter(c => c.status === 'ACTIVE');
+  
+  console.log(`Campanhas ativas: ${activeCampaigns.length}`);
+  
+  activeCampaigns.forEach(campaign => {
+    const progress = (campaign.sentMessages / campaign.totalContacts * 100).toFixed(1);
+    console.log(`${campaign.name}: ${progress}% concluída`);
+  });
+}
+
+// Monitorar a cada 30 segundos
+setInterval(monitorarCampanhas, 30000);
+```
+
+```python Relatório de Status
+import requests
+from datetime import datetime
+
+def gerar_relatorio_campanhas():
+    headers = {'X-Access-Token': '{access_token}'}
+    response = requests.get('https://{url-key}/api/campaigns', headers=headers)
+    campaigns = response.json()
+    
+    print(f"Relatório de Campanhas - {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+    print("-" * 50)
+    
+    for campaign in campaigns:
+        progress = (campaign['sentMessages'] / campaign['totalContacts']) * 100
+        print(f"📧 {campaign['name']}")
+        print(f"   Status: {campaign['status']}")
+        print(f"   Progresso: {progress:.1f}%")
+        print(f"   Falhas: {campaign['failedMessages']}")
+        print()
+
+gerar_relatorio_campanhas()
+```
+
+</RequestExample>
 
 ## Próximos Passos
 
@@ -201,7 +266,7 @@ Após listar as campanhas:
     Detalhes de uma campanha específica
   </Card>
   <Card title="Gerenciar Campanha" icon="gear" href="/api-reference/campaigns/pause">
-    Pause, retome ou cancele
+    Pause, retome ou cancele campanhas
   </Card>
   <Card title="Criar Nova Campanha" icon="plus" href="/api-reference/campaigns/create">
     Crie uma nova campanha
