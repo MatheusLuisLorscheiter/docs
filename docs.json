@@ -8,85 +8,43 @@
     "dark": "#15803D"
   },
   "favicon": "/favicon.svg",
-  "navigation": {
-    "tabs": [
-      {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "authentication"
-            ]
-          },
-          {
-            "group": "Development",
-            "pages": [
-              "development"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API reference",
-        "groups": [
-          {
-            "group": "Autenticação",
-            "pages": [
-              "api-reference/auth/register"
-            ]
-          },
-          {
-            "group": "Campanhas",
-            "pages": [
-              "api-reference/campaigns/create",
-              "api-reference/campaigns/list",
-              "api-reference/campaigns/get",
-              "api-reference/campaigns/pause",
-              "api-reference/campaigns/resume",
-              "api-reference/campaigns/cancel"
-            ]
-          }
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "GitHub",
-          "href": "https://github.com/matheusluislorscheiter/api-disparador",
-          "icon": "github"
-        },
-        {
-          "anchor": "Suporte",
-          "href": "mailto:suporte@disparador.com",
-          "icon": "mail"
-        }
+  "navigation": [
+    {
+      "group": "Guides",
+      "pages": [
+        "index",
+        "quickstart",
+        "authentication",
+        "development"
+      ]
+    },
+    {
+      "group": "API Reference",
+      "pages": [
+        "api-reference/auth/register",
+        "api-reference/campaigns/create",
+        "api-reference/campaigns/list",
+        "api-reference/campaigns/get",
+        "api-reference/campaigns/pause",
+        "api-reference/campaigns/resume",
+        "api-reference/campaigns/cancel"
       ]
     }
-  },
+  ],
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
-  "navbar": {
-    "links": [
-      {
-        "label": "Suporte",
-        "href": "mailto:suporte@disparador.com"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.disparador.com"
+  "anchors": [
+    {
+      "anchor": "GitHub",
+      "href": "https://github.com/matheusluislorscheiter/api-disparador",
+      "icon": "github"
+    },
+    {
+      "anchor": "Suporte",
+      "href": "mailto:suporte@disparador.com",
+      "icon": "envelope"
     }
-  },
-  "footer": {
-    "socials": {
-      "github": "https://github.com/matheusluislorscheiter/api-disparador"
-    }
-  }
+  ]
 }
