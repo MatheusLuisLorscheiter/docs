@@ -1,0 +1,41 @@
+---
+icon: "/images/icons/bulb.svg"
+--- 
+
+# Conceitos Chave
+
+Este guia aborda os conceitos fundamentais por trás da API Disparador, explicando como ela se integra com a Evolution API para o envio de mensagens e como nosso sistema de filas garante o processamento eficiente das campanhas.
+
+## Evolution API
+
+A **Evolution API** é a espinha dorsal para o envio de mensagens de WhatsApp. Nossa API se integra diretamente com ela para:
+
+*   **Conectividade**: Estabelecer e manter a conexão com as instâncias do WhatsApp.
+*   **Envio de Mensagens**: Enviar mensagens de texto, mídias (imagens, vídeos, áudios, documentos) e legendas.
+*   **Gerenciamento de Instâncias**: Utilizar `evolutionUrl`, `evolutionApiKey` e `evolutionInstance` para se conectar a uma instância específica da Evolution API.
+
+Para mais detalhes sobre a Evolution API e como configurar sua instância, consulte a [documentação oficial da Evolution API](https://docs.evolution-api.com/).
+
+## Sistema de Filas de Mensagens
+
+A API Disparador utiliza um robusto sistema de filas de mensagens para processar e disparar campanhas de forma assíncrona e eficiente. Isso garante que:
+
+*   **Escalabilidade**: Campanhas com um grande número de contatos podem ser processadas sem sobrecarregar a API principal.
+*   **Confiabilidade**: Mensagens são enfileiradas e retentadas em caso de falha, minimizando a perda de dados.
+*   **Agendamento**: Campanhas agendadas são processadas no momento correto, sem a necessidade de manter uma conexão ativa.
+*   **Controle de Fluxo**: Permite controlar o intervalo entre os envios de mensagens para evitar bloqueios ou sobrecarga da Evolution API.
+
+### Como Funciona
+
+1.  **Criação da Campanha**: Ao criar uma campanha via endpoint `POST /campaigns`, a API valida os dados e a insere em uma fila de processamento.
+2.  **Processamento Assíncrono**: Um *worker* (`MessageQueueWorker`) monitora essa fila. Quando uma nova campanha é detectada, o worker a processa, criando tarefas de envio de mensagens para cada contato.
+3.  **Envio de Mensagens**: Cada tarefa de envio é então enviada para a Evolution API, respeitando os intervalos configurados para evitar limites de taxa.
+4.  **Atualização de Status**: O status da campanha e de cada contato é atualizado em tempo real, refletindo o progresso e quaisquer falhas.
+
+### Tecnologias Utilizadas
+
+Nosso sistema de filas é alimentado por:
+
+*   **Redis**: Utilizado como o *broker* da fila, armazenando as tarefas de forma persistente.
+*   **Spring Boot com Spring AMQP/Redis**: Para a integração com o Redis e gerenciamento das filas.
+*   **Workers Dedicados**: Processos em segundo plano que consomem as mensagens da fila e executam a lógica de negócio (envio via Evolution API). 

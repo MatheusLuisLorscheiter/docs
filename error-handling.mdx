@@ -1,0 +1,43 @@
+---
+icon: "/images/icons/error.svg"
+--- 
+
+# Tratamento de Erros
+
+A API Disparador utiliza códigos de status HTTP padrão para indicar o sucesso ou falha das requisições. Erros são retornados com uma mensagem descritiva no corpo da resposta JSON.
+
+## Códigos de Status Comuns
+
+| Código HTTP | Descrição                 | Significado                                                                |
+|-------------|---------------------------|----------------------------------------------------------------------------|
+| `200 OK`    | Sucesso                   | A requisição foi processada com sucesso.                                   |
+| `400 Bad Request` | Requisição Inválida       | Os dados fornecidos na requisição são inválidos ou incompletos. Verifique os campos obrigatórios e o formato dos dados. |
+| `401 Unauthorized` | Não Autorizado            | O token de acesso (`X-Access-Token`) é inválido ou não foi fornecido. Requisite um novo token ou verifique se o token atual é válido. |
+| `404 Not Found` | Não Encontrado            | O recurso solicitado não foi encontrado. Isso pode ocorrer para IDs de campanhas ou outros recursos inexistentes. |
+| `500 Internal Server Error` | Erro Interno do Servidor | Ocorreu um erro inesperado no servidor. Tente novamente mais tarde ou entre em contato com o suporte se o problema persistir. |
+
+## Estrutura da Resposta de Erro
+
+Em caso de erro, a resposta da API incluirá um objeto JSON com uma chave `message` contendo uma descrição do erro.
+
+```json
+{
+  "message": "Descrição detalhada do erro"
+}
+```
+
+**Exemplo de Erro 400 Bad Request:**
+
+```json
+{
+  "message": "Email é obrigatório"
+}
+```
+
+**Exemplo de Erro 401 Unauthorized:**
+
+```json
+{
+  "message": "Access token inválido"
+}
+``` 
