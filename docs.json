@@ -18,13 +18,15 @@
             "pages": [
               "index",
               "quickstart",
-              "authentication"
+              "authentication",
+              "error-handling"
             ]
           },
           {
             "group": "Development",
             "pages": [
-              "development"
+              "development",
+              "concepts"
             ]
           }
         ]
@@ -96,4 +98,4 @@
     "title": "API Disparador",
     "description": "Sistema simplificado de disparo de mensagens via WhatsApp"
   }
-}
+} 
