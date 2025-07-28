@@ -1,0 +1,558 @@
+---
+title: "Configuração"
+description: "Configuração completa da API Disparador"
+---
+
+<Note>
+Este guia detalha todas as variáveis de ambiente e configurações disponíveis na API Disparador.
+</Note>
+
+## Visão Geral
+
+A API Disparador utiliza variáveis de ambiente para configuração. Todas as configurações têm valores padrão, mas é recomendado configurar adequadamente para produção.
+
+<CardGroup cols={3}>
+  <Card title="Banco de Dados" icon="database" color="#2563eb">
+    PostgreSQL e conexões
+  </Card>
+  <Card title="Redis" icon="server" color="#dc2626">
+    Cache e filas
+  </Card>
+  <Card title="Aplicação" icon="settings" color="#16a34a">
+    Configurações gerais
+  </Card>
+</CardGroup>
+
+## Configuração do Banco de Dados
+
+### Variáveis PostgreSQL
+
+<CardGroup cols={2}>
+  <Card title="DB_HOST" icon="server" color="#2563eb">
+    Host do PostgreSQL (padrão: localhost)
+  </Card>
+  <Card title="DB_PORT" icon="hash" color="#7c3aed">
+    Porta do PostgreSQL (padrão: 5432)
+  </Card>
+  <Card title="DB_NAME" icon="database" color="#16a34a">
+    Nome do banco (padrão: api-disparador)
+  </Card>
+  <Card title="DB_USER" icon="user" color="#ea580c">
+    Usuário do banco (padrão: postgres)
+  </Card>
+  <Card title="DB_PASSWORD" icon="key" color="#dc2626">
+    Senha do banco (obrigatória)
+  </Card>
+  <Card title="DB_POOL_SIZE" icon="settings" color="#059669">
+    Tamanho do pool (padrão: 10)
+  </Card>
+</CardGroup>
+
+<RequestExample>
+
+```bash
+# Configuração PostgreSQL
+export DB_HOST=localhost
+export DB_PORT=5432
+export DB_NAME=api-disparador
+export DB_USER=disparador
+export DB_PASSWORD=your-secure-password
+export DB_POOL_SIZE=20
+```
+
+</RequestExample>
+
+### Configurações Hibernate
+
+<RequestExample>
+
+```bash
+# Configurações Hibernate
+export HIBERNATE_DDL_AUTO=update
+export SHOW_SQL=false
+export FORMAT_SQL=false
+export APP_TIMEZONE=America/Sao_Paulo
+```
+
+</RequestExample>
+
+## Configuração do Redis
+
+### Variáveis Redis
+
+<CardGroup cols={2}>
+  <Card title="REDIS_HOST" icon="server" color="#dc2626">
+    Host do Redis (padrão: localhost)
+  </Card>
+  <Card title="REDIS_PORT" icon="hash" color="#2563eb">
+    Porta do Redis (padrão: 6379)
+  </Card>
+  <Card title="REDIS_PASSWORD" icon="key" color="#7c3aed">
+    Senha do Redis (opcional)
+  </Card>
+  <Card title="REDIS_TIMEOUT" icon="clock" color="#ea580c">
+    Timeout de conexão (padrão: 2000ms)
+  </Card>
+</CardGroup>
+
+<RequestExample>
+
+```bash
+# Configuração Redis
+export REDIS_HOST=localhost
+export REDIS_PORT=6379
+export REDIS_PASSWORD=
+export REDIS_TIMEOUT=2000ms
+export REDIS_MAX_ACTIVE=8
+export REDIS_MAX_IDLE=8
+export REDIS_MIN_IDLE=0
+```
+
+</RequestExample>
+
+## Configuração da Aplicação
+
+### Variáveis Gerais
+
+<CardGroup cols={2}>
+  <Card title="APP_TIMEZONE" icon="clock" color="#16a34a">
+    Fuso horário (padrão: America/Sao_Paulo)
+  </Card>
+  <Card title="APP_TIMEZONE" icon="clock" color="#16a34a">
+  Fuso horário (padrão: America/Sao_Paulo)
+</Card>
+<Card title="PORT" icon="hash" color="#7c3aed">
+  Porta da aplicação (padrão: 80)
+</Card>
+  <Card title="PORT" icon="hash" color="#7c3aed">
+    Porta da aplicação (padrão: 80)
+  </Card>
+</CardGroup>
+
+<RequestExample>
+
+```bash
+# Configurações gerais
+export APP_TIMEZONE=America/Sao_Paulo
+export PORT=8080
+export PORT=8080
+```
+
+</RequestExample>
+
+### Configurações de Campanha
+
+<CardGroup cols={2}>
+  <Card title="CAMPAIGN_MIN_SCHEDULE_MINUTES" icon="clock" color="#16a34a">
+    Antecedência mínima (padrão: 5)
+  </Card>
+  <Card title="CAMPAIGN_INTERVAL_MIN" icon="settings" color="#2563eb">
+    Intervalo mínimo (padrão: 3s)
+  </Card>
+  <Card title="CAMPAIGN_INTERVAL_MAX" icon="settings" color="#7c3aed">
+    Intervalo máximo (padrão: 30s)
+  </Card>
+  <Card title="CAMPAIGN_MAX_RESUME_DAYS" icon="calendar" color="#ea580c">
+    Dias para retomar (padrão: 1)
+  </Card>
+</CardGroup>
+
+<RequestExample>
+
+```bash
+# Configurações de campanha
+export CAMPAIGN_MIN_SCHEDULE_MINUTES=5
+export CAMPAIGN_INTERVAL_MIN=3
+export CAMPAIGN_INTERVAL_MAX=30
+export CAMPAIGN_MAX_RESUME_DAYS=1
+```
+
+</RequestExample>
+
+### Configurações de Fila
+
+<CardGroup cols={2}>
+  <Card title="QUEUE_MESSAGE_NAME" icon="list" color="#16a34a">
+    Nome da fila principal (padrão: message_queue)
+  </Card>
+  <Card title="QUEUE_SCHEDULED_NAME" icon="clock" color="#2563eb">
+    Nome da fila agendada (padrão: scheduled_queue)
+  </Card>
+  <Card title="QUEUE_RETRY_NAME" icon="refresh" color="#7c3aed">
+    Nome da fila de retry (padrão: retry_queue)
+  </Card>
+  <Card title="QUEUE_CONCURRENCY" icon="cpu" color="#ea580c">
+    Concorrência (padrão: 5)
+  </Card>
+</CardGroup>
+
+<RequestExample>
+
+```bash
+# Configurações de fila
+export QUEUE_MESSAGE_NAME=message_queue
+export QUEUE_SCHEDULED_NAME=scheduled_queue
+export QUEUE_RETRY_NAME=retry_queue
+export QUEUE_CONCURRENCY=5
+export QUEUE_MAX_RETRIES=3
+export QUEUE_RETRY_DELAY=60
+export QUEUE_WORKER_ENABLED=true
+```
+
+</RequestExample>
+
+## Configuração do Servidor
+
+### Variáveis do Tomcat
+
+<CardGroup cols={2}>
+  <Card title="SERVER_MAX_THREADS" icon="cpu" color="#16a34a">
+    Threads máximas (padrão: 200)
+  </Card>
+  <Card title="SERVER_MIN_THREADS" icon="cpu" color="#2563eb">
+    Threads mínimas (padrão: 10)
+  </Card>
+  <Card title="SERVER_CONNECTION_TIMEOUT" icon="clock" color="#7c3aed">
+    Timeout de conexão (padrão: 20000ms)
+  </Card>
+  <Card title="SCHEDULER_POOL_SIZE" icon="settings" color="#ea580c">
+    Tamanho do pool de agendamento (padrão: 5)
+  </Card>
+</CardGroup>
+
+<RequestExample>
+
+```bash
+# Configurações do servidor
+export SERVER_MAX_THREADS=200
+export SERVER_MIN_THREADS=10
+export SERVER_CONNECTION_TIMEOUT=20000
+export SCHEDULER_POOL_SIZE=5
+```
+
+</RequestExample>
+
+## Configuração de Logs
+
+### Variáveis de Logging
+
+<CardGroup cols={2}>
+  <Card title="LOGGING_LEVEL_COM_DISPARADOR" icon="file-text" color="#16a34a">
+    Nível de log da aplicação (padrão: INFO)
+  </Card>
+  <Card title="LOG_FILE" icon="file" color="#2563eb">
+    Arquivo de log (padrão: logs/disparador-api.log)
+  </Card>
+  <Card title="LOG_MAX_SIZE" icon="settings" color="#7c3aed">
+    Tamanho máximo do log (padrão: 10MB)
+  </Card>
+  <Card title="LOG_MAX_HISTORY" icon="calendar" color="#ea580c">
+    Histórico de logs (padrão: 30)
+  </Card>
+</CardGroup>
+
+<RequestExample>
+
+```bash
+# Configurações de log
+export LOGGING_LEVEL_COM_DISPARADOR=INFO
+export LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=WARN
+export LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB=WARN
+export LOGGING_LEVEL_HIBERNATE_SQL=WARN
+export LOGGING_LEVEL_REDIS=WARN
+export LOG_FILE=logs/disparador-api.log
+export LOG_MAX_SIZE=10MB
+export LOG_MAX_HISTORY=30
+```
+
+</RequestExample>
+
+## Configuração de Rate Limiting
+
+### Variáveis de Rate Limit
+
+<CardGroup cols={2}>
+  <Card title="RATE_LIMIT_PER_MINUTE" icon="clock" color="#16a34a">
+    Limite por minuto (padrão: 60)
+  </Card>
+  <Card title="RATE_LIMIT_PER_HOUR" icon="clock" color="#2563eb">
+    Limite por hora (padrão: 1000)
+  </Card>
+  <Card title="RATE_LIMIT_BURST" icon="zap" color="#7c3aed">
+    Limite de burst (padrão: 10)
+  </Card>
+</CardGroup>
+
+<RequestExample>
+
+```bash
+# Configurações de rate limiting
+export RATE_LIMIT_PER_MINUTE=60
+export RATE_LIMIT_PER_HOUR=1000
+export RATE_LIMIT_BURST=10
+```
+
+</RequestExample>
+
+## Configuração do Actuator
+
+### Variáveis do Actuator
+
+<CardGroup cols={2}>
+  <Card title="ACTUATOR_ENDPOINTS" icon="activity" color="#16a34a">
+    Endpoints expostos (padrão: health,info,metrics,prometheus)
+  </Card>
+  <Card title="PROMETHEUS_ENABLED" icon="chart-bar" color="#2563eb">
+    Métricas Prometheus (padrão: true)
+  </Card>
+</CardGroup>
+
+<RequestExample>
+
+```bash
+# Configurações do Actuator
+export ACTUATOR_ENDPOINTS=health,info,metrics,prometheus
+export PROMETHEUS_ENABLED=true
+```
+
+</RequestExample>
+
+## Configuração do Swagger
+
+### Variáveis do Swagger
+
+<CardGroup cols={2}>
+  <Card title="SWAGGER_ENABLED" icon="book-open" color="#16a34a">
+    Habilitar Swagger (padrão: true)
+  </Card>
+  <Card title="SUPPORT_EMAIL" icon="envelope" color="#2563eb">
+    Email de suporte (padrão: suporte@disparador.com)
+  </Card>
+</CardGroup>
+
+<RequestExample>
+
+```bash
+# Configurações do Swagger
+export SWAGGER_ENABLED=true
+export SUPPORT_EMAIL=suporte@disparador.com
+```
+
+</RequestExample>
+
+## Configuração Completa
+
+### Arquivo .env Completo
+
+<RequestExample>
+
+```bash
+# ========================================
+# CONFIGURAÇÃO COMPLETA DA API DISPARADOR
+# ========================================
+
+# ========================================
+# BANCO DE DADOS
+# ========================================
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=api-disparador
+DB_USER=disparador
+DB_PASSWORD=your-secure-password
+DB_POOL_SIZE=20
+DB_MIN_IDLE=5
+
+# Configurações Hibernate
+HIBERNATE_DDL_AUTO=update
+SHOW_SQL=false
+FORMAT_SQL=false
+APP_TIMEZONE=America/Sao_Paulo
+
+# ========================================
+# REDIS
+# ========================================
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=
+REDIS_TIMEOUT=2000ms
+REDIS_MAX_ACTIVE=8
+REDIS_MAX_IDLE=8
+REDIS_MIN_IDLE=0
+
+# ========================================
+# APLICAÇÃO
+# ========================================
+APP_TIMEZONE=America/Sao_Paulo
+PORT=8080
+PORT=8080
+
+# ========================================
+# CAMPANHAS
+# ========================================
+CAMPAIGN_MIN_SCHEDULE_MINUTES=5
+CAMPAIGN_INTERVAL_MIN=3
+CAMPAIGN_INTERVAL_MAX=30
+CAMPAIGN_MAX_RESUME_DAYS=1
+
+# ========================================
+# FILAS
+# ========================================
+QUEUE_MESSAGE_NAME=message_queue
+QUEUE_SCHEDULED_NAME=scheduled_queue
+QUEUE_RETRY_NAME=retry_queue
+QUEUE_CONCURRENCY=5
+QUEUE_MAX_RETRIES=3
+QUEUE_RETRY_DELAY=60
+QUEUE_WORKER_ENABLED=true
+
+# ========================================
+# SERVIDOR
+# ========================================
+SERVER_MAX_THREADS=200
+SERVER_MIN_THREADS=10
+SERVER_CONNECTION_TIMEOUT=20000
+SCHEDULER_POOL_SIZE=5
+
+# ========================================
+# LOGS
+# ========================================
+LOGGING_LEVEL_COM_DISPARADOR=INFO
+LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=WARN
+LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB=WARN
+LOGGING_LEVEL_HIBERNATE_SQL=WARN
+LOGGING_LEVEL_REDIS=WARN
+LOG_FILE=logs/disparador-api.log
+LOG_MAX_SIZE=10MB
+LOG_MAX_HISTORY=30
+
+# ========================================
+# RATE LIMITING
+# ========================================
+RATE_LIMIT_PER_MINUTE=60
+RATE_LIMIT_PER_HOUR=1000
+RATE_LIMIT_BURST=10
+
+# ========================================
+# ACTUATOR
+# ========================================
+ACTUATOR_ENDPOINTS=health,info,metrics,prometheus
+PROMETHEUS_ENABLED=true
+
+# ========================================
+# SWAGGER
+# ========================================
+SWAGGER_ENABLED=true
+SUPPORT_EMAIL=suporte@disparador.com
+```
+
+</RequestExample>
+
+## Configurações por Ambiente
+
+### Desenvolvimento
+
+<RequestExample>
+
+```bash
+# Desenvolvimento - Logs detalhados
+export LOGGING_LEVEL_COM_DISPARADOR=DEBUG
+export SHOW_SQL=true
+export FORMAT_SQL=true
+export SWAGGER_ENABLED=true
+export ACTUATOR_ENDPOINTS=health,info,metrics,prometheus,env
+```
+
+</RequestExample>
+
+### Produção
+
+<RequestExample>
+
+```bash
+# Produção - Performance e segurança
+export LOGGING_LEVEL_COM_DISPARADOR=WARN
+export SHOW_SQL=false
+export FORMAT_SQL=false
+export SWAGGER_ENABLED=false
+export ACTUATOR_ENDPOINTS=health,info,metrics,prometheus
+export DB_POOL_SIZE=20
+export SERVER_MAX_THREADS=200
+export QUEUE_CONCURRENCY=10
+```
+
+</RequestExample>
+
+### Teste
+
+<RequestExample>
+
+```bash
+# Teste - Configurações mínimas
+export LOGGING_LEVEL_COM_DISPARADOR=ERROR
+export SHOW_SQL=false
+export SWAGGER_ENABLED=false
+export ACTUATOR_ENDPOINTS=health
+export DB_POOL_SIZE=5
+export SERVER_MAX_THREADS=50
+export QUEUE_CONCURRENCY=2
+```
+
+</RequestExample>
+
+## Validação de Configuração
+
+### Script de Validação
+
+<RequestExample>
+
+```bash
+#!/bin/bash
+
+echo "Validando configuração da API Disparador..."
+
+# Verificar variáveis obrigatórias
+if [ -z "$DB_PASSWORD" ]; then
+    echo "❌ DB_PASSWORD não configurado"
+    exit 1
+fi
+
+if [ -z "$DB_PASSWORD" ]; then
+    echo "❌ DB_PASSWORD não configurado"
+    exit 1
+fi
+
+# Verificar conectividade
+echo "🔍 Testando conexão com PostgreSQL..."
+if pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; then
+    echo "✅ PostgreSQL conectado"
+else
+    echo "❌ Erro ao conectar com PostgreSQL"
+    exit 1
+fi
+
+echo "🔍 Testando conexão com Redis..."
+if redis-cli -h $REDIS_HOST -p $REDIS_PORT ping; then
+    echo "✅ Redis conectado"
+else
+    echo "❌ Erro ao conectar com Redis"
+    exit 1
+fi
+
+echo "✅ Configuração válida!"
+```
+
+</RequestExample>
+
+## Próximos Passos
+
+<CardGroup cols={3}>
+  <Card title="Deployment" icon="rocket" href="/deployment">
+    Faça o deploy da aplicação
+  </Card>
+  <Card title="Monitoramento" icon="activity" href="/monitoring">
+    Configure monitoramento
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/troubleshooting">
+    Resolva problemas
+  </Card>
+</CardGroup> 

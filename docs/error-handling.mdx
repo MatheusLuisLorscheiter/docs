@@ -1,0 +1,421 @@
+---
+title: "Tratamento de Erros"
+description: "Como a API Disparador trata e reporta erros"
+---
+
+<Warning>
+A API Disparador utiliza códigos de status HTTP padrão para indicar o sucesso ou falha das requisições. Todos os erros são retornados com uma estrutura JSON consistente.
+</Warning>
+
+## Visão Geral
+
+A API Disparador implementa um sistema robusto de tratamento de erros que:
+
+- **Retorna códigos HTTP apropriados** para cada tipo de erro
+- **Fornece mensagens descritivas** em português
+- **Mantém estrutura JSON consistente** em todas as respostas
+- **Inclui detalhes técnicos** quando necessário para debugging
+
+## Códigos de Status HTTP
+
+<CardGroup cols={2}>
+  <Card title="200 OK" icon="check" color="#16a34a">
+    Requisição processada com sucesso
+  </Card>
+  <Card title="201 Created" icon="plus" color="#16a34a">
+    Recurso criado com sucesso
+  </Card>
+  <Card title="400 Bad Request" icon="alert-triangle" color="#dc2626">
+    Dados inválidos ou incompletos
+  </Card>
+  <Card title="401 Unauthorized" icon="lock" color="#dc2626">
+    Token inválido ou ausente
+  </Card>
+  <Card title="404 Not Found" icon="search" color="#dc2626">
+    Recurso não encontrado
+  </Card>
+  <Card title="500 Internal Server Error" icon="server" color="#dc2626">
+    Erro interno do servidor
+  </Card>
+</CardGroup>
+
+## Estrutura da Resposta de Erro
+
+Todas as respostas de erro seguem uma estrutura consistente:
+
+<ResponseExample>
+
+```json Erro de Validação (400)
+{
+  "timestamp": "2024-01-15T10:30:00",
+  "status": 400,
+  "error": "Erro de validação",
+  "message": "{campaignId=Campanha não encontrada, evolutionUrl=URL da Evolution API é obrigatória}"
+}
+```
+
+```json Token Inválido (401)
+{
+  "timestamp": "2024-01-15T10:30:00",
+  "status": 401,
+  "error": "Credenciais inválidas",
+  "message": "Access token inválido"
+}
+```
+
+```json Recurso Não Encontrado (404)
+{
+  "timestamp": "2024-01-15T10:30:00",
+  "status": 404,
+  "error": "Usuário não encontrado",
+  "message": "Campanha com ID 123 não foi encontrada"
+}
+```
+
+```json Erro Interno (500)
+{
+  "timestamp": "2024-01-15T10:30:00",
+  "status": 500,
+  "error": "Erro interno do servidor",
+  "message": "Ocorreu um erro inesperado. Tente novamente mais tarde."
+}
+```
+
+</ResponseExample>
+
+## Campos da Resposta de Erro
+
+<ResponseField name="timestamp" type="string">
+  Data e hora do erro no formato ISO 8601
+</ResponseField>
+
+<ResponseField name="status" type="number">
+  Código de status HTTP do erro
+</ResponseField>
+
+<ResponseField name="error" type="string">
+  Título descritivo do tipo de erro
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Descrição detalhada do erro ou objeto com erros de validação
+</ResponseField>
+
+## Tipos de Erro Comuns
+
+### Erros de Validação (400)
+
+Ocorrem quando os dados enviados não atendem aos requisitos:
+
+<RequestExample>
+
+```bash cURL
+curl -X POST https://{url-key}/api/campaigns \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: {access_token}" \
+  -d '{
+    "name": "",
+    "message": "Teste"
+  }'
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json Resposta de Erro
+{
+  "timestamp": "2024-01-15T10:30:00",
+  "status": 400,
+  "error": "Erro de validação",
+  "message": "{name=Nome da campanha é obrigatório, evolutionUrl=URL da Evolution API é obrigatória, evolutionApiKey=Chave da Evolution API é obrigatória, evolutionInstance=Instância da Evolution é obrigatória}"
+}
+```
+
+</ResponseExample>
+
+### Erros de Autenticação (401)
+
+Quando o access token é inválido ou não fornecido:
+
+<RequestExample>
+
+```bash cURL
+curl -X GET https://{url-key}/api/campaigns \
+  -H "X-Access-Token: token-invalido"
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json Resposta de Erro
+{
+  "timestamp": "2024-01-15T10:30:00",
+  "status": 401,
+  "error": "Credenciais inválidas",
+  "message": "Access token inválido"
+}
+```
+
+</ResponseExample>
+
+### Erros de Recurso Não Encontrado (404)
+
+Quando o recurso solicitado não existe:
+
+<RequestExample>
+
+```bash cURL
+curl -X GET https://{url-key}/api/campaigns/999999 \
+  -H "X-Access-Token: {access_token}"
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json Resposta de Erro
+{
+  "timestamp": "2024-01-15T10:30:00",
+  "status": 404,
+  "error": "Usuário não encontrado",
+  "message": "Campanha com ID 999999 não foi encontrada"
+}
+```
+
+</ResponseExample>
+
+## Validações Específicas
+
+### Campanhas
+
+<CardGroup cols={2}>
+  <Card title="Nome da Campanha" icon="tag" color="#2563eb">
+    Obrigatório, 2-100 caracteres
+  </Card>
+  <Card title="Mensagem" icon="message" color="#7c3aed">
+    Obrigatória, máximo 1000 caracteres
+  </Card>
+  <Card title="Contatos" icon="users" color="#16a34a">
+    Lista obrigatória, mínimo 1 contato
+  </Card>
+  <Card title="Evolution API" icon="server" color="#ea580c">
+    URL, chave e instância obrigatórias
+  </Card>
+</CardGroup>
+
+### Agendamento
+
+<CardGroup cols={2}>
+  <Card title="Data Futura" icon="calendar" color="#2563eb">
+    Mínimo 5 minutos de antecedência
+  </Card>
+  <Card title="Formato ISO" icon="clock" color="#7c3aed">
+    Formato: YYYY-MM-DDTHH:mm:ss
+  </Card>
+</CardGroup>
+
+### Contatos
+
+<CardGroup cols={2}>
+  <Card title="Número de Telefone" icon="phone" color="#16a34a">
+    Formato: 5511999999999 (com código do país)
+  </Card>
+  <Card title="Nome" icon="user" color="#ea580c">
+    Opcional, máximo 100 caracteres
+  </Card>
+</CardGroup>
+
+## Tratamento de Erros no Cliente
+
+### JavaScript
+
+<RequestExample>
+
+```javascript JavaScript
+try {
+  const response = await fetch('https://{url-key}/api/campaigns', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Access-Token': '{access_token}'
+    },
+    body: JSON.stringify(campaignData)
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    console.error('Erro da API:', errorData);
+    
+    switch (response.status) {
+      case 400:
+        console.error('Dados inválidos:', errorData.message);
+        break;
+      case 401:
+        console.error('Token inválido:', errorData.message);
+        break;
+      case 404:
+        console.error('Recurso não encontrado:', errorData.message);
+        break;
+      default:
+        console.error('Erro inesperado:', errorData.message);
+    }
+  } else {
+    const result = await response.json();
+    console.log('Sucesso:', result);
+  }
+} catch (error) {
+  console.error('Erro de rede:', error);
+}
+```
+
+</RequestExample>
+
+### Python
+
+<RequestExample>
+
+```python Python
+import requests
+
+try:
+    response = requests.post(
+        'https://{url-key}/api/campaigns',
+        json=campaign_data,
+        headers={
+            'Content-Type': 'application/json',
+            'X-Access-Token': '{access_token}'
+        }
+    )
+    
+    if response.status_code != 200:
+        error_data = response.json()
+        print(f'Erro {response.status_code}: {error_data["message"]}')
+        
+        if response.status_code == 400:
+            print('Dados inválidos fornecidos')
+        elif response.status_code == 401:
+            print('Token de acesso inválido')
+        elif response.status_code == 404:
+            print('Recurso não encontrado')
+        else:
+            print('Erro inesperado do servidor')
+    else:
+        result = response.json()
+        print('Sucesso:', result)
+        
+except requests.exceptions.RequestException as e:
+    print(f'Erro de rede: {e}')
+```
+
+</RequestExample>
+
+### PHP
+
+<RequestExample>
+
+```php PHP
+<?php
+try {
+    $curl = curl_init();
+    curl_setopt_array($curl, [
+        CURLOPT_URL => 'https://{url-key}/api/campaigns',
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            'X-Access-Token: {access_token}'
+        ],
+        CURLOPT_POSTFIELDS => json_encode($campaign_data)
+    ]);
+    
+    $response = curl_exec($curl);
+    $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+    curl_close($curl);
+    
+    $result = json_decode($response, true);
+    
+    if ($http_code !== 200) {
+        echo "Erro {$http_code}: {$result['message']}\n";
+        
+        switch ($http_code) {
+            case 400:
+                echo "Dados inválidos fornecidos\n";
+                break;
+            case 401:
+                echo "Token de acesso inválido\n";
+                break;
+            case 404:
+                echo "Recurso não encontrado\n";
+                break;
+            default:
+                echo "Erro inesperado do servidor\n";
+        }
+    } else {
+        echo "Sucesso: " . print_r($result, true);
+    }
+    
+} catch (Exception $e) {
+    echo "Erro: " . $e->getMessage();
+}
+?>
+```
+
+</RequestExample>
+
+## Boas Práticas
+
+<CardGroup cols={2}>
+  <Card title="Sempre Verifique Status" icon="check-circle" color="#16a34a">
+    Verifique o código de status HTTP antes de processar a resposta
+  </Card>
+  <Card title="Trate Erros Específicos" icon="alert-triangle" color="#dc2626">
+    Implemente tratamento específico para cada tipo de erro
+  </Card>
+  <Card title="Log de Erros" icon="file-text" color="#2563eb">
+    Registre erros para debugging e monitoramento
+  </Card>
+  <Card title="Retry Inteligente" icon="refresh" color="#7c3aed">
+    Implemente retry apenas para erros temporários (5xx)
+  </Card>
+</CardGroup>
+
+## Monitoramento e Debugging
+
+### Logs de Erro
+
+A API registra todos os erros com detalhes para facilitar o debugging:
+
+- **Timestamp preciso** do erro
+- **Stack trace completo** para erros internos
+- **Contexto da requisição** (IP, headers, body)
+- **Métricas de erro** para monitoramento
+
+### Métricas Disponíveis
+
+<CardGroup cols={3}>
+  <Card title="Taxa de Erro" icon="chart-bar" color="#dc2626">
+    Porcentagem de requisições com erro
+  </Card>
+  <Card title="Tempo de Resposta" icon="clock" color="#2563eb">
+    Latência média das requisições
+  </Card>
+  <Card title="Erros por Tipo" icon="pie-chart" color="#7c3aed">
+    Distribuição dos tipos de erro
+  </Card>
+</CardGroup>
+
+## Próximos Passos
+
+<CardGroup cols={3}>
+  <Card title="Autenticação" icon="key" href="/authentication">
+    Configure a autenticação corretamente
+  </Card>
+  <Card title="API Reference" icon="book-open" href="/api-reference">
+    Consulte a documentação completa
+  </Card>
+  <Card title="Suporte" icon="help-circle" href="mailto:suporte@disparador.com">
+    Entre em contato para ajuda
+  </Card>
+</CardGroup> 
