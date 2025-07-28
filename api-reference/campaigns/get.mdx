@@ -129,7 +129,7 @@ print_r($campaign);
 </ResponseField>
 
 <ResponseField name="status" type="string">
-  Status atual: ACTIVE, PAUSED, CANCELLED, COMPLETED
+  Status atual: DRAFT, SCHEDULED, RUNNING, PAUSED, COMPLETED, CANCELLED
 </ResponseField>
 
 <ResponseField name="totalContacts" type="number">
@@ -170,18 +170,24 @@ print_r($campaign);
 
 ## Status das Campanhas
 
-<CardGroup cols={2}>
-  <Card title="ACTIVE" icon="play" color="#16a34a">
-    Campanha ativa e enviando mensagens
+<CardGroup cols={3}>
+  <Card title="DRAFT" icon="file-edit" color="#6b7280">
+    Campanha criada mas ainda não executada
+  </Card>
+  <Card title="SCHEDULED" icon="calendar" color="#2563eb">
+    Campanha agendada para execução futura
+  </Card>
+  <Card title="RUNNING" icon="play" color="#16a34a">
+    Campanha executando ativamente
   </Card>
   <Card title="PAUSED" icon="pause" color="#eab308">
     Campanha pausada temporariamente
   </Card>
-  <Card title="CANCELLED" icon="stop" color="#dc2626">
-    Campanha cancelada
+  <Card title="COMPLETED" icon="check" color="#7c3aed">
+    Campanha finalizada com sucesso
   </Card>
-  <Card title="COMPLETED" icon="check" color="#6366f1">
-    Campanha finalizada (todas as mensagens processadas)
+  <Card title="CANCELLED" icon="x-circle" color="#dc2626">
+    Campanha cancelada permanentemente
   </Card>
 </CardGroup>
 

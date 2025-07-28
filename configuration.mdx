@@ -118,12 +118,12 @@ export REDIS_MIN_IDLE=0
   <Card title="APP_TIMEZONE" icon="clock" color="#16a34a">
     Fuso horário (padrão: America/Sao_Paulo)
   </Card>
-  <Card title="JWT_SECRET" icon="key" color="#dc2626">
-    Chave JWT (obrigatória)
-  </Card>
-  <Card title="JWT_EXPIRATION" icon="clock" color="#2563eb">
-    Expiração JWT (padrão: 86400000ms)
-  </Card>
+  <Card title="APP_TIMEZONE" icon="clock" color="#16a34a">
+  Fuso horário (padrão: America/Sao_Paulo)
+</Card>
+<Card title="PORT" icon="hash" color="#7c3aed">
+  Porta da aplicação (padrão: 80)
+</Card>
   <Card title="PORT" icon="hash" color="#7c3aed">
     Porta da aplicação (padrão: 80)
   </Card>
@@ -134,8 +134,7 @@ export REDIS_MIN_IDLE=0
 ```bash
 # Configurações gerais
 export APP_TIMEZONE=America/Sao_Paulo
-export JWT_SECRET=your-super-secret-key-change-in-production
-export JWT_EXPIRATION=86400000
+export PORT=8080
 export PORT=8080
 ```
 
@@ -384,8 +383,7 @@ REDIS_MIN_IDLE=0
 # APLICAÇÃO
 # ========================================
 APP_TIMEZONE=America/Sao_Paulo
-JWT_SECRET=your-super-secret-key-change-in-production
-JWT_EXPIRATION=86400000
+PORT=8080
 PORT=8080
 
 # ========================================
@@ -513,8 +511,8 @@ export QUEUE_CONCURRENCY=2
 echo "Validando configuração da API Disparador..."
 
 # Verificar variáveis obrigatórias
-if [ -z "$JWT_SECRET" ]; then
-    echo "❌ JWT_SECRET não configurado"
+if [ -z "$DB_PASSWORD" ]; then
+    echo "❌ DB_PASSWORD não configurado"
     exit 1
 fi
 

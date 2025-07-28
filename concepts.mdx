@@ -169,7 +169,7 @@ Campanhas que começam a ser processadas imediatamente após a criação:
 ```json
 {
   "name": "Campanha Imediata",
-  "message": "Olá {{name}}! Bem-vindo!",
+  "message": "Olá {{PrimeiroNome}}! Bem-vindo!",
   "contacts": [...],
   "evolutionUrl": "https://sua-evolution-api.com",
   "evolutionApiKey": "sua-api-key",
@@ -236,7 +236,7 @@ Mensagem simples de texto com suporte a variáveis:
 
 ```json
 {
-  "message": "Olá {{name}}! Sua compra de {{product}} foi confirmada.",
+  "message": "Olá {{PrimeiroNome}}! Sua compra foi confirmada.",
   "contacts": [
     {
       "phoneNumber": "5511999999999",
@@ -288,17 +288,11 @@ Mensagem com imagem, vídeo, áudio ou documento:
 A API suporta variáveis personalizadas nas mensagens:
 
 <CardGroup cols={2}>
-  <Card title="{{name}}" icon="user" color="#16a34a">
-    Nome do contato
+  <Card title="{{NomeCompleto}}" icon="user" color="#16a34a">
+    Nome completo do contato
   </Card>
-  <Card title="{{phone}}" icon="phone" color="#2563eb">
-    Número de telefone
-  </Card>
-  <Card title="{{company}}" icon="building" color="#7c3aed">
-    Nome da empresa
-  </Card>
-  <Card title="{{date}}" icon="calendar" color="#ea580c">
-    Data atual
+  <Card title="{{PrimeiroNome}}" icon="users" color="#6366f1">
+    Primeiro nome do contato
   </Card>
 </CardGroup>
 
@@ -306,7 +300,7 @@ A API suporta variáveis personalizadas nas mensagens:
 
 ```json
 {
-  "message": "Olá {{name}}! Bem-vindo à {{company}}. Hoje é {{date}}.",
+  "message": "Olá {{PrimeiroNome}}! Bem-vindo {{NomeCompleto}}.",
   "contacts": [
     {
       "phoneNumber": "5511999999999",

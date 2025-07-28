@@ -1,41 +1,22 @@
 ---
 title: "Health Check"
-api: "GET /actuator/health"
-description: "Verifica o status de saúde da API e seus componentes"
+api: "GET /api/actuator/health"
+description: "Verifica o status de saúde da API Disparador e seus componentes"
 ---
 
 <Note>
-O endpoint de health check fornece informações sobre o status de todos os componentes da API, incluindo banco de dados, Redis e Evolution API.
+O endpoint de health check fornece informações sobre o status de todos os componentes da API Disparador, incluindo banco de dados PostgreSQL, Redis e espaço em disco.
 </Note>
 
 ## Visão Geral
 
-O endpoint de health check é usado para monitorar a saúde da aplicação e verificar se todos os componentes estão funcionando corretamente.
+O Spring Boot Actuator fornece este endpoint para monitorar a saúde da aplicação e verificar se todos os componentes estão funcionando corretamente. O endpoint está configurado para ser acessado publicamente sem autenticação.
 
 ## Headers
 
-<ParamField header="X-Access-Token" type="string" optional>
-  Token de acesso (opcional para health check)
-</ParamField>
+Nenhum header é obrigatório para este endpoint.
 
-## Endpoints Disponíveis
-
-<CardGroup cols={2}>
-  <Card title="Health Geral" icon="heart" color="#16a34a">
-    GET /actuator/health
-  </Card>
-  <Card title="Health Detalhado" icon="activity" color="#2563eb">
-    GET /actuator/health/{component}
-  </Card>
-  <Card title="Info da Aplicação" icon="info" color="#7c3aed">
-    GET /actuator/info
-  </Card>
-  <Card title="Métricas" icon="chart-bar" color="#ea580c">
-    GET /actuator/metrics
-  </Card>
-</CardGroup>
-
-## Health Check Geral
+## Endpoint Principal
 
 <RequestExample>
 
@@ -81,7 +62,7 @@ print_r($health);
 
 <ResponseExample>
 
-```json Sucesso (200 OK)
+```json Sistema Saudável (200 OK)
 {
   "status": "UP",
   "components": {
@@ -103,28 +84,46 @@ print_r($health);
       "details": {
         "total": 107374182400,
         "free": 53687091200,
-        "threshold": 10485760
+        "threshold": 10485760,
+        "path": "/app",
+        "exists": true
       }
+    },
+    "ping": {
+      "status": "UP"
     }
   }
 }
 ```
 
-```json Erro (503 Service Unavailable)
+```json Sistema com Problemas (503 Service Unavailable)
 {
   "status": "DOWN",
   "components": {
     "db": {
       "status": "DOWN",
       "details": {
-        "error": "Connection refused"
+        "error": "Connection refused: Connection refused"
       }
     },
     "redis": {
-      "status": "DOWN",
+      "status": "UP",
       "details": {
-        "error": "Connection timeout"
+        "version": "6.2.0"
       }
+    },
+    "diskSpace": {
+      "status": "UP",
+      "details": {
+        "total": 107374182400,
+        "free": 53687091200,
+        "threshold": 10485760,
+        "path": "/app",
+        "exists": true
+      }
+    },
+    "ping": {
+      "status": "UP"
     }
   }
 }
@@ -134,7 +133,7 @@ print_r($health);
 
 ## Health Check por Componente
 
-### Banco de Dados
+### Banco de Dados PostgreSQL
 
 <RequestExample>
 
@@ -146,12 +145,21 @@ curl -X GET https://{url-key}/api/actuator/health/db
 
 <ResponseExample>
 
-```json Banco de Dados OK
+```json Banco OK (200 OK)
 {
   "status": "UP",
   "details": {
     "database": "PostgreSQL",
     "validationQuery": "SELECT 1"
+  }
+}
+```
+
+```json Banco com Problema (503 Service Unavailable)
+{
+  "status": "DOWN",
+  "details": {
+    "error": "Connection refused: Connection refused"
   }
 }
 ```
@@ -170,7 +178,7 @@ curl -X GET https://{url-key}/api/actuator/health/redis
 
 <ResponseExample>
 
-```json Redis OK
+```json Redis OK (200 OK)
 {
   "status": "UP",
   "details": {
@@ -179,164 +187,281 @@ curl -X GET https://{url-key}/api/actuator/health/redis
 }
 ```
 
-</ResponseExample>
-
-## Informações da Aplicação
-
-<RequestExample>
-
-```bash cURL
-curl -X GET https://{url-key}/api/actuator/info
-```
-
-</RequestExample>
-
-<ResponseExample>
-
-```json Info da Aplicação
+```json Redis com Problema (503 Service Unavailable)
 {
-  "app": {
-    "name": "disparador-api",
-    "description": "Sistema de disparo de mensagens via WhatsApp",
-    "version": "2.0.0",
-    "java": {
-      "version": "17.0.2",
-      "vendor": "Oracle Corporation"
-    }
-  },
-  "build": {
-    "artifact": "disparador-api",
-    "name": "disparador-api",
-    "time": "2024-01-15T10:30:00.000Z",
-    "version": "2.0.0",
-    "group": "com.disparador"
+  "status": "DOWN",
+  "details": {
+    "error": "Connection timeout"
   }
 }
 ```
 
 </ResponseExample>
 
-## Métricas do Sistema
+### Espaço em Disco
 
 <RequestExample>
 
 ```bash cURL
-curl -X GET https://{url-key}/api/actuator/metrics
+curl -X GET https://{url-key}/api/actuator/health/diskSpace
 ```
 
 </RequestExample>
 
 <ResponseExample>
 
-```json Métricas Disponíveis
+```json Espaço OK (200 OK)
 {
-  "names": [
-    "jvm.memory.used",
-    "jvm.memory.max",
-    "jvm.threads.live",
-    "jvm.threads.peak",
-    "process.cpu.usage",
-    "process.uptime",
-    "http.server.requests",
-    "disparador.campaigns.active",
-    "disparador.messages.sent",
-    "disparador.messages.failed"
-  ]
+  "status": "UP",
+  "details": {
+    "total": 107374182400,
+    "free": 53687091200,
+    "threshold": 10485760,
+    "path": "/app",
+    "exists": true
+  }
+}
+```
+
+```json Espaço Insuficiente (503 Service Unavailable)
+{
+  "status": "DOWN",
+  "details": {
+    "total": 107374182400,
+    "free": 5242880,
+    "threshold": 10485760,
+    "path": "/app",
+    "exists": true
+  }
 }
 ```
 
 </ResponseExample>
 
-### Métricas Específicas
+## Response
 
-<RequestExample>
+<ResponseField name="status" type="string">
+  Status geral do sistema: UP, DOWN, OUT_OF_SERVICE, UNKNOWN
+</ResponseField>
 
-```bash cURL
-curl -X GET https://{url-key}/api/actuator/metrics/disparador.campaigns.active
-```
+<ResponseField name="components" type="object">
+  Detalhes de cada componente monitorado
+</ResponseField>
 
-</RequestExample>
+<ResponseField name="components.db.status" type="string">
+  Status da conexão com PostgreSQL
+</ResponseField>
 
-<ResponseExample>
+<ResponseField name="components.db.details" type="object">
+  Detalhes da conexão com o banco de dados
+</ResponseField>
 
-```json Métrica de Campanhas Ativas
-{
-  "name": "disparador.campaigns.active",
-  "description": "Número de campanhas ativas",
-  "baseUnit": null,
-  "measurements": [
-    {
-      "statistic": "VALUE",
-      "value": 5.0
-    }
-  ],
-  "availableTags": []
-}
-```
+<ResponseField name="components.redis.status" type="string">
+  Status da conexão com Redis
+</ResponseField>
 
-</ResponseExample>
+<ResponseField name="components.redis.details" type="object">
+  Detalhes da conexão com Redis
+</ResponseField>
 
-## Códigos de Status
+<ResponseField name="components.diskSpace.status" type="string">
+  Status do espaço em disco
+</ResponseField>
 
-| Status | Descrição |
+<ResponseField name="components.diskSpace.details" type="object">
+  Detalhes do espaço em disco disponível
+</ResponseField>
+
+## Códigos de Status HTTP
+
+| Código | Descrição |
 |--------|-----------|
-| `UP` | Componente funcionando normalmente |
-| `DOWN` | Componente com problema |
-| `OUT_OF_SERVICE` | Componente fora de serviço |
-| `UNKNOWN` | Status desconhecido |
+| 200 | Sistema totalmente saudável |
+| 503 | Um ou mais componentes com problema |
 
-## Monitoramento
+## Status dos Componentes
 
-### Health Check Automático
+| Status | Descrição | Cor de Indicação |
+|--------|-----------|------------------|
+| `UP` | Componente funcionando normalmente | 🟢 Verde |
+| `DOWN` | Componente com problema | 🔴 Vermelho |
+| `OUT_OF_SERVICE` | Componente fora de serviço | 🟡 Amarelo |
+| `UNKNOWN` | Status desconhecido | ⚫ Cinza |
 
-Configure seu sistema de monitoramento para verificar o health check a cada 30 segundos:
+## Monitoramento e Alertas
 
-<RequestExample>
+### Configuração de Monitoramento
 
-```bash cURL
-# Verificar se a API está respondendo
-curl -f https://{url-key}/api/actuator/health
+Configure seu sistema de monitoramento para verificar o health check:
 
-# Verificar componentes específicos
-curl -f https://{url-key}/api/actuator/health/db
-curl -f https://{url-key}/api/actuator/health/redis
-```
-
-</RequestExample>
+<CardGroup cols={2}>
+  <Card title="Intervalo de Verificação" icon="clock" color="#16a34a">
+    A cada 30 segundos para status geral
+  </Card>
+  <Card title="Timeout" icon="timer" color="#2563eb">
+    Máximo 10 segundos para resposta
+  </Card>
+  <Card title="Retry" icon="refresh-cw" color="#8b5cf6">
+    3 tentativas antes de considerar DOWN
+  </Card>
+  <Card title="Alertas" icon="alert-triangle" color="#dc2626">
+    Notificar imediatamente se DOWN
+  </Card>
+</CardGroup>
 
 ### Alertas Recomendados
 
 <CardGroup cols={2}>
-  <Card title="API Down" icon="alert-triangle" color="#dc2626">
-    Status geral diferente de UP
+  <Card title="Sistema DOWN" icon="alert-triangle" color="#dc2626">
+    **Crítico:** Status geral diferente de UP
   </Card>
-  <Card title="Banco de Dados" icon="database" color="#2563eb">
-    Componente db com status DOWN
+  <Card title="Banco de Dados DOWN" icon="database" color="#dc2626">
+    **Alto:** PostgreSQL inacessível
   </Card>
-  <Card title="Redis" icon="server" color="#7c3aed">
-    Componente redis com status DOWN
+  <Card title="Redis DOWN" icon="server" color="#ea580c">
+    **Médio:** Cache indisponível
   </Card>
-  <Card title="Espaço em Disco" icon="hard-drive" color="#ea580c">
-    Espaço livre abaixo de 10GB
+  <Card title="Disco Cheio" icon="hard-drive" color="#f59e0b">
+    **Alto:** Espaço livre < 10MB
   </Card>
 </CardGroup>
+
+### Script de Monitoramento
+
+<RequestExample>
+
+```bash Script Bash
+#!/bin/bash
+# health-check.sh
+
+HEALTH_URL="https://{url-key}/api/actuator/health"
+WEBHOOK_URL="your-webhook-url"
+
+response=$(curl -s -w "%{http_code}" -o /tmp/health.json "$HEALTH_URL")
+http_code=${response: -3}
+
+if [ "$http_code" != "200" ]; then
+    echo "🚨 API Disparador DOWN - HTTP $http_code"
+    # Enviar alerta
+    curl -X POST "$WEBHOOK_URL" \
+        -H "Content-Type: application/json" \
+        -d '{"text":"🚨 API Disparador DOWN - HTTP '$http_code'"}'
+else
+    status=$(cat /tmp/health.json | grep -o '"status":"[^"]*"' | cut -d'"' -f4)
+    if [ "$status" != "UP" ]; then
+        echo "⚠️  API Disparador $status"
+        curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{"text":"⚠️ API Disparador '$status'"}'
+    else
+        echo "✅ API Disparador UP"
+    fi
+fi
+```
+
+```python Script Python
+import requests
+import json
+import time
+
+def check_health():
+    url = "https://{url-key}/api/actuator/health"
+    webhook = "your-webhook-url"
+    
+    try:
+        response = requests.get(url, timeout=10)
+        
+        if response.status_code != 200:
+            send_alert(f"🚨 API DOWN - HTTP {response.status_code}", webhook)
+            return False
+            
+        health = response.json()
+        status = health.get('status', 'UNKNOWN')
+        
+        if status != 'UP':
+            send_alert(f"⚠️ API {status}", webhook)
+            return False
+            
+        print("✅ API UP")
+        return True
+        
+    except requests.exceptions.RequestException as e:
+        send_alert(f"🚨 API Unreachable: {str(e)}", webhook)
+        return False
+
+def send_alert(message, webhook):
+    try:
+        requests.post(webhook, json={"text": message})
+        print(message)
+    except:
+        print(f"Failed to send alert: {message}")
+
+if __name__ == "__main__":
+    check_health()
+```
+
+</RequestExample>
 
 ## Troubleshooting
 
 ### Problemas Comuns
 
 <CardGroup cols={2}>
-  <Card title="Banco de Dados" icon="database" color="#dc2626">
-    Verificar conexão PostgreSQL e credenciais
+  <Card title="PostgreSQL DOWN" icon="database" color="#dc2626">
+    **Verificar:** Conexão, credenciais, firewall
+    **Variáveis:** DB_HOST, DB_USER, DB_PASSWORD
   </Card>
-  <Card title="Redis" icon="server" color="#2563eb">
-    Verificar se Redis está rodando na porta 6379
+  <Card title="Redis DOWN" icon="server" color="#ea580c">
+    **Verificar:** Serviço Redis, porta 6379
+    **Variáveis:** REDIS_HOST, REDIS_PORT
   </Card>
-  <Card title="Evolution API" icon="message-circle" color="#7c3aed">
-    Verificar conectividade com Evolution API
+  <Card title="Espaço em Disco" icon="hard-drive" color="#f59e0b">
+    **Verificar:** Logs antigos, cache, uploads
+    **Limpeza:** docker system prune -a
   </Card>
-  <Card title="Memória" icon="cpu" color="#ea580c">
-    Verificar uso de memória JVM
+  <Card title="Health Timeout" icon="clock" color="#2563eb">
+    **Verificar:** Carga do sistema, queries lentas
+    **Configuração:** connection timeout
+  </Card>
+</CardGroup>
+
+### Diagnóstico Detalhado
+
+<RequestExample>
+
+```bash Verificar Componentes
+# Verificar todos os componentes
+curl -s https://{url-key}/api/actuator/health | jq .
+
+# Verificar apenas o banco
+curl -s https://{url-key}/api/actuator/health/db | jq .
+
+# Verificar apenas o Redis
+curl -s https://{url-key}/api/actuator/health/redis | jq .
+
+# Verificar espaço em disco
+curl -s https://{url-key}/api/actuator/health/diskSpace | jq .
+```
+
+</RequestExample>
+
+## Outros Endpoints Úteis
+
+<CardGroup cols={2}>
+  <Card title="Informações da App" icon="info" color="#7c3aed">
+    `GET /api/actuator/info`
+    Versão, build info, etc.
+  </Card>
+  <Card title="Métricas" icon="chart-bar" color="#ea580c">
+    `GET /api/actuator/metrics`
+    CPU, memória, threads, etc.
+  </Card>
+  <Card title="Prometheus" icon="activity" color="#16a34a">
+    `GET /api/actuator/prometheus`
+    Métricas formato Prometheus
+  </Card>
+  <Card title="Configuração" icon="settings" color="#2563eb">
+    Endpoints configurados no application.yml
   </Card>
 </CardGroup>
 

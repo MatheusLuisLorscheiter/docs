@@ -369,7 +369,7 @@ curl -v -H "X-Access-Token: {token}" \
 #### Soluções
 
 <CardGroup cols={2}>
-  <Card title="Token expirado" icon="clock" color="#dc2626">
+  <Card title="Token inválido" icon="key" color="#dc2626">
     Gerar novo token via registro
   </Card>
   <Card title="Token malformado" icon="key" color="#2563eb">
@@ -378,8 +378,8 @@ curl -v -H "X-Access-Token: {token}" \
   <Card title="Header incorreto" icon="settings" color="#7c3aed">
     Usar header `X-Access-Token`
   </Card>
-  <Card title="JWT secret mudou" icon="key" color="#ea580c">
-    Verificar `JWT_SECRET` no servidor
+  <Card title="Token inválido" icon="key" color="#ea580c">
+    Verificar se o token está correto
   </Card>
 </CardGroup>
 
@@ -398,7 +398,7 @@ curl -v -H "X-Access-Token: {token}" \
 
 ```bash
 # Verificar variáveis de ambiente
-env | grep -E "(DB_|REDIS_|JWT_|CAMPAIGN_)"
+env | grep -E "(DB_|REDIS_|CAMPAIGN_)"
 
 # Verificar arquivo .env
 cat .env

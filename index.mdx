@@ -111,8 +111,12 @@ curl -X POST https://{url-key}/api/auth/register \
 
 ```json Resposta de Registro
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "accessToken": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "tokenType": "Access",
   "companyId": 1,
+  "companyName": "Minha Empresa",
+  "companyEmail": "contato@empresa.com",
+  "expiresAt": null,
   "message": null
 }
 ```

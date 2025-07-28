@@ -1,0 +1,282 @@
+/* Custom CSS for API Disparador Documentation */
+
+/* Status badges for campaigns */
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-draft {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.status-scheduled {
+  background-color: #dbeafe;
+  color: #2563eb;
+}
+
+.status-running {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.status-paused {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.status-completed {
+  background-color: #e0e7ff;
+  color: #7c3aed;
+}
+
+.status-cancelled {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Campaign type badges */
+.type-immediate {
+  background-color: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+}
+
+.type-scheduled {
+  background-color: #f0f9ff;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+/* Custom warning for important notes */
+.warning-box {
+  background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+  border-left: 4px solid #f59e0b;
+  padding: 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+
+.warning-box .warning-title {
+  font-weight: 700;
+  color: #d97706;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.warning-box .warning-title::before {
+  content: "⚠️";
+  margin-right: 8px;
+}
+
+/* Success box for tips */
+.success-box {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border-left: 4px solid #16a34a;
+  padding: 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+
+.success-box .success-title {
+  font-weight: 700;
+  color: #15803d;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.success-box .success-title::before {
+  content: "✅";
+  margin-right: 8px;
+}
+
+/* Info box for general information */
+.info-box {
+  background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
+  border-left: 4px solid #0369a1;
+  padding: 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+}
+
+.info-box .info-title {
+  font-weight: 700;
+  color: #0369a1;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.info-box .info-title::before {
+  content: "ℹ️";
+  margin-right: 8px;
+}
+
+/* Endpoint method badges */
+.method-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-family: monospace;
+}
+
+.method-get {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.method-post {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.method-put {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.method-delete {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+/* Code highlighting improvements */
+.code-filename {
+  background-color: #374151;
+  color: #f9fafb;
+  padding: 8px 12px;
+  border-radius: 6px 6px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+/* Response status styling */
+.response-status {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  font-weight: 600;
+}
+
+.status-200 { color: #16a34a; }
+.status-201 { color: #059669; }
+.status-400 { color: #dc2626; }
+.status-401 { color: #b91c1c; }
+.status-403 { color: #991b1b; }
+.status-404 { color: #7f1d1d; }
+.status-500 { color: #450a0a; }
+.status-503 { color: #dc2626; }
+
+/* API version badge */
+.api-version {
+  background: linear-gradient(45deg, #16a34a, #15803d);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Environment badges */
+.env-production {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.env-staging {
+  background-color: #fef3c7;
+  color: #d97706;
+  border: 1px solid #fed7aa;
+}
+
+.env-development {
+  background-color: #dcfce7;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+/* Custom scrollbar for code blocks */
+.code-block::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.code-block::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.code-block::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.code-block::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .warning-box {
+  background: linear-gradient(135deg, #451a03 0%, #78350f 100%);
+  border-left-color: #f59e0b;
+}
+
+[data-theme="dark"] .success-box {
+  background: linear-gradient(135deg, #14532d 0%, #166534 100%);
+  border-left-color: #16a34a;
+}
+
+[data-theme="dark"] .info-box {
+  background: linear-gradient(135deg, #0c4a6e 0%, #075985 100%);
+  border-left-color: #0369a1;
+}
+
+[data-theme="dark"] .code-filename {
+  background-color: #1f2937;
+  color: #f3f4f6;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .status-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  .method-badge {
+    font-size: 9px;
+    padding: 1px 4px;
+  }
+  
+  .warning-box,
+  .success-box,
+  .info-box {
+    padding: 12px;
+    margin: 12px 0;
+  }
+}
+
+/* Animation for status changes */
+.status-badge,
+.method-badge {
+  transition: all 0.2s ease-in-out;
+}
+
+.status-badge:hover,
+.method-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

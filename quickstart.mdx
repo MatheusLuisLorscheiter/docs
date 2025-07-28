@@ -89,8 +89,12 @@ echo 'Access Token: ' . $result['accessToken'];
 
 ```json Sucesso (200 OK)
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "accessToken": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "tokenType": "Access",
   "companyId": 1,
+  "companyName": "Minha Empresa",
+  "companyEmail": "contato@minhaempresa.com",
+  "expiresAt": null,
   "message": null
 }
 ```
@@ -132,7 +136,7 @@ curl -X POST https://{url-key}/api/campaigns \
     "evolutionUrl": "https://sua-evolution-api.com",
     "evolutionApiKey": "sua-api-key",
     "evolutionInstance": "minha-instancia",
-    "message": "Olá {{name}}! Bem-vindo à nossa empresa!",
+    "message": "Olá {{PrimeiroNome}}! Bem-vindo à nossa empresa!",
     "contacts": [
       {
         "phoneNumber": "5511999999999",
@@ -152,7 +156,7 @@ const campaignData = {
   evolutionUrl: 'https://sua-evolution-api.com',
   evolutionApiKey: 'sua-api-key',
   evolutionInstance: 'minha-instancia',
-  message: 'Olá {{name}}! Bem-vindo à nossa empresa!',
+  message: 'Olá {{PrimeiroNome}}! Bem-vindo à nossa empresa!',
   contacts: [
     {
       phoneNumber: '5511999999999',
@@ -186,7 +190,7 @@ campaign_data = {
     'evolutionUrl': 'https://sua-evolution-api.com',
     'evolutionApiKey': 'sua-api-key',
     'evolutionInstance': 'minha-instancia',
-    'message': 'Olá {{name}}! Bem-vindo à nossa empresa!',
+    'message': 'Olá {{PrimeiroNome}}! Bem-vindo à nossa empresa!',
     'contacts': [
         {
             'phoneNumber': '5511999999999',
@@ -221,7 +225,7 @@ $campaign_data = [
     'evolutionUrl' => 'https://sua-evolution-api.com',
     'evolutionApiKey' => 'sua-api-key',
     'evolutionInstance' => 'minha-instancia',
-    'message' => 'Olá {{name}}! Bem-vindo à nossa empresa!',
+    'message' => 'Olá {{PrimeiroNome}}! Bem-vindo à nossa empresa!',
     'contacts' => [
         [
             'phoneNumber' => '5511999999999',

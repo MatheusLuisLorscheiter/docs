@@ -72,8 +72,8 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=
 
-# JWT
-JWT_SECRET=your-super-secret-key-change-in-production
+# App Configuration
+APP_TIMEZONE=America/Sao_Paulo
 
 # App Configuration
 APP_TIMEZONE=America/Sao_Paulo
@@ -233,7 +233,7 @@ java -jar api-disparador.jar \
   --spring.profiles.active=production \
   --DB_HOST=localhost \
   --DB_PASSWORD=your-password \
-  --JWT_SECRET=your-secret
+  --DB_PASSWORD=your-password
 ```
 
 </RequestExample>
@@ -243,9 +243,9 @@ java -jar api-disparador.jar \
 ### Variáveis de Ambiente Críticas
 
 <CardGroup cols={2}>
-  <Card title="JWT_SECRET" icon="key" color="#dc2626">
-    Chave secreta para tokens JWT (obrigatória)
-  </Card>
+  <Card title="DB_PASSWORD" icon="database" color="#dc2626">
+  Senha do banco PostgreSQL (obrigatória)
+</Card>
   <Card title="DB_PASSWORD" icon="database" color="#2563eb">
     Senha do banco PostgreSQL (obrigatória)
   </Card>

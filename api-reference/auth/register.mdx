@@ -111,8 +111,12 @@ echo 'Access Token: ' . $result['accessToken'];
 
 ```json Sucesso (200 OK)
 {
-  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55SWQiOjEsImlhdCI6MTcwNTQ0NzIwMCwiZXhwIjoxNzA1NTMzNjAwfQ.example",
+  "accessToken": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "tokenType": "Access",
   "companyId": 1,
+  "companyName": "Minha Empresa LTDA",
+  "companyEmail": "contato@minhaempresa.com",
+  "expiresAt": null,
   "message": null
 }
 ```
@@ -120,7 +124,11 @@ echo 'Access Token: ' . $result['accessToken'];
 ```json Email já em uso (400)
 {
   "accessToken": null,
+  "tokenType": "Access",
   "companyId": null,
+  "companyName": null,
+  "companyEmail": null,
+  "expiresAt": null,
   "message": "Email já está em uso"
 }
 ```
@@ -128,7 +136,11 @@ echo 'Access Token: ' . $result['accessToken'];
 ```json Email inválido (400)
 {
   "accessToken": null,
+  "tokenType": "Access",
   "companyId": null,
+  "companyName": null,
+  "companyEmail": null,
+  "expiresAt": null,
   "message": "Email deve ter formato válido"
 }
 ```
@@ -136,7 +148,11 @@ echo 'Access Token: ' . $result['accessToken'];
 ```json Senha muito curta (400)
 {
   "accessToken": null,
+  "tokenType": "Access",
   "companyId": null,
+  "companyName": null,
+  "companyEmail": null,
+  "expiresAt": null,
   "message": "Senha deve ter pelo menos 6 caracteres"
 }
 ```
@@ -149,8 +165,24 @@ echo 'Access Token: ' . $result['accessToken'];
   Token de acesso para autenticação. Use no header X-Access-Token (null em caso de erro)
 </ResponseField>
 
+<ResponseField name="tokenType" type="string">
+  Tipo do token, sempre "Access"
+</ResponseField>
+
 <ResponseField name="companyId" type="number">
   ID único da empresa registrada (null em caso de erro)
+</ResponseField>
+
+<ResponseField name="companyName" type="string">
+  Nome da empresa registrada (null em caso de erro)
+</ResponseField>
+
+<ResponseField name="companyEmail" type="string">
+  Email da empresa registrada (null em caso de erro)
+</ResponseField>
+
+<ResponseField name="expiresAt" type="datetime">
+  Sempre null - tokens não expiram automaticamente
 </ResponseField>
 
 <ResponseField name="message" type="string">
@@ -175,6 +207,25 @@ echo 'Access Token: ' . $result['accessToken'];
   </Card>
   <Card title="Nome" icon="building" color="#16a34a">
     Opcional, máximo 100 caracteres. Se não fornecido, usa nome do email
+  </Card>
+</CardGroup>
+
+## Token de Acesso
+
+<Note>
+O token de acesso **não expira** automaticamente. É um UUID único que permanece válido até que a empresa seja desativada ou o token seja regenerado manualmente.
+</Note>
+
+## Rate Limiting
+
+Cada empresa possui limites de rate limiting independentes:
+
+<CardGroup cols={2}>
+  <Card title="Por Minuto" icon="clock" color="#16a34a">
+    60 requisições por minuto (padrão)
+  </Card>
+  <Card title="Por Hora" icon="calendar" color="#2563eb">
+    1000 requisições por hora (padrão)
   </Card>
 </CardGroup>
 
