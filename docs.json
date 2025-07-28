@@ -79,12 +79,12 @@
         },
         {
           "anchor": "Suporte por Email",
-          "href": "mailto:suporte@disparador.com",
-          "icon": "mail"
+          "href": "mailto:suporte@chavemestragestao.com.br",
+          "icon": "envelope-open"
         },
         {
           "anchor": "Suporte WhatsApp",
-          "href": "https://wa.me/5511999999999",
+          "href": "https://wa.me/5548988420158",
           "icon": "whatsapp"
         }
       ]
@@ -98,19 +98,19 @@
     "links": [
       {
         "label": "Suporte",
-        "href": "mailto:suporte@disparador.com"
+        "href": "mailto:suporte@chavemestragestao.com.br"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.disparador.com"
+      "label": "GitHub",
+      "href": "https://github.com/MatheusLuisLorscheiter/Api-Evolution"
     }
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/matheusluislorscheiter/api-disparador",
-      "discord": "https://discord.gg/your-discord-invite"
+      "github": "https://github.com/MatheusLuisLorscheiter/Api-Evolution",
+      "discord": "https://discord.gg/wm5ZrNueec"
     }
   },
   "modeToggle": {
