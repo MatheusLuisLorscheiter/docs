@@ -120,5 +120,6 @@
     "title": "API Disparador",
     "description": "Sistema robusto de disparo de mensagens via WhatsApp com suporte a campanhas, agendamentos, mídia e notificações"
   },
-  "customCSS": ["custom.css"]
+  "customCSS": ["custom.css"],
+  "components": ["components.js"]
 } 
