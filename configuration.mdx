@@ -4,7 +4,7 @@ description: "Configuração completa da API Disparador"
 ---
 
 <Note>
-Este guia detalha todas as variáveis de ambiente e configurações disponíveis na API Disparador.
+  Este guia detalha todas as variáveis de ambiente e configurações disponíveis na API Disparador.
 </Note>
 
 ## Visão Geral
@@ -118,12 +118,6 @@ export REDIS_MIN_IDLE=0
   <Card title="APP_TIMEZONE" icon="clock" color="#16a34a">
     Fuso horário (padrão: America/Sao_Paulo)
   </Card>
-  <Card title="APP_TIMEZONE" icon="clock" color="#16a34a">
-  Fuso horário (padrão: America/Sao_Paulo)
-</Card>
-<Card title="PORT" icon="hash" color="#7c3aed">
-  Porta da aplicação (padrão: 80)
-</Card>
   <Card title="PORT" icon="hash" color="#7c3aed">
     Porta da aplicação (padrão: 80)
   </Card>
@@ -134,7 +128,6 @@ export REDIS_MIN_IDLE=0
 ```bash
 # Configurações gerais
 export APP_TIMEZONE=America/Sao_Paulo
-export PORT=8080
 export PORT=8080
 ```
 
@@ -326,7 +319,7 @@ export PROMETHEUS_ENABLED=true
     Habilitar Swagger (padrão: true)
   </Card>
   <Card title="SUPPORT_EMAIL" icon="envelope" color="#2563eb">
-    Email de suporte (padrão: suporte@disparador.com)
+    Email de suporte (padrão: [suporte@disparador.com](mailto:suporte@disparador.com))
   </Card>
 </CardGroup>
 
@@ -383,7 +376,6 @@ REDIS_MIN_IDLE=0
 # APLICAÇÃO
 # ========================================
 APP_TIMEZONE=America/Sao_Paulo
-PORT=8080
 PORT=8080
 
 # ========================================
@@ -516,11 +508,6 @@ if [ -z "$DB_PASSWORD" ]; then
     exit 1
 fi
 
-if [ -z "$DB_PASSWORD" ]; then
-    echo "❌ DB_PASSWORD não configurado"
-    exit 1
-fi
-
 # Verificar conectividade
 echo "🔍 Testando conexão com PostgreSQL..."
 if pg_isready -h $DB_HOST -p $DB_PORT -U $DB_USER; then
@@ -555,4 +542,4 @@ echo "✅ Configuração válida!"
   <Card title="Troubleshooting" icon="wrench" href="/troubleshooting">
     Resolva problemas
   </Card>
-</CardGroup> 
+</CardGroup>

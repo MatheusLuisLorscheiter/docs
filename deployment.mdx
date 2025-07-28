@@ -148,7 +148,6 @@ docker run -d \
   -p 8080:8080 \
   -e DB_HOST=your-db-host \
   -e DB_PASSWORD=your-password \
-  -e JWT_SECRET=your-secret \
   -e REDIS_HOST=your-redis-host \
   api-disparador:latest
 
@@ -232,7 +231,6 @@ wget https://github.com/matheusluislorscheiter/api-disparador/releases/latest/do
 java -jar api-disparador.jar \
   --spring.profiles.active=production \
   --DB_HOST=localhost \
-  --DB_PASSWORD=your-password \
   --DB_PASSWORD=your-password
 ```
 
@@ -244,8 +242,8 @@ java -jar api-disparador.jar \
 
 <CardGroup cols={2}>
   <Card title="DB_PASSWORD" icon="database" color="#dc2626">
-  Senha do banco PostgreSQL (obrigatória)
-</Card>
+    Senha do banco PostgreSQL (obrigatória)
+  </Card>
   <Card title="DB_PASSWORD" icon="database" color="#2563eb">
     Senha do banco PostgreSQL (obrigatória)
   </Card>
@@ -375,8 +373,8 @@ journalctl -u api-disparador -f
   <Card title="Firewall" icon="shield" color="#2563eb">
     Abra apenas porta 8080
   </Card>
-  <Card title="JWT Secret" icon="key" color="#dc2626">
-    Use secret forte e único
+  <Card title="Access Token" icon="key" color="#dc2626">
+    Use token forte e único
   </Card>
   <Card title="Database" icon="database" color="#7c3aed">
     Configure usuário específico
