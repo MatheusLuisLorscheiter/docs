@@ -58,11 +58,11 @@ Você precisa de um access token válido no header X-Access-Token para usar este
 </ParamField>
 
 <ParamField body="mediaUrl" type="string">
-  URL do arquivo de mídia
+  URL do arquivo de mídia ou dados em base64 (ex: data:image/jpeg;base64,...)
 </ParamField>
 
 <ParamField body="mediaType" type="string">
-  Tipo de mídia: image, video, audio, document
+  Tipo de mídia: image, video, audio, document (detectado automaticamente se não fornecido)
 </ParamField>
 
 <ParamField body="caption" type="string">
@@ -244,6 +244,39 @@ print_r($result);
 }
 ```
 
+```json Exemplo com Mídia (Detecção Automática)
+{
+  "id": 2,
+  "name": "Campanha com Imagem",
+  "message": "Confira nossa promoção!",
+  "mediaUrl": "https://exemplo.com/promo.jpg",
+  "caption": "Oferta especial válida até domingo",
+  "contacts": [...]
+}
+```
+
+```json Exemplo com Base64
+{
+  "id": 3,
+  "name": "Campanha com PDF",
+  "message": "Documento importante",
+  "mediaUrl": "data:application/pdf;base64,JVBERi0xLjQKJeLj...",
+  "caption": "Por favor, leia com atenção",
+  "contacts": [...]
+}
+```
+
+```json Exemplo com Áudio e Texto
+{
+  "id": 4,
+  "name": "Campanha de Áudio",
+  "message": "Ouça as instruções acima com atenção",
+  "mediaUrl": "https://exemplo.com/instrucoes.mp3",
+  "mediaType": "audio",
+  "contacts": [...]
+}
+```
+
 ```json Erro (400 Bad Request)
 {
   "id": null,
@@ -371,12 +404,20 @@ Prezado(a) {{NomeCompleto}}, temos uma oferta especial para você!
 
 ## Tipos de Mídia Suportados
 
-| Tipo | Descrição | Extensões |
-|------|-----------|-----------|
-| **image** | Imagens | jpg, jpeg, png, gif |
-| **video** | Vídeos | mp4, avi, mov |
-| **audio** | Áudios | mp3, wav, ogg |
-| **document** | Documentos | pdf, doc, docx, txt |
+| Tipo | Descrição | Extensões | Tamanho Máximo |
+|------|-----------|-----------|----------------|
+| **image** | Imagens | jpg, jpeg, png, gif, webp, svg | 5MB |
+| **video** | Vídeos | mp4, avi, mov, wmv, flv, webm, mkv, 3gp | 16MB |
+| **audio** | Áudios | mp3, wav, ogg, m4a, aac, opus, amr | 16MB |
+| **document** | Documentos | pdf, doc, docx, xls, xlsx, ppt, pptx, zip, rar, txt, csv | 100MB |
+
+<Note>
+**Detecção Automática**: O sistema detecta automaticamente o tipo de mídia e MIME type baseado na extensão do arquivo ou header base64. Você pode fornecer manualmente se preferir.
+
+**Suporte a Base64**: Arquivos podem ser enviados como dados base64 (ex: `data:image/jpeg;base64,...`) ou URLs.
+
+**Áudio com Texto**: Para áudios, se uma mensagem de texto for fornecida, ela será enviada após o áudio com 1 segundo de intervalo.
+</Note>
 
 ## Validações
 

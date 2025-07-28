@@ -26,6 +26,7 @@
             "group": "Development",
             "pages": [
               "concepts",
+              "media-features",
               "campaign-status-reference",
               "deployment",
               "configuration",

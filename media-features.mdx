@@ -1,0 +1,338 @@
+---
+title: "Funcionalidades de Mídia"
+description: "Guia completo sobre envio de mídias na API Disparador"
+---
+
+<Note>
+A API Disparador oferece suporte avançado para envio de mídias via WhatsApp, incluindo detecção automática de tipos, suporte a base64 e integração com áudio e texto.
+</Note>
+
+## Visão Geral
+
+A API Disparador suporta o envio de diversos tipos de mídia através do WhatsApp, com funcionalidades avançadas que facilitam a integração e melhoram a experiência do usuário.
+
+<CardGroup cols={3}>
+  <Card title="Detecção Automática" icon="magic" color="#16a34a">
+    MIME type e media type detectados automaticamente
+  </Card>
+  <Card title="Suporte a Base64" icon="code" color="#2563eb">
+    Envie arquivos como dados inline
+  </Card>
+  <Card title="Áudio + Texto" icon="music" color="#7c3aed">
+    Combine áudios com mensagens de texto
+  </Card>
+</CardGroup>
+
+## Formatos Suportados
+
+### URLs e Base64
+
+A API aceita mídias em dois formatos principais:
+
+#### URLs
+```json
+{
+  "mediaUrl": "https://exemplo.com/imagem.jpg",
+  "caption": "Imagem hospedada"
+}
+```
+
+#### Base64
+```json
+{
+  "mediaUrl": "data:image/jpeg;base64,/9j/4AAQSkZJRg...",
+  "caption": "Imagem em base64"
+}
+```
+
+## Tipos de Mídia
+
+### Imagens
+- **Formatos**: JPG, JPEG, PNG, GIF, WebP, SVG
+- **MIME types**: `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/svg+xml`
+- **Tamanho máximo**: 5MB
+- **Uso**: Fotos, logos, banners, ilustrações
+
+### Vídeos
+- **Formatos**: MP4, AVI, MOV, WMV, FLV, WebM, MKV, 3GP
+- **MIME types**: `video/mp4`, `video/x-msvideo`, `video/quicktime`, etc.
+- **Tamanho máximo**: 16MB
+- **Uso**: Vídeos promocionais, tutoriais, demonstrações
+
+### Áudios
+- **Formatos**: MP3, WAV, OGG, M4A, AAC, OPUS, AMR
+- **MIME types**: `audio/mpeg`, `audio/wav`, `audio/ogg`, etc.
+- **Tamanho máximo**: 16MB
+- **Uso**: Mensagens de voz, podcasts, instruções
+
+### Documentos
+- **Formatos**: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, ZIP, RAR, TXT, CSV
+- **MIME types**: `application/pdf`, `application/msword`, etc.
+- **Tamanho máximo**: 100MB
+- **Uso**: Relatórios, contratos, planilhas, apresentações
+
+## Detecção Automática
+
+### Como Funciona
+
+O sistema detecta automaticamente:
+
+1. **MIME Type**: Baseado na extensão do arquivo ou header base64
+2. **Media Type**: Categoria da mídia (image, video, audio, document)
+3. **Nome do Arquivo**: Extraído da URL quando não fornecido
+
+### Exemplos de Detecção
+
+<RequestExample>
+
+```json
+// URL com extensão - detecta automaticamente
+{
+  "mediaUrl": "https://exemplo.com/documento.pdf"
+  // mediaType: "document", mimeType: "application/pdf"
+}
+
+// Base64 com header - detecta automaticamente
+{
+  "mediaUrl": "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
+  // mediaType: "image", mimeType: "image/jpeg"
+}
+
+// URL sem extensão - fallback para document
+{
+  "mediaUrl": "https://exemplo.com/arquivo"
+  // mediaType: "document", mimeType: "application/octet-stream"
+}
+```
+
+</RequestExample>
+
+## Suporte a Base64
+
+### Vantagens
+
+- **Sem hospedagem**: Não precisa hospedar arquivos externamente
+- **Integração simples**: Ideal para aplicações que já têm os arquivos
+- **Controle total**: Dados ficam dentro da sua aplicação
+
+### Limitações
+
+- **Tamanho**: Aumenta o payload em ~33%
+- **Performance**: Para arquivos grandes, URLs são mais eficientes
+- **Recomendação**: Use base64 para arquivos até 1MB
+
+### Exemplo de Conversão
+
+```javascript
+// JavaScript - Converter arquivo para base64
+const file = document.getElementById('fileInput').files[0];
+const reader = new FileReader();
+reader.onload = function(e) {
+  const base64 = e.target.result;
+  // Enviar para API
+  sendToAPI(base64);
+};
+reader.readAsDataURL(file);
+```
+
+```java
+// Java - Converter arquivo para base64
+byte[] fileBytes = Files.readAllBytes(Paths.get("arquivo.pdf"));
+String base64 = Base64.getEncoder().encodeToString(fileBytes);
+String dataUri = "data:application/pdf;base64," + base64;
+```
+
+## Áudio com Mensagem de Texto
+
+### Comportamento
+
+Quando você envia um áudio com uma mensagem de texto:
+
+1. **Envio do áudio**: Sistema envia o áudio primeiro
+2. **Delay**: Aguarda 1 segundo
+3. **Envio do texto**: Envia a mensagem de texto
+
+### Exemplo
+
+```json
+{
+  "name": "Campanha de Áudio",
+  "message": "Por favor, ouça as instruções acima com atenção.",
+  "mediaUrl": "https://exemplo.com/instrucoes.mp3",
+  "mediaType": "audio",
+  "contacts": [
+    {
+      "phoneNumber": "5511999999999",
+      "name": "João"
+    }
+  ]
+}
+```
+
+### Casos de Uso
+
+- **Instruções de voz**: Áudio com texto explicativo
+- **Podcasts**: Áudio com resumo em texto
+- **Tutoriais**: Áudio com passos em texto
+- **Anúncios**: Áudio promocional com detalhes em texto
+
+## Exemplos Práticos
+
+### Campanha com Imagem
+
+```json
+{
+  "name": "Promoção de Verão",
+  "message": "Confira nossa nova coleção!",
+  "mediaUrl": "https://exemplo.com/colecao-verao.jpg",
+  "caption": "Descontos de até 50% na coleção de verão",
+  "contacts": [...]
+}
+```
+
+### Campanha com Vídeo
+
+```json
+{
+  "name": "Tutorial de Produto",
+  "message": "Aprenda a usar nosso produto",
+  "mediaUrl": "https://exemplo.com/tutorial.mp4",
+  "caption": "Tutorial completo em 3 minutos",
+  "contacts": [...]
+}
+```
+
+### Campanha com Documento
+
+```json
+{
+  "name": "Relatório Mensal",
+  "message": "Seu relatório está pronto",
+  "mediaUrl": "data:application/pdf;base64,JVBERi0xLjQKJeLj...",
+  "caption": "Relatório de vendas - Janeiro 2024",
+  "contacts": [...]
+}
+```
+
+### Campanha com Áudio
+
+```json
+{
+  "name": "Boas-vindas",
+  "message": "Bem-vindo à nossa empresa!",
+  "mediaUrl": "https://exemplo.com/boas-vindas.mp3",
+  "mediaType": "audio",
+  "contacts": [...]
+}
+```
+
+## Validações e Limites
+
+### Validações Automáticas
+
+- **Formato de URL**: Deve começar com `http://`, `https://`, `ftp://` ou `file://`
+- **Formato Base64**: Deve começar com `data:` e conter `;base64,`
+- **Tamanho de arquivo**: Respeita limites do WhatsApp
+- **MIME type**: Detectado automaticamente ou validado se fornecido
+
+### Limites do WhatsApp
+
+| Tipo | Tamanho Máximo | Formatos Recomendados |
+|------|----------------|----------------------|
+| Imagens | 5MB | JPG, PNG, GIF |
+| Vídeos | 16MB | MP4, 3GP |
+| Áudios | 16MB | MP3, OGG |
+| Documentos | 100MB | PDF, DOC, XLS |
+
+## Boas Práticas
+
+### Para URLs
+
+1. **Use URLs públicas**: Garanta que os arquivos sejam acessíveis
+2. **Otimize tamanhos**: Comprima imagens e vídeos quando possível
+3. **Forneça captions**: Melhora a experiência do usuário
+4. **Teste acessibilidade**: Verifique se as URLs funcionam
+
+### Para Base64
+
+1. **Use para arquivos pequenos**: Ideal para imagens até 1MB
+2. **Otimize antes**: Comprima arquivos antes da conversão
+3. **Valide formato**: Certifique-se de que o base64 está correto
+4. **Considere performance**: Para arquivos grandes, use URLs
+
+### Para Áudios
+
+1. **Qualidade adequada**: Use bitrate de 128kbps para MP3
+2. **Duração apropriada**: Áudios de 30 segundos a 2 minutos
+3. **Texto complementar**: Sempre forneça uma mensagem de texto
+4. **Teste o áudio**: Verifique se o áudio está claro
+
+## Troubleshooting
+
+### Problemas Comuns
+
+#### MIME Type Não Detectado
+```
+Erro: MIME type inválido
+Solução: O sistema usa "application/octet-stream" como fallback
+```
+
+#### Base64 Mal Formatado
+```
+Erro: Formato base64 inválido
+Solução: Use o formato completo: data:mime/type;base64,dados
+```
+
+#### Arquivo Muito Grande
+```
+Erro: Arquivo excede limite
+Solução: Comprima o arquivo ou use URL externa
+```
+
+#### URL Inacessível
+```
+Erro: Não foi possível acessar a URL
+Solução: Verifique se a URL é pública e acessível
+```
+
+### Logs de Debug
+
+O sistema fornece logs detalhados para debugging:
+
+```
+DEBUG - Detectando mídia: URL=https://exemplo.com/imagem.jpg
+DEBUG - MIME type detectado: image/jpeg
+DEBUG - Media type detectado: image
+DEBUG - Enviando mídia: tipo=image, mimeType=image/jpeg, isBase64=false
+```
+
+## Integração com Evolution API
+
+A API Disparador se integra perfeitamente com a [Evolution API v2](https://doc.evolution-api.com/v2/):
+
+- **Endpoint**: `/message/sendMedia` para imagens, vídeos e documentos
+- **Endpoint**: `/message/sendWhatsAppAudio` para áudios
+- **Endpoint**: `/message/sendText` para textos complementares a áudios
+
+### Campos Utilizados
+
+| Tipo | Campo Evolution API | Descrição |
+|------|-------------------|-----------|
+| URL | `media` | URL do arquivo |
+| Base64 | `mediabase64` | Dados em base64 |
+| Áudio URL | `audio` | URL do áudio |
+| Áudio Base64 | `audiobase64` | Áudio em base64 |
+
+## Próximos Passos
+
+<CardGroup cols={3}>
+  <Card title="Criar Campanha" icon="plus" href="/api-reference/campaigns/create">
+    Comece a enviar mídias
+  </Card>
+  <Card title="API Reference" icon="book-open" href="/api-reference">
+    Explore todos os endpoints
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Guia de 5 minutos
+  </Card>
+</CardGroup> 

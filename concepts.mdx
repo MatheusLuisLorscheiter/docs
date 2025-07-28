@@ -266,22 +266,45 @@ Mensagem com imagem, vídeo, áudio ou documento:
 
 </RequestExample>
 
+#### Suporte a Base64
+
+Você também pode enviar arquivos como dados base64:
+
+<RequestExample>
+
+```json
+{
+  "message": "Documento importante",
+  "mediaUrl": "data:application/pdf;base64,JVBERi0xLjQKJeLj...",
+  "caption": "Por favor, leia com atenção",
+  "contacts": [...]
+}
+```
+
+</RequestExample>
+
 ### Tipos de Mídia Suportados
 
 <CardGroup cols={2}>
   <Card title="image" icon="image" color="#16a34a">
-    Imagens (JPG, PNG, GIF)
+    Imagens (JPG, PNG, GIF, WebP, SVG) - até 5MB
   </Card>
   <Card title="video" icon="video" color="#2563eb">
-    Vídeos (MP4, AVI, MOV)
+    Vídeos (MP4, AVI, MOV, WMV, FLV, WebM, MKV, 3GP) - até 16MB
   </Card>
   <Card title="audio" icon="music" color="#7c3aed">
-    Áudios (MP3, WAV, OGG)
+    Áudios (MP3, WAV, OGG, M4A, AAC, OPUS, AMR) - até 16MB
   </Card>
   <Card title="document" icon="file-text" color="#ea580c">
-    Documentos (PDF, DOC, XLS)
+    Documentos (PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, ZIP, RAR, TXT, CSV) - até 100MB
   </Card>
 </CardGroup>
+
+<Note>
+**Detecção Automática**: O sistema detecta automaticamente o tipo de mídia e MIME type baseado na extensão do arquivo ou header base64.
+
+**Áudio com Texto**: Para áudios, se uma mensagem de texto for fornecida, ela será enviada após o áudio com 1 segundo de intervalo.
+</Note>
 
 ## Variáveis Personalizadas
 
