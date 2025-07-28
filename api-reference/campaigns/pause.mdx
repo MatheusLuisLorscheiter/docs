@@ -4,13 +4,17 @@ api: "PUT /api/campaigns/{id}/pause"
 description: "Pausa uma campanha ativa temporariamente"
 ---
 
-<Warning>
-Pausa uma campanha ativa, interrompendo temporariamente o envio de mensagens. A campanha pode ser retomada posteriormente.
-</Warning>
+<Tip>
+  Pausa uma campanha ativa, interrompendo temporariamente o envio de mensagens. A campanha pode ser retomada posteriormente.
+</Tip>
 
 <Note>
-Você precisa de um access token válido no header X-Access-Token para usar este endpoint.
+  Importante! As campanhas só podem ser retomadas em um periodo de 24h após ter sido pausada.
 </Note>
+
+<Warning>
+  Você precisa de um access token válido no header X-Access-Token para usar este endpoint.
+</Warning>
 
 ## Path Parameters
 
