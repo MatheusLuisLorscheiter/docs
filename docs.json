@@ -62,9 +62,14 @@
           "icon": "github"
         },
         {
-          "anchor": "Suporte",
+          "anchor": "Suporte por Email",
           "href": "mailto:suporte@disparador.com",
           "icon": "envelope"
+        },
+        {
+          "anchor": "Suporte WhatsApp",
+          "href": "https://wa.me/5511999999999",
+          "icon": "message"
         }
       ]
     }
@@ -88,7 +93,8 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/matheusluislorscheiter/api-disparador"
+      "github": "https://github.com/matheusluislorscheiter/api-disparador",
+      "discord": "https://discord.gg/your-discord-invite"
     }
   },
   "modeToggle": {
