@@ -25,8 +25,16 @@
           {
             "group": "Development",
             "pages": [
-              "development",
-              "concepts"
+              "concepts",
+              "deployment",
+              "configuration",
+              "monitoring"
+            ]
+          },
+          {
+            "group": "Troubleshooting",
+            "pages": [
+              "troubleshooting"
             ]
           }
         ]
@@ -49,6 +57,12 @@
               "api-reference/campaigns/pause",
               "api-reference/campaigns/resume",
               "api-reference/campaigns/cancel"
+            ]
+          },
+          {
+            "group": "Sistema",
+            "pages": [
+              "api-reference/system/health"
             ]
           }
         ]
@@ -102,6 +116,6 @@
   },
   "openapi": {
     "title": "API Disparador",
-    "description": "Sistema simplificado de disparo de mensagens via WhatsApp"
+    "description": "Sistema robusto de disparo de mensagens via WhatsApp com suporte a campanhas, agendamentos, mídia e notificações"
   }
 } 
