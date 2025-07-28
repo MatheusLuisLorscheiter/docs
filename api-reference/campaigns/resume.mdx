@@ -4,13 +4,17 @@ api: "PUT /api/campaigns/{id}/resume"
 description: "Retoma uma campanha pausada"
 ---
 
-<Warning>
+<Tip>
 Retoma uma campanha que foi pausada anteriormente, reiniciando o envio de mensagens.
-</Warning>
+</Tip>
 
 <Note>
-Você precisa de um access token válido no header X-Access-Token para usar este endpoint.
+  Importante! As campanhas só podem ser retomadas em um periodo de 24h após ter sido pausada.
 </Note>
+
+<Warning>
+Você precisa de um access token válido no header X-Access-Token para usar este endpoint.
+</Warning>
 
 ## Path Parameters
 
