@@ -85,7 +85,7 @@ CAMPAIGN_INTERVAL_MAX=30
 LOGGING_LEVEL_COM_DISPARADOR=INFO
 
 # Server
-PORT=8080
+PORT=80
 ```
 
 </RequestExample>
@@ -113,10 +113,10 @@ docker-compose down
 
 ```bash
 # Health check
-curl http://localhost:8080/api/actuator/health
+curl http://localhost:80/api/actuator/health
 
 # Swagger UI
-open http://localhost:8080/api/swagger-ui.html
+open http://localhost:80/api/swagger-ui.html
 ```
 
 </RequestExample>
@@ -145,7 +145,7 @@ docker images | grep api-disparador
 # Executar com variáveis de ambiente
 docker run -d \
   --name api-disparador \
-  -p 8080:8080 \
+  -p 80:80 \
   -e DB_HOST=your-db-host \
   -e DB_PASSWORD=your-password \
   -e REDIS_HOST=your-redis-host \
@@ -296,7 +296,7 @@ sudo chown $USER:$USER /var/log/api-disparador
 ```bash
 # Script de health check
 #!/bin/bash
-HEALTH_URL="http://localhost:8080/api/actuator/health"
+HEALTH_URL="http://localhost:80/api/actuator/health"
 RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" $HEALTH_URL)
 
 if [ $RESPONSE -eq 200 ]; then
@@ -319,7 +319,7 @@ fi
 scrape_configs:
   - job_name: 'api-disparador'
     static_configs:
-      - targets: ['localhost:8080']
+      - targets: ['localhost:80']
     metrics_path: '/api/actuator/prometheus'
     scrape_interval: 30s
 ```
@@ -331,8 +331,8 @@ scrape_configs:
 ### Problemas Comuns
 
 <CardGroup cols={2}>
-  <Card title="Porta 8080 em uso" icon="alert-triangle" color="#dc2626">
-    `lsof -i :8080` e `kill -9 <PID>`
+  <Card title="Porta 80 em uso" icon="alert-triangle" color="#dc2626">
+    `lsof -i :80` e `kill -9 <PID>`
   </Card>
   <Card title="Banco não conecta" icon="database" color="#2563eb">
     Verificar credenciais e firewall
@@ -371,7 +371,7 @@ journalctl -u api-disparador -f
     Configure SSL/TLS em produção
   </Card>
   <Card title="Firewall" icon="shield" color="#2563eb">
-    Abra apenas porta 8080
+    Abra apenas porta 80
   </Card>
   <Card title="Access Token" icon="key" color="#dc2626">
     Use token forte e único
@@ -401,7 +401,7 @@ server {
     ssl_certificate_key /path/to/key.pem;
     
     location / {
-        proxy_pass http://localhost:8080;
+        proxy_pass http://localhost:80;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;

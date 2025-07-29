@@ -187,7 +187,7 @@ top -p $(pgrep -f api-disparador)
 jstack $(pgrep -f api-disparador) > thread-dump.txt
 
 # Verificar métricas
-curl http://localhost:8080/api/actuator/metrics/process.cpu.usage
+curl http://localhost:80/api/actuator/metrics/process.cpu.usage
 ```
 
 </RequestExample>
@@ -225,7 +225,7 @@ curl http://localhost:8080/api/actuator/metrics/process.cpu.usage
 jstat -gc $(pgrep -f api-disparador)
 
 # Verificar heap
-curl http://localhost:8080/api/actuator/metrics/jvm.memory.used
+curl http://localhost:80/api/actuator/metrics/jvm.memory.used
 
 # Verificar logs de GC
 tail -f /var/log/api-disparador/application.log | grep GC
@@ -268,7 +268,7 @@ tail -f /var/log/api-disparador/application.log | grep GC
 ```bash
 # Verificar status da campanha
 curl -H "X-Access-Token: {token}" \
-  http://localhost:8080/api/campaigns/{campaign_id}
+  http://localhost:80/api/campaigns/{campaign_id}
 
 # Verificar logs de envio
 tail -f /var/log/api-disparador/application.log | grep "Mensagem enviada"
@@ -317,7 +317,7 @@ redis-cli llen scheduled_queue
 ```bash
 # Verificar quando foi pausada
 curl -H "X-Access-Token: {token}" \
-  http://localhost:8080/api/campaigns/{campaign_id}
+  http://localhost:80/api/campaigns/{campaign_id}
 
 # Verificar logs de pausa
 tail -f /var/log/api-disparador/application.log | grep "pausada"
@@ -358,7 +358,7 @@ tail -f /var/log/api-disparador/application.log | grep "pausada"
 ```bash
 # Verificar se token está sendo enviado
 curl -v -H "X-Access-Token: {token}" \
-  http://localhost:8080/api/campaigns
+  http://localhost:80/api/campaigns
 
 # Verificar se token é válido
 # (implementar validação no código)
@@ -450,7 +450,7 @@ ls -la /var/log/api-disparador/
 ls -la /var/log/api-disparador/application.log
 
 # Verificar configuração de logs
-curl http://localhost:8080/api/actuator/env | grep LOGGING
+curl http://localhost:80/api/actuator/env | grep LOGGING
 ```
 
 </RequestExample>
@@ -493,13 +493,13 @@ curl http://localhost:8080/api/actuator/env | grep LOGGING
 
 ```bash
 # Verificar se porta está em uso
-netstat -tulpn | grep :8080
+netstat -tulpn | grep :80
 
 # Verificar firewall
 sudo ufw status
 
 # Testar conectividade
-telnet localhost 8080
+telnet localhost 80
 ```
 
 </RequestExample>
@@ -510,14 +510,14 @@ telnet localhost 8080
   <Card title="Porta em uso" icon="hash" color="#dc2626">
     ```bash
     # Encontrar processo
-    lsof -i :8080
+    lsof -i :80
     # Matar processo
     kill -9 <PID>
     ```
   </Card>
   <Card title="Firewall bloqueando" icon="shield" color="#2563eb">
     ```bash
-    sudo ufw allow 8080
+    sudo ufw allow 80
     ```
   </Card>
   <Card title="Aplicação não iniciou" icon="server" color="#7c3aed">
@@ -569,7 +569,7 @@ fi
 # Verificar health check
 echo
 echo "4. Verificando health check..."
-if curl -s http://localhost:8080/api/actuator/health > /dev/null; then
+if curl -s http://localhost:80/api/actuator/health > /dev/null; then
     echo "✅ Health check OK"
 else
     echo "❌ Health check falhou"
