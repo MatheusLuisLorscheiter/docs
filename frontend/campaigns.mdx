@@ -1,0 +1,320 @@
+---
+title: "Gerenciamento de Campanhas"
+description: "Visão geral da página de campanhas"
+---
+
+## Página de Campanhas
+
+A página de Campanhas é o centro de controle para todas as suas ações de disparo em massa.
+
+<Note>
+  Aqui você pode criar, gerenciar, monitorar e analisar todas as suas campanhas em um só lugar.
+</Note>
+
+## Interface Principal
+
+### Barra de Ferramentas
+
+<CardGroup cols={4}>
+  <Card title="Nova Campanha" icon="plus" color="#16a34a">
+    Criar nova campanha
+  </Card>
+  <Card title="Filtros" icon="filter" color="#2563eb">
+    Filtrar campanhas
+  </Card>
+  <Card title="Pesquisar" icon="search" color="#7c3aed">
+    Buscar por nome
+  </Card>
+  <Card title="Exportar" icon="download" color="#ea580c">
+    Exportar dados
+  </Card>
+</CardGroup>
+
+### Status das Campanhas
+
+<Warning>
+  Cada campanha pode ter apenas um status por vez. Entenda cada um:
+</Warning>
+
+#### 📋 Rascunho
+- Campanha criada mas não iniciada
+- Pode ser editada livremente
+- Não consome recursos
+
+#### ⏱️ Agendada
+- Programada para início futuro
+- Editável até o horário de início
+- Exibe contagem regressiva
+
+#### ▶️ Em Andamento
+- Enviando mensagens ativamente
+- Pode ser pausada ou cancelada
+- Mostra progresso em tempo real
+
+#### ⏸️ Pausada
+- Temporariamente interrompida
+- Pode ser retomada ou cancelada
+- Mantém posição na fila
+
+#### ✅ Concluída
+- Todos os envios processados
+- Relatório final disponível
+- Não pode ser reiniciada
+
+#### ❌ Cancelada
+- Interrompida permanentemente
+- Não pode ser retomada
+- Histórico preservado
+
+## Lista de Campanhas
+
+### Informações Exibidas
+
+Cada campanha na lista mostra:
+
+1. **Informações Básicas**
+   - Nome da campanha
+   - Data de criação
+   - Criador
+
+2. **Estatísticas**
+   - Total de contatos
+   - Mensagens enviadas
+   - Taxa de sucesso
+
+3. **Status Visual**
+   - Ícone de status
+   - Barra de progresso
+   - Tempo estimado
+
+4. **Ações Rápidas**
+   - Ver detalhes
+   - Pausar/Retomar
+   - Duplicar
+   - Excluir
+
+## Filtros Avançados
+
+### Por Status
+
+<CardGroup cols={3}>
+  <Card title="Ativas" icon="play">
+    Em andamento e agendadas
+  </Card>
+  <Card title="Finalizadas" icon="check">
+    Concluídas e canceladas
+  </Card>
+  <Card title="Todas" icon="list">
+    Sem filtro de status
+  </Card>
+</CardGroup>
+
+### Por Período
+
+- Hoje
+- Últimos 7 dias
+- Últimos 30 dias
+- Mês atual
+- Personalizado
+
+### Por Tipo
+
+- ✉️ Texto simples
+- 🖼️ Com mídia
+- 📊 Enquetes
+- 🎯 Campanhas de teste
+
+## Ações em Massa
+
+<Tip>
+  Selecione múltiplas campanhas usando as caixas de seleção para executar ações em lote.
+</Tip>
+
+### Operações Disponíveis
+
+1. **Pausar Várias**
+   - Pausa todas as selecionadas
+   - Útil em emergências
+
+2. **Cancelar Várias**
+   - Cancela permanentemente
+   - Solicita confirmação
+
+3. **Exportar Selecionadas**
+   - Gera relatório conjunto
+   - Formatos: PDF, Excel, CSV
+
+4. **Duplicar em Lote**
+   - Cria cópias das campanhas
+   - Mantém configurações
+
+## Detalhes da Campanha
+
+Ao clicar em uma campanha, você vê:
+
+### 📊 Painel de Estatísticas
+
+<CardGroup cols={2}>
+  <Card title="Métricas de Envio" icon="chart-bar">
+    - Total enviado
+    - Taxa de sucesso
+    - Falhas por tipo
+    - Velocidade média
+  </Card>
+  <Card title="Análise Temporal" icon="clock">
+    - Início e fim
+    - Duração total
+    - Picos de envio
+    - Pausas realizadas
+  </Card>
+</CardGroup>
+
+### 📋 Informações da Campanha
+
+- **Configurações**
+  - Mensagem enviada
+  - Mídia anexada
+  - Intervalo usado
+  - Instância WhatsApp
+
+- **Lista de Contatos**
+  - Visualizar números
+  - Status individual
+  - Exportar lista
+  - Reenviar falhas
+
+### 📈 Gráficos Interativos
+
+1. **Linha do Tempo**
+   - Envios por hora
+   - Identificar gargalos
+
+2. **Pizza de Status**
+   - Sucesso vs Falha
+   - Tipos de erro
+
+3. **Velocidade de Envio**
+   - Mensagens/minuto
+   - Variações ao longo do tempo
+
+## Gerenciamento Avançado
+
+### Edição de Campanhas
+
+<Warning>
+  Campanhas só podem ser editadas nos status: Rascunho, Agendada ou Pausada.
+</Warning>
+
+#### Elementos Editáveis
+- ✅ Nome da campanha
+- ✅ Mensagem (se não iniciada)
+- ✅ Lista de contatos
+- ✅ Horário de agendamento
+- ✅ Intervalos de envio
+
+#### Elementos Fixos
+- ❌ Instância WhatsApp
+- ❌ Tipo de campanha
+- ❌ Histórico de envios
+
+### Duplicação de Campanhas
+
+Ao duplicar uma campanha:
+
+1. **O que é copiado:**
+   - Configurações
+   - Mensagem
+   - Lista de contatos
+   - Intervalos
+
+2. **O que é resetado:**
+   - Status (volta para Rascunho)
+   - Estatísticas
+   - Histórico
+   - Data de criação
+
+### Relatórios Detalhados
+
+<CardGroup cols={3}>
+  <Card title="Resumo Executivo" icon="file-alt">
+    Visão geral para gestores
+  </Card>
+  <Card title="Análise Técnica" icon="code">
+    Logs e detalhes técnicos
+  </Card>
+  <Card title="Lista de Contatos" icon="users">
+    Status individual de cada número
+  </Card>
+</CardGroup>
+
+## Boas Práticas
+
+### Organização
+
+<Tip>
+  **Dicas de Organização:**
+  - Use nomes descritivos
+  - Adicione data no nome
+  - Crie padrão de nomenclatura
+  - Archive campanhas antigas
+</Tip>
+
+### Performance
+
+1. **Campanhas Grandes**
+   - Divida em lotes menores
+   - Use múltiplas instâncias
+   - Agende para horários calmos
+
+2. **Monitoramento**
+   - Acompanhe em tempo real
+   - Configure alertas
+   - Analise relatórios
+
+## Solução de Problemas
+
+<Expandable title="Campanha travada">
+  - Verifique status da instância
+  - Tente pausar e retomar
+  - Contate suporte se persistir
+</Expandable>
+
+<Expandable title="Estatísticas não atualizam">
+  - Aguarde 30 segundos
+  - Recarregue a página
+  - Limpe cache do navegador
+</Expandable>
+
+<Expandable title="Não consigo criar campanha">
+  - Verifique se há instância ativa
+  - Confirme permissões da conta
+  - Teste com poucos contatos
+</Expandable>
+
+## Recursos Avançados
+
+### Automação de Campanhas
+
+- **Templates**: Salve configurações frequentes
+- **Agendamento Recorrente**: Configure campanhas periódicas
+- **Triggers**: Inicie campanhas por eventos
+
+### Integração com Analytics
+
+- Exporte dados para análise
+- Conecte com ferramentas BI
+- Gere dashboards personalizados
+
+## Próximos Passos
+
+<CardGroup cols={3}>
+  <Card title="Criar Campanha" icon="plus" href="/frontend/campaigns/creating">
+    Tutorial detalhado
+  </Card>
+  <Card title="Agendamento" icon="calendar" href="/frontend/campaigns/scheduling">
+    Agendar campanhas
+  </Card>
+  <Card title="Enquetes" icon="poll" href="/frontend/campaigns/polls">
+    Criar enquetes
+  </Card>
+</CardGroup>

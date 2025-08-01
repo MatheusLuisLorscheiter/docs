@@ -34,7 +34,7 @@ Este guia aborda os problemas mais comuns e suas soluções para a API Disparado
 
 #### Diagnóstico
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Verificar se PostgreSQL está rodando
@@ -47,7 +47,7 @@ psql -h localhost -p 5432 -U disparador -d api-disparador
 sudo tail -f /var/log/postgresql/postgresql-*.log
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### Soluções
 
@@ -85,7 +85,7 @@ sudo tail -f /var/log/postgresql/postgresql-*.log
 
 #### Diagnóstico
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Verificar se Redis está rodando
@@ -98,7 +98,7 @@ redis-cli ping
 sudo tail -f /var/log/redis/redis-server.log
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### Soluções
 
@@ -137,7 +137,7 @@ sudo tail -f /var/log/redis/redis-server.log
 
 #### Diagnóstico
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Testar conectividade
@@ -147,7 +147,7 @@ curl -X GET https://sua-evolution-api.com/instance/connectionState/minha-instanc
 curl -X GET https://sua-evolution-api.com/instance/fetchInstances
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### Soluções
 
@@ -177,7 +177,7 @@ curl -X GET https://sua-evolution-api.com/instance/fetchInstances
 
 #### Diagnóstico
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Verificar uso de CPU
@@ -190,7 +190,7 @@ jstack $(pgrep -f api-disparador) > thread-dump.txt
 curl http://localhost:80/api/actuator/metrics/process.cpu.usage
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### Soluções
 
@@ -218,7 +218,7 @@ curl http://localhost:80/api/actuator/metrics/process.cpu.usage
 
 #### Diagnóstico
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Verificar uso de memória
@@ -231,7 +231,7 @@ curl http://localhost:80/api/actuator/metrics/jvm.memory.used
 tail -f /var/log/api-disparador/application.log | grep GC
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### Soluções
 
@@ -263,7 +263,7 @@ tail -f /var/log/api-disparador/application.log | grep GC
 
 #### Diagnóstico
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Verificar status da campanha
@@ -278,7 +278,7 @@ redis-cli llen message_queue
 redis-cli llen scheduled_queue
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### Soluções
 
@@ -312,7 +312,7 @@ redis-cli llen scheduled_queue
 
 #### Diagnóstico
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Verificar quando foi pausada
@@ -323,7 +323,7 @@ curl -H "X-Access-Token: {token}" \
 tail -f /var/log/api-disparador/application.log | grep "pausada"
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### Soluções
 
@@ -353,7 +353,7 @@ tail -f /var/log/api-disparador/application.log | grep "pausada"
 
 #### Diagnóstico
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Verificar se token está sendo enviado
@@ -364,7 +364,7 @@ curl -v -H "X-Access-Token: {token}" \
 # (implementar validação no código)
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### Soluções
 
@@ -394,7 +394,7 @@ curl -v -H "X-Access-Token: {token}" \
 
 #### Diagnóstico
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Verificar variáveis de ambiente
@@ -407,7 +407,7 @@ cat .env
 tail -f /var/log/api-disparador/application.log | grep "Configuration"
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### Soluções
 
@@ -440,7 +440,7 @@ tail -f /var/log/api-disparador/application.log | grep "Configuration"
 
 #### Diagnóstico
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Verificar se diretório existe
@@ -453,7 +453,7 @@ ls -la /var/log/api-disparador/application.log
 curl http://localhost:80/api/actuator/env | grep LOGGING
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### Soluções
 
@@ -489,7 +489,7 @@ curl http://localhost:80/api/actuator/env | grep LOGGING
 
 #### Diagnóstico
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Verificar se porta está em uso
@@ -502,7 +502,7 @@ sudo ufw status
 telnet localhost 80
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### Soluções
 
@@ -532,7 +532,7 @@ telnet localhost 80
 
 ### Script Completo de Diagnóstico
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 #!/bin/bash
@@ -592,11 +592,11 @@ echo
 echo "=== DIAGNÓSTICO CONCLUÍDO ==="
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Script de Limpeza
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 #!/bin/bash
@@ -630,7 +630,7 @@ nohup java -jar api-disparador.jar > /dev/null 2>&1 &
 echo "✅ Limpeza concluída"
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Próximos Passos
 

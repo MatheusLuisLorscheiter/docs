@@ -1,0 +1,325 @@
+---
+title: "Automações"
+description: "Gerencie suas instâncias do WhatsApp"
+---
+
+## Página de Automações
+
+A página de Automações é onde você conecta e gerencia suas instâncias do WhatsApp para enviar mensagens.
+
+<Note>
+  Você precisa de pelo menos uma instância conectada para enviar campanhas.
+</Note>
+
+## Visão Geral
+
+<CardGroup cols={3}>
+  <Card title="Instâncias Ativas" icon="whatsapp" color="#16a34a">
+    WhatsApp conectados e prontos
+  </Card>
+  <Card title="QR Code" icon="qrcode" color="#2563eb">
+    Conecte novos números
+  </Card>
+  <Card title="Monitoramento" icon="activity" color="#7c3aed">
+    Status em tempo real
+  </Card>
+</CardGroup>
+
+## Lista de Instâncias
+
+### Informações Exibidas
+
+Para cada instância, você visualiza:
+
+1. **Identificação**
+   - Nome da instância
+   - Número do WhatsApp
+   - Avatar/foto do perfil
+
+2. **Status de Conexão**
+   - 🟢 **Conectada**: Pronta para uso
+   - 🟡 **Conectando**: Processando conexão
+   - 🔴 **Desconectada**: Precisa reconectar
+   - ⚫ **Erro**: Problema na instância
+
+3. **Estatísticas**
+   - Campanhas usando a instância
+   - Mensagens enviadas hoje
+   - Última atividade
+
+4. **Ações Disponíveis**
+   - Ver QR Code
+   - Desconectar
+   - Configurações
+   - Excluir
+
+## Conectando uma Instância
+
+### Passo a Passo
+
+1. **Clique em "Nova Instância"**
+   - Botão verde no topo da página
+
+2. **Digite um nome**
+   - Use nomes descritivos
+   - Ex: "Vendas", "Suporte", "Marketing"
+
+3. **Gere o QR Code**
+   - Clique em "Gerar QR Code"
+   - Aguarde o código aparecer
+
+4. **Escaneie com WhatsApp**
+   - Abra WhatsApp no celular
+   - Vá em Configurações > Dispositivos conectados
+   - Toque em "Conectar dispositivo"
+   - Aponte a câmera para o QR Code
+
+5. **Aguarde confirmação**
+   - Status mudará para "Conectada"
+   - Número aparecerá na lista
+
+<Warning>
+  O QR Code expira em 60 segundos. Se expirar, clique em "Gerar Novo QR Code".
+</Warning>
+
+## Gerenciamento de Instâncias
+
+### Estados e Ações
+
+<Expandable title="Instância Conectada">
+  **Ações disponíveis:**
+  - Visualizar estatísticas
+  - Usar em campanhas
+  - Desconectar temporariamente
+  - Configurar webhooks
+</Expandable>
+
+<Expandable title="Instância Desconectada">
+  **Como reconectar:**
+  1. Clique em "Reconectar"
+  2. Escaneie novo QR Code
+  3. Aguarde confirmação
+</Expandable>
+
+<Expandable title="Instância com Erro">
+  **Soluções:**
+  - Verifique conexão internet
+  - Confirme WhatsApp ativo no celular
+  - Tente reconectar
+  - Delete e crie nova se persistir
+</Expandable>
+
+### Configurações da Instância
+
+<CardGroup cols={2}>
+  <Card title="Nome e Identificação" icon="tag">
+    - Renomear instância
+    - Adicionar descrição
+    - Definir tags
+  </Card>
+  <Card title="Limites e Controles" icon="sliders">
+    - Limite diário de mensagens
+    - Horário de funcionamento
+    - Pausas automáticas
+  </Card>
+</CardGroup>
+
+## Recursos Avançados
+
+### Múltiplas Instâncias
+
+<Tip>
+  Use múltiplas instâncias para:
+  - Aumentar velocidade de envio
+  - Separar por departamento
+  - Redundância em caso de falhas
+  - Distribuir carga
+</Tip>
+
+#### Estratégias de Uso
+
+1. **Por Departamento**
+   - Vendas: 1 instância
+   - Suporte: 1 instância
+   - Marketing: 2 instâncias
+
+2. **Por Volume**
+   - Campanhas pequenas: 1 instância
+   - Campanhas grandes: 3+ instâncias
+
+3. **Por Horário**
+   - Comercial: Instâncias 1-2
+   - Noturno: Instância 3
+
+### Balanceamento de Carga
+
+O sistema distribui automaticamente:
+- Mensagens entre instâncias ativas
+- Prioriza instâncias menos utilizadas
+- Evita sobrecarga
+
+### Monitoramento em Tempo Real
+
+<CardGroup cols={3}>
+  <Card title="Taxa de Envio" icon="tachometer-alt">
+    Mensagens por minuto
+  </Card>
+  <Card title="Fila de Mensagens" icon="list">
+    Pendentes por instância
+  </Card>
+  <Card title="Saúde da Conexão" icon="heartbeat">
+    Latência e estabilidade
+  </Card>
+</CardGroup>
+
+## Boas Práticas
+
+### Manutenção Preventiva
+
+<Warning>
+  **Evite problemas:**
+  - Mantenha WhatsApp atualizado
+  - Não use mesmo número em múltiplos lugares
+  - Evite desconectar frequentemente
+  - Monitore limites do WhatsApp
+</Warning>
+
+### Segurança
+
+1. **Proteção da Conta**
+   - Use números comerciais
+   - Evite números pessoais
+   - Configure 2FA no WhatsApp
+
+2. **Backup**
+   - Mantenha instância reserva
+   - Documente configurações
+   - Teste reconexão periodicamente
+
+### Performance
+
+<Tip>
+  **Otimize seus envios:**
+  - Use 2-3 instâncias para grandes volumes
+  - Alterne instâncias em campanhas longas
+  - Monitore temperatura das contas
+  - Respeite limites do WhatsApp
+</Tip>
+
+## Limites e Restrições
+
+### Limites do WhatsApp
+
+<CardGroup cols={2}>
+  <Card title="Conta Nova" icon="seedling">
+    - 250 conversas/dia
+    - Aumenta gradualmente
+    - Evite picos súbitos
+  </Card>
+  <Card title="Conta Estabelecida" icon="tree">
+    - 1000+ conversas/dia
+    - Baseado no histórico
+    - Mantém com uso regular
+  </Card>
+</CardGroup>
+
+### Sinais de Alerta
+
+⚠️ **Atenção para:**
+- Muitas mensagens não entregues
+- Bloqueios temporários
+- Relatos de spam
+- Desconexões frequentes
+
+## Solução de Problemas
+
+<Expandable title="QR Code não aparece">
+  - Verifique conexão internet
+  - Tente outro navegador
+  - Desabilite bloqueadores
+  - Limpe cache
+</Expandable>
+
+<Expandable title="Instância desconecta sozinha">
+  - Verifique internet do celular
+  - WhatsApp pode estar desatualizado
+  - Celular pode estar sem bateria
+  - Verifique configurações de economia
+</Expandable>
+
+<Expandable title="Mensagens não enviando">
+  - Confirme instância conectada
+  - Verifique limites diários
+  - Teste com seu número
+  - Pode estar bloqueada temporariamente
+</Expandable>
+
+<Expandable title="Erro ao conectar">
+  - QR Code pode ter expirado
+  - Número já conectado em outro lugar
+  - Limpe dados do navegador
+  - Tente modo incógnito
+</Expandable>
+
+## Webhooks e Integrações
+
+### Configurar Webhooks
+
+1. **Acesse configurações da instância**
+2. **Adicione URL do webhook**
+3. **Selecione eventos:**
+   - Mensagem recebida
+   - Mensagem enviada
+   - Status alterado
+   - Erro ocorrido
+
+### Eventos Disponíveis
+
+```json
+{
+  "event": "message.received",
+  "instance": "vendas-01",
+  "data": {
+    "from": "5511999999999",
+    "message": "Texto da mensagem",
+    "timestamp": "2024-01-01T10:00:00Z"
+  }
+}
+```
+
+## Estatísticas e Relatórios
+
+### Métricas por Instância
+
+- **Volume diário/mensal**
+- **Taxa de sucesso**
+- **Tempo de atividade**
+- **Velocidade média**
+
+### Exportar Dados
+
+<CardGroup cols={3}>
+  <Card title="Logs Detalhados" icon="file-alt">
+    Histórico completo
+  </Card>
+  <Card title="Resumo Mensal" icon="calendar">
+    Estatísticas do mês
+  </Card>
+  <Card title="Análise de Saúde" icon="heartbeat">
+    Performance e problemas
+  </Card>
+</CardGroup>
+
+## Próximos Passos
+
+<CardGroup cols={3}>
+  <Card title="Conectar WhatsApp" icon="whatsapp" href="/frontend/automations/whatsapp-setup">
+    Guia detalhado
+  </Card>
+  <Card title="Gerenciar Instâncias" icon="cogs" href="/frontend/automations/instance-management">
+    Administração avançada
+  </Card>
+  <Card title="QR Code" icon="qrcode" href="/frontend/automations/qr-code">
+    Processo de conexão
+  </Card>
+</CardGroup>

@@ -5,7 +5,7 @@ description: "Cria uma nova campanha com disparo imediato ou agendado"
 ---
 
 <Tip>
-Cria uma nova campanha de disparo de mensagens via WhatsApp. A campanha pode ser executada imediatamente ou agendada para uma data futura.
+Cria uma nova campanha de disparo de mensagens via WhatsApp. Suporta texto, mídia, enquetes e agendamento.
 </Tip>
 
 <Warning>
@@ -42,7 +42,7 @@ Você precisa de um access token válido no header X-Access-Token para usar este
 
 <ParamField body="contacts" type="array" required>
   Lista de contatos que receberão a mensagem
-
+  
   <Expandable title="contacts[]">
     <ParamField body="phoneNumber" type="string" required>
       Número de telefone no formato 5511999999999
@@ -53,8 +53,24 @@ Você precisa de um access token válido no header X-Access-Token para usar este
   </Expandable>
 </ParamField>
 
-<ParamField body="message" type="string" required>
-  Conteúdo da mensagem com suporte a variáveis
+<ParamField body="message" type="string" conditionally_required>
+  Conteúdo da mensagem com suporte a variáveis. Obrigatório exceto para enquetes
+</ParamField>
+
+<ParamField body="pollData" type="object">
+  Dados da enquete (opcional - substitui message)
+  
+  <Expandable title="pollData">
+    <ParamField body="title" type="string" required>
+      Título da enquete (máximo 100 caracteres)
+    </ParamField>
+    <ParamField body="options" type="array" required>
+      Opções da enquete (mínimo 2, máximo 12)
+    </ParamField>
+    <ParamField body="maxChoices" type="number">
+      Número máximo de escolhas (padrão: 1)
+    </ParamField>
+  </Expandable>
 </ParamField>
 
 <ParamField body="mediaUrl" type="string">
@@ -65,12 +81,16 @@ Você precisa de um access token válido no header X-Access-Token para usar este
   Tipo de mídia: image, video, audio, document (detectado automaticamente se não fornecido)
 </ParamField>
 
+<ParamField body="fileName" type="string">
+  Nome do arquivo para mídia (recomendado para base64)
+</ParamField>
+
 <ParamField body="caption" type="string">
   Legenda para mídia
 </ParamField>
 
 <ParamField body="scheduledFor" type="datetime">
-  Data e hora para agendamento (mínimo 5 minutos de antecedência)
+  Data e hora para agendamento no formato yyyy-MM-dd'T'HH:mm (mínimo 5 minutos de antecedência)
 </ParamField>
 
 <ParamField body="intervalMinSeconds" type="number">
@@ -85,26 +105,26 @@ Você precisa de um access token válido no header X-Access-Token para usar este
   Número de telefone para receber notificação de conclusão da campanha
 </ParamField>
 
+<ParamField body="isTest" type="boolean">
+  Marca a campanha como teste (padrão: false)
+</ParamField>
+
 <RequestExample>
 
-```bash cURL
-curl -X POST https://{url-key}/api/campaigns \
+```bash cURL - Mensagem Simples
+curl -X POST https://api.exemplo.com/api/campaigns \
   -H "Content-Type: application/json" \
-  -H "X-Access-Token: {access_token}" \
+  -H "X-Access-Token: seu_access_token" \
   -d '{
-    "name": "{campaign_name}",
-    "evolutionUrl": "{evolution_url}",
-    "evolutionApiKey": "{evolution_api_key}",
-    "evolutionInstance": "{evolution_instance}",
-    "message": "{message_content}",
+    "name": "Campanha de Boas Vindas",
+    "evolutionUrl": "https://evolution.exemplo.com",
+    "evolutionApiKey": "sua_api_key",
+    "evolutionInstance": "instancia_whatsapp",
+    "message": "Olá {{PrimeiroNome}}! Bem-vindo à nossa empresa!",
     "contacts": [
       {
-        "phoneNumber": "{phone_number_1}",
-        "name": "{contact_name_1}"
-      },
-      {
-        "phoneNumber": "{phone_number_2}",
-        "name": "{contact_name_2}"
+        "phoneNumber": "5511999999999",
+        "name": "João Silva"
       }
     ],
     "intervalMinSeconds": 5,
@@ -113,97 +133,127 @@ curl -X POST https://{url-key}/api/campaigns \
   }'
 ```
 
-```javascript JavaScript
-const response = await fetch('https://{url-key}/api/campaigns', {
+```bash cURL - Enquete
+curl -X POST https://api.exemplo.com/api/campaigns \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: seu_access_token" \
+  -d '{
+    "name": "Pesquisa de Satisfação",
+    "evolutionUrl": "https://evolution.exemplo.com",
+    "evolutionApiKey": "sua_api_key",
+    "evolutionInstance": "instancia_whatsapp",
+    "pollData": {
+      "title": "Como você avalia nosso atendimento?",
+      "options": ["Excelente", "Bom", "Regular", "Ruim"],
+      "maxChoices": 1
+    },
+    "contacts": [
+      {
+        "phoneNumber": "5511999999999",
+        "name": "Maria Santos"
+      }
+    ]
+  }'
+```
+
+```javascript JavaScript - Com Mídia
+const response = await fetch('https://api.exemplo.com/api/campaigns', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
-    'X-Access-Token': '{access_token}'
+    'X-Access-Token': 'seu_access_token'
   },
   body: JSON.stringify({
-    name: '{campaign_name}',
-    evolutionUrl: '{evolution_url}',
-    evolutionApiKey: '{evolution_api_key}',
-    evolutionInstance: '{evolution_instance}',
-    message: '{message_content}',
+    name: 'Promoção com Imagem',
+    evolutionUrl: 'https://evolution.exemplo.com',
+    evolutionApiKey: 'sua_api_key',
+    evolutionInstance: 'instancia_whatsapp',
+    message: 'Confira nossa promoção especial!',
+    mediaUrl: 'https://exemplo.com/promo.jpg',
+    caption: 'Válido até domingo',
     contacts: [
       {
-        phoneNumber: '{phone_number}',
-        name: '{contact_name}'
+        phoneNumber: '5511999999999',
+        name: 'Pedro Costa'
       }
     ],
     intervalMinSeconds: 5,
-    intervalMaxSeconds: 15,
-    notificationPhone: '5511888888888'
+    intervalMaxSeconds: 15
   })
 });
 
 const result = await response.json();
-console.log('Resultado:', result);
+console.log('Campanha criada:', result);
 ```
 
-```python Python
+```python Python - Agendada
 import requests
+from datetime import datetime, timedelta
+
+# Agendar para 1 hora no futuro
+scheduled_time = (datetime.now() + timedelta(hours=1)).strftime('%Y-%m-%dT%H:%M')
 
 headers = {
     'Content-Type': 'application/json',
-    'X-Access-Token': '{access_token}'
+    'X-Access-Token': 'seu_access_token'
 }
 
 data = {
-    'name': '{campaign_name}',
-    'evolutionUrl': '{evolution_url}',
-    'evolutionApiKey': '{evolution_api_key}',
-    'evolutionInstance': '{evolution_instance}',
-    'message': '{message_content}',
+    'name': 'Lembrete Agendado',
+    'evolutionUrl': 'https://evolution.exemplo.com',
+    'evolutionApiKey': 'sua_api_key',
+    'evolutionInstance': 'instancia_whatsapp',
+    'message': 'Olá {{PrimeiroNome}}, não esqueça do seu compromisso amanhã!',
+    'scheduledFor': scheduled_time,
     'contacts': [
         {
-            'phoneNumber': '{phone_number}',
-            'name': '{contact_name}'
+            'phoneNumber': '5511999999999',
+            'name': 'Ana Paula'
         }
     ],
-    'intervalMinSeconds': 5,
-    'intervalMaxSeconds': 15,
-    'notificationPhone': '5511888888888'
+    'isTest': True  # Marcando como teste
 }
 
 response = requests.post(
-    'https://{url-key}/api/campaigns',
+    'https://api.exemplo.com/api/campaigns',
     headers=headers,
     json=data
 )
 
 result = response.json()
-print('Resultado:', result)
+print('Campanha agendada:', result)
 ```
 
-```php PHP
+```php PHP - Base64
 <?php
 $headers = [
     'Content-Type: application/json',
-    'X-Access-Token: {access_token}'
+    'X-Access-Token: seu_access_token'
 ];
 
+// Converter imagem para base64
+$imageData = base64_encode(file_get_contents('promocao.jpg'));
+$base64Url = 'data:image/jpeg;base64,' . $imageData;
+
 $data = [
-    'name' => '{campaign_name}',
-    'evolutionUrl' => '{evolution_url}',
-    'evolutionApiKey' => '{evolution_api_key}',
-    'evolutionInstance' => '{evolution_instance}',
-    'message' => '{message_content}',
+    'name' => 'Campanha com Base64',
+    'evolutionUrl' => 'https://evolution.exemplo.com',
+    'evolutionApiKey' => 'sua_api_key',
+    'evolutionInstance' => 'instancia_whatsapp',
+    'message' => 'Documento importante anexado',
+    'mediaUrl' => $base64Url,
+    'fileName' => 'promocao.jpg',
     'contacts' => [
         [
-            'phoneNumber' => '{phone_number}',
-            'name' => '{contact_name}'
+            'phoneNumber' => '5511999999999',
+            'name' => 'Carlos Mendes'
         ]
-    ],
-    'intervalMinSeconds' => 5,
-    'intervalMaxSeconds' => 15,
-    'notificationPhone' => '5511888888888'
+    ]
 ];
 
 $curl = curl_init();
 curl_setopt_array($curl, [
-    CURLOPT_URL => 'https://{url-key}/api/campaigns',
+    CURLOPT_URL => 'https://api.exemplo.com/api/campaigns',
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST => true,
     CURLOPT_HTTPHEADER => $headers,
@@ -222,80 +272,82 @@ print_r($result);
 
 <ResponseExample>
 
-```json Sucesso (200 OK)
+```json Sucesso - Campanha Imediata (200 OK)
 {
   "id": 1,
-  "name": "{campaign_name}",
+  "name": "Campanha de Boas Vindas",
   "description": null,
   "status": "RUNNING",
-  "type": "IMMEDIATE",
+  "type": "NORMAL",
   "scheduledFor": null,
   "startedAt": "2024-01-15T10:30:00",
   "completedAt": null,
   "pausedAt": null,
-  "totalContacts": 2,
+  "totalContacts": 1,
   "sentContacts": 0,
   "failedContacts": 0,
-  "pendingContacts": 2,
+  "pendingContacts": 1,
   "progressPercentage": 0.0,
   "successRate": 0.0,
-  "estimatedCompletion": null,
+  "estimatedCompletion": "2024-01-15T10:31:00",
+  "createdAt": "2024-01-15T10:30:00",
+  "mediaType": null,
+  "evolutionInstance": "instancia_whatsapp",
+  "minInterval": 5,
+  "maxInterval": 15,
+  "messageContent": "Olá {{PrimeiroNome}}! Bem-vindo à nossa empresa!",
+  "fileName": null,
   "message": null
 }
 ```
 
-```json Exemplo com Mídia (Detecção Automática)
+```json Sucesso - Campanha com Enquete (200 OK)
 {
   "id": 2,
-  "name": "Campanha com Imagem",
-  "message": "Confira nossa promoção!",
-  "mediaUrl": "https://exemplo.com/promo.jpg",
-  "caption": "Oferta especial válida até domingo",
-  "contacts": [...]
+  "name": "Pesquisa de Satisfação",
+  "status": "RUNNING",
+  "type": "POLL",
+  "totalContacts": 1,
+  "mediaType": "poll",
+  "messageContent": "Como você avalia nosso atendimento?",
+  "message": null
 }
 ```
 
-```json Exemplo com Base64
+```json Sucesso - Campanha Agendada (200 OK)
 {
   "id": 3,
-  "name": "Campanha com PDF",
-  "message": "Documento importante",
-  "mediaUrl": "data:application/pdf;base64,JVBERi0xLjQKJeLj...",
-  "caption": "Por favor, leia com atenção",
-  "contacts": [...]
-}
-```
-
-```json Exemplo com Áudio e Texto
-{
-  "id": 4,
-  "name": "Campanha de Áudio",
-  "message": "Ouça as instruções acima com atenção",
-  "mediaUrl": "https://exemplo.com/instrucoes.mp3",
-  "mediaType": "audio",
-  "contacts": [...]
-}
-```
-
-```json Erro (400 Bad Request)
-{
-  "id": null,
-  "name": null,
-  "description": null,
-  "status": null,
-  "type": null,
-  "scheduledFor": null,
+  "name": "Lembrete Agendado",
+  "status": "SCHEDULED",
+  "type": "NORMAL",
+  "scheduledFor": "2024-01-15T11:30:00",
   "startedAt": null,
-  "completedAt": null,
-  "pausedAt": null,
-  "totalContacts": 0,
-  "sentContacts": 0,
-  "failedContacts": 0,
-  "pendingContacts": 0,
-  "progressPercentage": 0.0,
-  "successRate": 0.0,
-  "estimatedCompletion": null,
-  "message": "{error_message}"
+  "totalContacts": 1,
+  "message": null
+}
+```
+
+```json Erro - Token Inválido (400)
+{
+  "message": "Access token inválido"
+}
+```
+
+```json Erro - Agendamento Muito Próximo (400)
+{
+  "message": "Agendamento deve ter pelo menos 5 minutos de antecedência"
+}
+```
+
+```json Erro - Mensagem Obrigatória (400)
+{
+  "message": "Mensagem é obrigatória quando não for enquete"
+}
+```
+
+```json Erro - Intervalos Inválidos (400)
+{
+  "message": "Intervalo máximo deve ser maior ou igual ao intervalo mínimo"
 }
 ```
 
@@ -320,7 +372,7 @@ print_r($result);
 </ResponseField>
 
 <ResponseField name="type" type="string">
-  Tipo da campanha: IMMEDIATE, SCHEDULED
+  Tipo da campanha: NORMAL, POLL, TEST
 </ResponseField>
 
 <ResponseField name="scheduledFor" type="datetime">
@@ -367,6 +419,34 @@ print_r($result);
   Estimativa de conclusão da campanha
 </ResponseField>
 
+<ResponseField name="createdAt" type="datetime">
+  Data e hora de criação da campanha
+</ResponseField>
+
+<ResponseField name="mediaType" type="string">
+  Tipo de mídia: text, image, video, audio, document, poll
+</ResponseField>
+
+<ResponseField name="evolutionInstance" type="string">
+  Nome da instância Evolution usada
+</ResponseField>
+
+<ResponseField name="minInterval" type="number">
+  Intervalo mínimo entre mensagens (segundos)
+</ResponseField>
+
+<ResponseField name="maxInterval" type="number">
+  Intervalo máximo entre mensagens (segundos)
+</ResponseField>
+
+<ResponseField name="messageContent" type="string">
+  Conteúdo da mensagem ou título da enquete
+</ResponseField>
+
+<ResponseField name="fileName" type="string">
+  Nome do arquivo de mídia (se houver)
+</ResponseField>
+
 <ResponseField name="message" type="string">
   Mensagem de erro ou null em caso de sucesso
 </ResponseField>
@@ -376,7 +456,7 @@ print_r($result);
 | Código | Descrição |
 |--------|-----------|
 | 400 | Dados inválidos, access token inválido ou erro de validação |
-| 401 | Token de acesso não fornecido ou inválido |
+| 401 | Token de acesso não fornecido |
 | 500 | Erro interno do servidor |
 
 ## Variáveis na Mensagem
@@ -393,11 +473,9 @@ Você pode usar variáveis na mensagem que serão substituídas pelos dados do c
 </CardGroup>
 
 **Exemplos de uso:**
-
 ```
 Olá {{PrimeiroNome}}! Como você está?
 ```
-
 ```
 Prezado(a) {{NomeCompleto}}, temos uma oferta especial para você!
 ```
@@ -412,12 +490,28 @@ Prezado(a) {{NomeCompleto}}, temos uma oferta especial para você!
 | **document** | Documentos | pdf, doc, docx, xls, xlsx, ppt, pptx, zip, rar, txt, csv | 100MB |
 
 <Note>
-**Detecção Automática**: O sistema detecta automaticamente o tipo de mídia e MIME type baseado na extensão do arquivo ou header base64. Você pode fornecer manualmente se preferir.
+**Detecção Automática**: O sistema detecta automaticamente o tipo de mídia e MIME type baseado na extensão do arquivo ou header base64.
 
 **Suporte a Base64**: Arquivos podem ser enviados como dados base64 (ex: `data:image/jpeg;base64,...`) ou URLs.
 
 **Áudio com Texto**: Para áudios, se uma mensagem de texto for fornecida, ela será enviada após o áudio com 1 segundo de intervalo.
 </Note>
+
+## Enquetes (Polls)
+
+Para criar uma campanha com enquete, use o campo `pollData`:
+
+<CardGroup cols={3}>
+  <Card title="Título" icon="heading" color="#16a34a">
+    Máximo 100 caracteres
+  </Card>
+  <Card title="Opções" icon="list" color="#6366f1">
+    Mínimo 2, máximo 12 opções
+  </Card>
+  <Card title="Escolhas" icon="check-square" color="#8b5cf6">
+    maxChoices define quantas opções podem ser selecionadas
+  </Card>
+</CardGroup>
 
 ## Validações
 
@@ -426,24 +520,26 @@ Prezado(a) {{NomeCompleto}}, temos uma oferta especial para você!
     Entre 2 e 100 caracteres
   </Card>
   <Card title="URL Evolution" icon="link" color="#6366f1">
-    Deve ser uma URL válida
+    Deve ser uma URL válida completa
   </Card>
   <Card title="Contatos" icon="users" color="#8b5cf6">
     Mínimo 1 contato na lista
   </Card>
   <Card title="Formato do Telefone" icon="phone" color="#f59e0b">
-    Formato: 5511999999999 com código do país
+    Formato: 5511999999999 (com código do país)
   </Card>
   <Card title="Intervalo de Mensagens" icon="clock" color="#dc2626">
     intervalMaxSeconds deve ser >= intervalMinSeconds
   </Card>
   <Card title="Agendamento" icon="calendar" color="#059669">
-    Mínimo 5 minutos de antecedência
+    Mínimo 5 minutos de antecedência, formato: yyyy-MM-dd'T'HH:mm
   </Card>
 </CardGroup>
 
+## Campanhas de Teste
+
 <Note>
-Se o campo `scheduledFor` for fornecido, deve ser uma data futura válida no formato ISO 8601 com pelo menos 5 minutos de antecedência.
+Defina `isTest: true` para marcar uma campanha como teste. Campanhas de teste são úteis para validação e não contam nas estatísticas principais.
 </Note>
 
 ## Próximos Passos

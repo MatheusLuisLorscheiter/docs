@@ -85,7 +85,7 @@ A API Disparador utiliza um robusto sistema de filas de mensagens para processar
 
 ### Como Funciona o Processamento
 
-<RequestExample>
+<CodeGroup>
 
 ```mermaid
 graph TD
@@ -98,7 +98,7 @@ graph TD
     G --> H[Notificação de Conclusão]
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### 1. Criação da Campanha
 
@@ -164,7 +164,7 @@ O status é atualizado em tempo real:
 
 Campanhas que começam a ser processadas imediatamente após a criação:
 
-<RequestExample>
+<CodeGroup>
 
 ```json
 {
@@ -177,13 +177,13 @@ Campanhas que começam a ser processadas imediatamente após a criação:
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Campanha Agendada
 
 Campanhas programadas para execução futura:
 
-<RequestExample>
+<CodeGroup>
 
 ```json
 {
@@ -197,7 +197,7 @@ Campanhas programadas para execução futura:
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <Note>
 Campanhas agendadas devem ter pelo menos 5 minutos de antecedência para garantir processamento adequado.
@@ -232,7 +232,7 @@ Campanhas agendadas devem ter pelo menos 5 minutos de antecedência para garanti
 
 Mensagem simples de texto com suporte a variáveis:
 
-<RequestExample>
+<CodeGroup>
 
 ```json
 {
@@ -246,13 +246,13 @@ Mensagem simples de texto com suporte a variáveis:
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Mensagem com Mídia
 
 Mensagem com imagem, vídeo, áudio ou documento:
 
-<RequestExample>
+<CodeGroup>
 
 ```json
 {
@@ -264,13 +264,13 @@ Mensagem com imagem, vídeo, áudio ou documento:
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 #### Suporte a Base64
 
 Você também pode enviar arquivos como dados base64:
 
-<RequestExample>
+<CodeGroup>
 
 ```json
 {
@@ -281,7 +281,7 @@ Você também pode enviar arquivos como dados base64:
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Tipos de Mídia Suportados
 
@@ -319,7 +319,7 @@ A API suporta variáveis personalizadas nas mensagens:
   </Card>
 </CardGroup>
 
-<RequestExample>
+<CodeGroup>
 
 ```json
 {
@@ -333,7 +333,7 @@ A API suporta variáveis personalizadas nas mensagens:
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Sistema de Notificações
 
@@ -341,7 +341,7 @@ A API suporta variáveis personalizadas nas mensagens:
 
 A API pode enviar notificação quando uma campanha é concluída:
 
-<RequestExample>
+<CodeGroup>
 
 ```json
 {
@@ -352,7 +352,7 @@ A API pode enviar notificação quando uma campanha é concluída:
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Tipos de Notificação
 

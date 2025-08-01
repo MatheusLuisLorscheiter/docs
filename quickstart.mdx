@@ -11,7 +11,7 @@ Este guia te ajudará a começar com a API Disparador em poucos minutos. Siga os
 
 Primeiro, você precisa registrar sua empresa para obter um access token:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X POST https://{url-key}/api/auth/register \
@@ -83,7 +83,7 @@ echo 'Access Token: ' . $result['accessToken'];
 ?>
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <ResponseExample>
 
@@ -125,7 +125,7 @@ Você precisará fornecer nas requisições:
 
 Agora vamos criar uma campanha simples de texto:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X POST https://{url-key}/api/campaigns \
@@ -260,7 +260,7 @@ print_r($result);
 ?>
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <ResponseExample>
 
@@ -282,7 +282,7 @@ print_r($result);
 
 Verifique o status da sua campanha:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X GET https://{url-key}/api/campaigns/{campaign_id} \
@@ -340,7 +340,7 @@ print_r($result);
 ?>
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <ResponseExample>
 
@@ -363,7 +363,7 @@ print_r($result);
 
 Crie uma campanha com imagem:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X POST https://{url-key}/api/campaigns \
@@ -494,13 +494,13 @@ print_r($result);
 ?>
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## 6. Áudio com Texto
 
 Envie um áudio com uma mensagem de texto complementar:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X POST https://{url-key}/api/campaigns \
@@ -627,7 +627,7 @@ print_r($result);
 ?>
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <Note>
 **Comportamento do Áudio**: O sistema envia primeiro o áudio, aguarda 1 segundo e depois envia a mensagem de texto.
@@ -637,7 +637,7 @@ print_r($result);
 
 Agende uma campanha para execução futura:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X POST https://{url-key}/api/campaigns \
@@ -760,7 +760,7 @@ print_r($result);
 ?>
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## 8. Gerenciamento de campanhas
 
@@ -778,7 +778,7 @@ print_r($result);
 
 ### Pausar campanha
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X PUT https://{url-key}/api/campaigns/{campaign_id}/pause \
@@ -798,11 +798,11 @@ const result = await response.json();
 console.log('Campanha pausada:', result);
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Retomar campanha
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X PUT https://{url-key}/api/campaigns/{campaign_id}/resume \
@@ -822,11 +822,11 @@ const result = await response.json();
 console.log('Campanha retomada:', result);
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Cancelar campanha
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X PUT https://{url-key}/api/campaigns/{campaign_id}/cancel \
@@ -846,13 +846,13 @@ const result = await response.json();
 console.log('Campanha cancelada:', result);
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## 9. Listar campanhas
 
 Veja todas as suas campanhas:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X GET https://{url-key}/api/campaigns \
@@ -907,7 +907,7 @@ print_r($campaigns);
 ?>
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Próximos Passos
 

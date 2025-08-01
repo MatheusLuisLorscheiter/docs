@@ -40,7 +40,7 @@ POST /api/auth/register
   Senha com mínimo de 6 caracteres. Recomendado incluir letras, números e símbolos
 </ParamField>
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X POST https://api.disparador.com/api/auth/register \
@@ -113,7 +113,7 @@ echo 'Token: ' . $result['accessToken'];
 ?>
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <ResponseExample>
 
@@ -173,7 +173,7 @@ echo 'Token: ' . $result['accessToken'];
 
 Após obter o access token no registro, use-o no header `X-Access-Token` em todas as requisições:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X GET https://api.disparador.com/api/campaigns \
@@ -221,7 +221,7 @@ $response = file_get_contents('https://api.disparador.com/api/campaigns', false,
 ?>
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Códigos de Erro
 
@@ -266,7 +266,7 @@ Quando um token inválido é usado, a API retorna:
 
 ### Armazenamento Seguro
 
-<RequestExample>
+<CodeGroup>
 
 ```javascript JavaScript Correto
 // ✅ Correto - Variável de ambiente
@@ -295,7 +295,7 @@ $token = getenv('API_TOKEN');
 ?>
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Próximos Passos
 

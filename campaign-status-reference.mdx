@@ -219,7 +219,7 @@ PUT /api/campaigns/{id}/cancel
 
 ### Verificar Status de Campanha
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X GET https://{url-key}/api/campaigns/123 \
@@ -249,11 +249,11 @@ print(f"Status: {campaign['status']}")
 print(f"Tipo: {campaign['type']}")
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Lógica de Status em Frontend
 
-<RequestExample>
+<CodeGroup>
 
 ```javascript Status Display
 function getStatusDisplay(status) {
@@ -289,7 +289,7 @@ function canCancel(status) {
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Próximos Passos
 

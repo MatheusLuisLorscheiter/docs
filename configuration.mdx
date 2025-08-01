@@ -48,9 +48,9 @@ A API Disparador utiliza variáveis de ambiente para configuração. Todas as co
   </Card>
 </CardGroup>
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash Exemplo
 # Configuração PostgreSQL
 export DB_HOST=localhost
 export DB_PORT=5432
@@ -60,13 +60,13 @@ export DB_PASSWORD=your-secure-password
 export DB_POOL_SIZE=20
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Configurações Hibernate
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash Exemplo
 # Configurações Hibernate
 export HIBERNATE_DDL_AUTO=update
 export SHOW_SQL=false
@@ -74,7 +74,7 @@ export FORMAT_SQL=false
 export APP_TIMEZONE=America/Sao_Paulo
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Configuração do Redis
 
@@ -95,9 +95,9 @@ export APP_TIMEZONE=America/Sao_Paulo
   </Card>
 </CardGroup>
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash Exemplo
 # Configuração Redis
 export REDIS_HOST=localhost
 export REDIS_PORT=6379
@@ -108,7 +108,7 @@ export REDIS_MAX_IDLE=8
 export REDIS_MIN_IDLE=0
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Configuração da Aplicação
 
@@ -123,15 +123,15 @@ export REDIS_MIN_IDLE=0
   </Card>
 </CardGroup>
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash Exemplo
 # Configurações gerais
 export APP_TIMEZONE=America/Sao_Paulo
 export PORT=80
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Configurações de Campanha
 
@@ -150,9 +150,9 @@ export PORT=80
   </Card>
 </CardGroup>
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash Exemplo
 # Configurações de campanha
 export CAMPAIGN_MIN_SCHEDULE_MINUTES=5
 export CAMPAIGN_INTERVAL_MIN=3
@@ -160,7 +160,7 @@ export CAMPAIGN_INTERVAL_MAX=30
 export CAMPAIGN_MAX_RESUME_DAYS=1
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Configurações de Fila
 
@@ -179,9 +179,9 @@ export CAMPAIGN_MAX_RESUME_DAYS=1
   </Card>
 </CardGroup>
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash Exemplo
 # Configurações de fila
 export QUEUE_MESSAGE_NAME=message_queue
 export QUEUE_SCHEDULED_NAME=scheduled_queue
@@ -192,7 +192,7 @@ export QUEUE_RETRY_DELAY=60
 export QUEUE_WORKER_ENABLED=true
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Configuração do Servidor
 
@@ -213,9 +213,9 @@ export QUEUE_WORKER_ENABLED=true
   </Card>
 </CardGroup>
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash Exemplo
 # Configurações do servidor
 export SERVER_MAX_THREADS=200
 export SERVER_MIN_THREADS=10
@@ -223,7 +223,7 @@ export SERVER_CONNECTION_TIMEOUT=20000
 export SCHEDULER_POOL_SIZE=5
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Configuração de Logs
 
@@ -244,9 +244,9 @@ export SCHEDULER_POOL_SIZE=5
   </Card>
 </CardGroup>
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash Exemplo
 # Configurações de log
 export LOGGING_LEVEL_COM_DISPARADOR=INFO
 export LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY=WARN
@@ -258,7 +258,7 @@ export LOG_MAX_SIZE=10MB
 export LOG_MAX_HISTORY=30
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Configuração de Rate Limiting
 
@@ -276,16 +276,16 @@ export LOG_MAX_HISTORY=30
   </Card>
 </CardGroup>
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash Exemplo
 # Configurações de rate limiting
 export RATE_LIMIT_PER_MINUTE=60
 export RATE_LIMIT_PER_HOUR=1000
 export RATE_LIMIT_BURST=10
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Configuração do Actuator
 
@@ -300,15 +300,15 @@ export RATE_LIMIT_BURST=10
   </Card>
 </CardGroup>
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash Exemplo
 # Configurações do Actuator
 export ACTUATOR_ENDPOINTS=health,info,metrics,prometheus
 export PROMETHEUS_ENABLED=true
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Configuração do Swagger
 
@@ -323,23 +323,23 @@ export PROMETHEUS_ENABLED=true
   </Card>
 </CardGroup>
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash Exemplo
 # Configurações do Swagger
 export SWAGGER_ENABLED=true
 export SUPPORT_EMAIL=suporte@disparador.com
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Configuração Completa
 
 ### Arquivo .env Completo
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash .env
 # ========================================
 # CONFIGURAÇÃO COMPLETA DA API DISPARADOR
 # ========================================
@@ -437,67 +437,67 @@ SWAGGER_ENABLED=true
 SUPPORT_EMAIL=suporte@disparador.com
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Configurações por Ambiente
 
 ### Desenvolvimento
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash .env.development
 # Desenvolvimento - Logs detalhados
-export LOGGING_LEVEL_COM_DISPARADOR=DEBUG
-export SHOW_SQL=true
-export FORMAT_SQL=true
-export SWAGGER_ENABLED=true
-export ACTUATOR_ENDPOINTS=health,info,metrics,prometheus,env
+LOGGING_LEVEL_COM_DISPARADOR=DEBUG
+SHOW_SQL=true
+FORMAT_SQL=true
+SWAGGER_ENABLED=true
+ACTUATOR_ENDPOINTS=health,info,metrics,prometheus,env
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Produção
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash .env.production
 # Produção - Performance e segurança
-export LOGGING_LEVEL_COM_DISPARADOR=WARN
-export SHOW_SQL=false
-export FORMAT_SQL=false
-export SWAGGER_ENABLED=false
-export ACTUATOR_ENDPOINTS=health,info,metrics,prometheus
-export DB_POOL_SIZE=20
-export SERVER_MAX_THREADS=200
-export QUEUE_CONCURRENCY=10
+LOGGING_LEVEL_COM_DISPARADOR=WARN
+SHOW_SQL=false
+FORMAT_SQL=false
+SWAGGER_ENABLED=false
+ACTUATOR_ENDPOINTS=health,info,metrics,prometheus
+DB_POOL_SIZE=20
+SERVER_MAX_THREADS=200
+QUEUE_CONCURRENCY=10
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Teste
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash .env.test
 # Teste - Configurações mínimas
-export LOGGING_LEVEL_COM_DISPARADOR=ERROR
-export SHOW_SQL=false
-export SWAGGER_ENABLED=false
-export ACTUATOR_ENDPOINTS=health
-export DB_POOL_SIZE=5
-export SERVER_MAX_THREADS=50
-export QUEUE_CONCURRENCY=2
+LOGGING_LEVEL_COM_DISPARADOR=ERROR
+SHOW_SQL=false
+SWAGGER_ENABLED=false
+ACTUATOR_ENDPOINTS=health
+DB_POOL_SIZE=5
+SERVER_MAX_THREADS=50
+QUEUE_CONCURRENCY=2
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Validação de Configuração
 
 ### Script de Validação
 
-<RequestExample>
+<CodeGroup>
 
-```bash
+```bash validate-config.sh
 #!/bin/bash
 
 echo "Validando configuração da API Disparador..."
@@ -528,7 +528,7 @@ fi
 echo "✅ Configuração válida!"
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Próximos Passos
 

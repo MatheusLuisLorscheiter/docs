@@ -1,0 +1,347 @@
+---
+title: "Configurações"
+description: "Personalize e configure o sistema"
+---
+
+## Página de Configurações
+
+A página de Configurações permite personalizar o sistema de acordo com as necessidades da sua empresa.
+
+<Note>
+  Algumas configurações requerem permissões de administrador.
+</Note>
+
+## Seções Disponíveis
+
+<CardGroup cols={3}>
+  <Card title="Perfil da Empresa" icon="building" color="#16a34a">
+    Dados e informações
+  </Card>
+  <Card title="Notificações" icon="bell" color="#2563eb">
+    Alertas e relatórios
+  </Card>
+  <Card title="Preferências" icon="sliders" color="#7c3aed">
+    Interface e comportamento
+  </Card>
+</CardGroup>
+
+## Perfil da Empresa
+
+### Informações Básicas
+
+<Tip>
+  Mantenha estas informações atualizadas para garantir comunicações corretas.
+</Tip>
+
+#### Campos Editáveis
+
+1. **Nome da Empresa**
+   - Aparece em relatórios
+   - Usado em notificações
+
+2. **Email Principal**
+   - Recebe alertas importantes
+   - Usado para recuperação
+
+3. **Telefone**
+   - Contato administrativo
+   - Formato: +55 11 99999-9999
+
+4. **Endereço**
+   - Informação legal
+   - Pode ser usado em faturas
+
+### Logo e Identidade Visual
+
+<CardGroup cols={2}>
+  <Card title="Logo da Empresa" icon="image">
+    - Formato: PNG, JPG, SVG
+    - Tamanho máximo: 2MB
+    - Proporção recomendada: 1:1
+  </Card>
+  <Card title="Cores do Tema" icon="palette">
+    - Cor primária
+    - Cor secundária
+    - Aplicadas na interface
+  </Card>
+</CardGroup>
+
+## Configurações de Notificações
+
+### Tipos de Notificação
+
+<Warning>
+  Configure corretamente para não perder informações importantes sobre suas campanhas.
+</Warning>
+
+#### 📱 WhatsApp
+
+Configure número para receber:
+- ✅ Relatórios de campanha concluída
+- ✅ Alertas de instância desconectada
+- ✅ Resumo diário
+- ✅ Avisos de erro
+
+#### 📧 Email
+
+Configure endereços para:
+- Relatórios detalhados
+- Backups de dados
+- Alertas de segurança
+- Atualizações do sistema
+
+### Configurar Notificações WhatsApp
+
+1. **Digite o número**
+   ```
+   5511999999999
+   ```
+
+2. **Selecione eventos**
+   - [ ] Campanha iniciada
+   - [x] Campanha concluída
+   - [x] Erro em campanha
+   - [x] Instância desconectada
+
+3. **Configure horários**
+   - Ativo das: 08:00 às 22:00
+   - Dias: Segunda a Sábado
+
+### Relatórios Automáticos
+
+<CardGroup cols={3}>
+  <Card title="Diário" icon="calendar-day">
+    Resumo do dia às 18h
+  </Card>
+  <Card title="Semanal" icon="calendar-week">
+    Relatório toda segunda
+  </Card>
+  <Card title="Mensal" icon="calendar">
+    Análise completa
+  </Card>
+</CardGroup>
+
+## Preferências do Sistema
+
+### Interface
+
+#### Tema Visual
+
+<CardGroup cols={2}>
+  <Card title="Modo Claro" icon="sun">
+    Interface clara e limpa
+  </Card>
+  <Card title="Modo Escuro" icon="moon">
+    Reduz cansaço visual
+  </Card>
+</CardGroup>
+
+#### Idioma e Localização
+
+- **Idioma**: Português (BR)
+- **Formato de Data**: DD/MM/AAAA
+- **Formato de Hora**: 24h
+- **Fuso Horário**: America/Sao_Paulo
+
+### Comportamento
+
+#### Campanhas
+
+1. **Valores Padrão**
+   - Intervalo mínimo: 3 segundos
+   - Intervalo máximo: 30 segundos
+   - Horário permitido: 08:00 - 22:00
+
+2. **Validações**
+   - [x] Verificar números duplicados
+   - [x] Validar formato de número
+   - [x] Alertar campanhas grandes (>1000)
+
+#### Dashboard
+
+- **Atualização automática**: A cada 30 segundos
+- **Período padrão**: Últimos 7 dias
+- **Métricas visíveis**: Personalizável
+
+## Segurança e Privacidade
+
+### Autenticação
+
+<Warning>
+  Mantenha suas credenciais seguras e atualize regularmente.
+</Warning>
+
+#### Senha
+
+- **Alterar senha**
+  - Senha atual
+  - Nova senha (mín. 8 caracteres)
+  - Confirmar nova senha
+
+- **Requisitos**
+  - ✅ Mínimo 8 caracteres
+  - ✅ Letras e números
+  - ✅ Recomendado: símbolos
+
+#### Sessões Ativas
+
+Visualize e gerencie:
+- Dispositivos conectados
+- Última atividade
+- Localização (IP)
+- Opção de desconectar
+
+### Privacidade de Dados
+
+<CardGroup cols={2}>
+  <Card title="Retenção de Dados" icon="database">
+    - Logs: 90 dias
+    - Campanhas: 1 ano
+    - Configurável
+  </Card>
+  <Card title="Exportação" icon="download">
+    - Baixar todos os dados
+    - Formato: JSON/CSV
+    - Inclui campanhas e contatos
+  </Card>
+</CardGroup>
+
+## Integrações
+
+### APIs e Webhooks
+
+#### Token de API
+
+```
+Seu token: xxxxxx-xxxxxx-xxxxxx-xxxxxx
+```
+
+<Tip>
+  Use este token para integrar com sistemas externos. Mantenha-o seguro!
+</Tip>
+
+#### Webhooks Globais
+
+Configure URLs para receber eventos:
+
+1. **URL do Webhook**
+   ```
+   https://seu-sistema.com/webhook
+   ```
+
+2. **Eventos**
+   - [ ] Nova campanha
+   - [x] Campanha concluída
+   - [x] Instância conectada
+   - [x] Instância desconectada
+
+3. **Headers Customizados**
+   ```
+   X-API-Key: seu-token
+   Content-Type: application/json
+   ```
+
+## Configurações Avançadas
+
+### Limites e Quotas
+
+<Warning>
+  Ajuste com cuidado. Limites muito altos podem causar problemas.
+</Warning>
+
+#### Por Campanha
+- Máximo de contatos: 10.000
+- Timeout de campanha: 24 horas
+- Tentativas de retry: 3
+
+#### Por Instância
+- Mensagens/dia: 1.000
+- Mensagens/hora: 100
+- Pausa após erro: 5 minutos
+
+### Backup e Restauração
+
+<CardGroup cols={2}>
+  <Card title="Backup Automático" icon="save">
+    - Frequência: Diário
+    - Horário: 03:00
+    - Retenção: 30 dias
+  </Card>
+  <Card title="Backup Manual" icon="download">
+    - Exportar agora
+    - Incluir: Tudo
+    - Formato: ZIP
+  </Card>
+</CardGroup>
+
+## Logs e Auditoria
+
+### Visualizar Logs
+
+Filtros disponíveis:
+- **Período**: Últimos 7 dias
+- **Tipo**: Todos
+- **Usuário**: Todos
+- **Ação**: Todas
+
+### Tipos de Log
+
+1. **Acesso**
+   - Login/Logout
+   - Tentativas falhas
+   - Mudanças de senha
+
+2. **Campanhas**
+   - Criação
+   - Modificação
+   - Execução
+
+3. **Sistema**
+   - Configurações alteradas
+   - Erros
+   - Manutenção
+
+## Solução de Problemas
+
+<Expandable title="Não consigo salvar configurações">
+  - Verifique permissões da conta
+  - Tente fazer logout e login
+  - Limpe cache do navegador
+</Expandable>
+
+<Expandable title="Notificações não chegam">
+  - Confirme número correto
+  - Verifique horários configurados
+  - Teste com notificação manual
+</Expandable>
+
+<Expandable title="Tema não muda">
+  - Recarregue a página (F5)
+  - Limpe cache do navegador
+  - Verifique configurações do sistema
+</Expandable>
+
+## Dicas de Configuração
+
+<Tip>
+  **Melhores Práticas:**
+  - Configure notificações para não perder informações
+  - Use senhas fortes e únicas
+  - Faça backups regularmente
+  - Revise logs periodicamente
+  - Mantenha contatos de emergência atualizados
+</Tip>
+
+## Próximos Passos
+
+<CardGroup cols={3}>
+  <Card title="Dashboard" icon="chart-line" href="/frontend/dashboard">
+    Voltar ao painel
+  </Card>
+  <Card title="Campanhas" icon="bullhorn" href="/frontend/campaigns">
+    Gerenciar campanhas
+  </Card>
+  <Card title="Suporte" icon="headset" href="/troubleshooting">
+    Obter ajuda
+  </Card>
+</CardGroup>

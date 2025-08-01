@@ -63,13 +63,13 @@ O monitoramento é essencial para garantir a saúde e performance da API Dispara
 
 ### Listar Métricas Disponíveis
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X GET https://{url-key}/api/actuator/metrics
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <ResponseExample>
 
@@ -94,13 +94,13 @@ curl -X GET https://{url-key}/api/actuator/metrics
 
 ### Obter Métrica Específica
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X GET https://{url-key}/api/actuator/metrics/disparador.campaigns.active
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <ResponseExample>
 
@@ -125,7 +125,7 @@ curl -X GET https://{url-key}/api/actuator/metrics/disparador.campaigns.active
 
 ### Configuração do Prometheus
 
-<RequestExample>
+<CodeGroup>
 
 ```yaml
 # prometheus.yml
@@ -142,17 +142,17 @@ scrape_configs:
     scrape_timeout: 10s
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Métricas Prometheus
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X GET https://{url-key}/api/actuator/prometheus
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <ResponseExample>
 
@@ -180,7 +180,7 @@ disparador_messages_failed_total 25.0
 
 ### Dashboard Principal
 
-<RequestExample>
+<CodeGroup>
 
 ```json
 {
@@ -226,7 +226,7 @@ disparador_messages_failed_total 25.0
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Alertas Recomendados
 
@@ -249,7 +249,7 @@ disparador_messages_failed_total 25.0
 
 ### Configuração de Logs
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Configurar logs estruturados
@@ -259,11 +259,11 @@ export LOG_MAX_SIZE=100MB
 export LOG_MAX_HISTORY=30
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Padrão de Logs
 
-<RequestExample>
+<CodeGroup>
 
 ```json
 {
@@ -278,7 +278,7 @@ export LOG_MAX_HISTORY=30
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Logs Importantes
 
@@ -301,7 +301,7 @@ export LOG_MAX_HISTORY=30
 
 ### Configuração do Logstash
 
-<RequestExample>
+<CodeGroup>
 
 ```ruby
 # logstash.conf
@@ -329,11 +329,11 @@ output {
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Queries Úteis do Elasticsearch
 
-<RequestExample>
+<CodeGroup>
 
 ```json
 // Campanhas criadas hoje
@@ -361,13 +361,13 @@ output {
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Alertas
 
 ### Configuração de Alertas
 
-<RequestExample>
+<CodeGroup>
 
 ```yaml
 # alertmanager.yml
@@ -390,11 +390,11 @@ receivers:
       - url: 'https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK'
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Regras de Alerta
 
-<RequestExample>
+<CodeGroup>
 
 ```yaml
 # disparador-alerts.yml
@@ -438,13 +438,13 @@ groups:
           description: "CPU está acima de 80%"
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Monitoramento de Infraestrutura
 
 ### Docker
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Verificar containers
@@ -457,11 +457,11 @@ docker logs -f api-disparador
 docker stats api-disparador
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Sistema
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Verificar uso de CPU e memória
@@ -474,7 +474,7 @@ df -h /var/log/api-disparador
 netstat -tulpn | grep :80
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Dashboards Recomendados
 
@@ -505,7 +505,7 @@ netstat -tulpn | grep :80
 
 ### Slack
 
-<RequestExample>
+<CodeGroup>
 
 ```yaml
 # Configuração do webhook do Slack
@@ -516,11 +516,11 @@ webhook_configs:
     icon_emoji: ':warning:'
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Email
 
-<RequestExample>
+<CodeGroup>
 
 ```yaml
 # Configuração de email
@@ -531,11 +531,11 @@ email_configs:
       subject: 'Alerta API Disparador'
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### PagerDuty
 
-<RequestExample>
+<CodeGroup>
 
 ```yaml
 # Configuração do PagerDuty
@@ -545,7 +545,7 @@ pagerduty_configs:
     severity: '{{ if eq .GroupLabels.severity "critical" }}critical{{ else }}warning{{ end }}'
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Próximos Passos
 

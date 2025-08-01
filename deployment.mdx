@@ -44,20 +44,20 @@ A API Disparador pode ser implantada de várias formas:
 
 ### 1. Clone o Repositório
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 git clone https://github.com/matheusluislorscheiter/api-disparador.git
 cd api-disparador
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### 2. Configure as Variáveis de Ambiente
 
 Crie um arquivo `.env` na raiz do projeto:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Database
@@ -88,11 +88,11 @@ LOGGING_LEVEL_COM_DISPARADOR=INFO
 PORT=80
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### 3. Execute com Docker Compose
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Construir e iniciar todos os serviços
@@ -105,11 +105,11 @@ docker-compose logs -f api
 docker-compose down
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### 4. Verificar Deploy
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Health check
@@ -119,13 +119,13 @@ curl http://localhost:80/api/actuator/health
 open http://localhost:80/api/swagger-ui.html
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Docker Individual
 
 ### 1. Construir a Imagem
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Construir imagem
@@ -135,11 +135,11 @@ docker build -t api-disparador:latest .
 docker images | grep api-disparador
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### 2. Executar Container
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Executar com variáveis de ambiente
@@ -158,13 +158,13 @@ docker logs -f api-disparador
 docker stop api-disparador
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Deployment Manual
 
 ### 1. Instalar Java 17
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Ubuntu/Debian
@@ -181,11 +181,11 @@ brew install openjdk@17
 java -version
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### 2. Configurar PostgreSQL
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Ubuntu/Debian
@@ -199,11 +199,11 @@ GRANT ALL PRIVILEGES ON DATABASE "api-disparador" TO disparador;
 \q
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### 3. Configurar Redis
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Ubuntu/Debian
@@ -217,11 +217,11 @@ sudo systemctl enable redis-server
 redis-cli ping
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### 4. Baixar e Executar a Aplicação
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Baixar JAR
@@ -234,7 +234,7 @@ java -jar api-disparador.jar \
   --DB_PASSWORD=your-password
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Configuração de Produção
 
@@ -257,7 +257,7 @@ java -jar api-disparador.jar \
 
 ### Configurações de Performance
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Configurações recomendadas para produção
@@ -268,11 +268,11 @@ export SCHEDULER_POOL_SIZE=10
 export LOGGING_LEVEL_COM_DISPARADOR=WARN
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Configuração de Logs
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Configurar logs para arquivo
@@ -285,13 +285,13 @@ sudo mkdir -p /var/log/api-disparador
 sudo chown $USER:$USER /var/log/api-disparador
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Monitoramento
 
 ### Health Checks
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Script de health check
@@ -308,11 +308,11 @@ else
 fi
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Métricas com Prometheus
 
-<RequestExample>
+<CodeGroup>
 
 ```yaml
 # prometheus.yml
@@ -324,7 +324,7 @@ scrape_configs:
     scrape_interval: 30s
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Troubleshooting
 
@@ -347,7 +347,7 @@ scrape_configs:
 
 ### Logs Importantes
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Ver logs da aplicação
@@ -360,7 +360,7 @@ docker logs -f api-disparador
 journalctl -u api-disparador -f
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Segurança
 
@@ -383,7 +383,7 @@ journalctl -u api-disparador -f
 
 ### Exemplo de Nginx
 
-<RequestExample>
+<CodeGroup>
 
 ```nginx
 # /etc/nginx/sites-available/api-disparador
@@ -410,13 +410,13 @@ server {
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Backup e Recuperação
 
 ### Backup do Banco
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Backup completo
@@ -426,11 +426,11 @@ pg_dump -h localhost -U disparador api-disparador > backup_$(date +%Y%m%d).sql
 0 2 * * * pg_dump -h localhost -U disparador api-disparador > /backups/api-disparador_$(date +\%Y\%m\%d).sql
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Backup do Redis
 
-<RequestExample>
+<CodeGroup>
 
 ```bash
 # Backup Redis
@@ -440,7 +440,7 @@ redis-cli BGSAVE
 cp /var/lib/redis/dump.rdb /backups/redis_$(date +%Y%m%d).rdb
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Próximos Passos
 

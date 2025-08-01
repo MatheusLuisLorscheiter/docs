@@ -93,7 +93,7 @@ A API utiliza um sistema de autenticação simples baseado em tokens:
   </Card>
 </CardGroup>
 
-<RequestExample>
+<CodeGroup>
 
 ```bash Exemplo de Autenticação
 curl -X POST https://{url-key}/api/auth/register \
@@ -105,7 +105,7 @@ curl -X POST https://{url-key}/api/auth/register \
   }'
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <ResponseExample>
 
@@ -208,7 +208,7 @@ A API fornece métricas detalhadas para acompanhamento das campanhas:
 
 Para desenvolvedores que desejam executar a API localmente:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash Configuração Local
 # Clone o repositório
@@ -227,7 +227,7 @@ export REDIS_PORT=6379
 ./mvnw spring-boot:run
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <Note>
 A aplicação estará disponível em `http://localhost:80` após a inicialização.

@@ -107,7 +107,7 @@ Todas as respostas de erro seguem uma estrutura consistente:
 
 Ocorrem quando os dados enviados não atendem aos requisitos:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X POST https://{url-key}/api/campaigns \
@@ -119,7 +119,7 @@ curl -X POST https://{url-key}/api/campaigns \
   }'
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <ResponseExample>
 
@@ -138,14 +138,14 @@ curl -X POST https://{url-key}/api/campaigns \
 
 Quando o access token é inválido ou não fornecido:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X GET https://{url-key}/api/campaigns \
   -H "X-Access-Token: token-invalido"
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <ResponseExample>
 
@@ -164,14 +164,14 @@ curl -X GET https://{url-key}/api/campaigns \
 
 Quando o recurso solicitado não existe:
 
-<RequestExample>
+<CodeGroup>
 
 ```bash cURL
 curl -X GET https://{url-key}/api/campaigns/999999 \
   -H "X-Access-Token: {access_token}"
 ```
 
-</RequestExample>
+</CodeGroup>
 
 <ResponseExample>
 
@@ -231,7 +231,7 @@ curl -X GET https://{url-key}/api/campaigns/999999 \
 
 ### JavaScript
 
-<RequestExample>
+<CodeGroup>
 
 ```javascript JavaScript
 try {
@@ -270,11 +270,11 @@ try {
 }
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### Python
 
-<RequestExample>
+<CodeGroup>
 
 ```python Python
 import requests
@@ -309,11 +309,11 @@ except requests.exceptions.RequestException as e:
     print(f'Erro de rede: {e}')
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ### PHP
 
-<RequestExample>
+<CodeGroup>
 
 ```php PHP
 <?php
@@ -362,7 +362,7 @@ try {
 ?>
 ```
 
-</RequestExample>
+</CodeGroup>
 
 ## Boas Práticas
 

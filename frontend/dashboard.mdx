@@ -1,0 +1,256 @@
+---
+title: "Dashboard"
+description: "Visão geral e métricas do sistema"
+---
+
+## Painel Principal
+
+O Dashboard é a primeira tela que você vê após fazer login, oferecendo uma visão completa do seu sistema de disparos.
+
+<Note>
+  O Dashboard atualiza automaticamente a cada 30 segundos para mostrar informações em tempo real.
+</Note>
+
+## Visão Geral das Métricas
+
+<CardGroup cols={4}>
+  <Card title="Total de Campanhas" icon="bullhorn" color="#16a34a">
+    Campanhas criadas no período
+  </Card>
+  <Card title="Mensagens Enviadas" icon="message" color="#2563eb">
+    Total de mensagens disparadas
+  </Card>
+  <Card title="Taxa de Sucesso" icon="chart-line" color="#7c3aed">
+    Percentual de entrega
+  </Card>
+  <Card title="Instâncias Ativas" icon="whatsapp" color="#ea580c">
+    WhatsApp conectados
+  </Card>
+</CardGroup>
+
+## Seções do Dashboard
+
+### 📊 Gráficos e Estatísticas
+
+#### Gráfico de Campanhas
+- **Período**: Últimos 7 dias
+- **Métricas**: Campanhas criadas, concluídas, em andamento
+- **Visualização**: Gráfico de linhas interativo
+
+#### Taxa de Entrega
+- **Visualização**: Gráfico de pizza
+- **Categorias**: Enviadas, Falhas, Pendentes
+- **Atualização**: Tempo real
+
+### 📱 Status das Instâncias
+
+<Tip>
+  Mantenha sempre pelo menos uma instância ativa para garantir o funcionamento das campanhas.
+</Tip>
+
+#### Informações Exibidas
+- **Nome da instância**
+- **Status**: 🟢 Conectada | 🔴 Desconectada | 🟡 Conectando
+- **Última atividade**
+- **Ações rápidas**: Reconectar, Ver QR Code
+
+### 📅 Campanhas Recentes
+
+Lista das últimas 5 campanhas com:
+- Nome da campanha
+- Status atual
+- Progresso (barra visual)
+- Ações rápidas
+
+## Filtros e Personalização
+
+### Período de Análise
+
+<CardGroup cols={4}>
+  <Card title="Hoje" icon="calendar-day">
+    Dados do dia atual
+  </Card>
+  <Card title="7 Dias" icon="calendar-week">
+    Última semana
+  </Card>
+  <Card title="30 Dias" icon="calendar">
+    Último mês
+  </Card>
+  <Card title="Personalizado" icon="calendar-plus">
+    Escolha o período
+  </Card>
+</CardGroup>
+
+### Métricas Customizáveis
+
+Você pode escolher quais métricas aparecem no seu dashboard:
+
+- ✅ Total de campanhas
+- ✅ Mensagens enviadas
+- ✅ Taxa de sucesso
+- ✅ Tempo médio de envio
+- ✅ Contatos únicos
+- ✅ Falhas por tipo
+
+## Interpretando as Métricas
+
+### Taxa de Sucesso
+
+<Warning>
+  Taxa de sucesso abaixo de 80% pode indicar:
+  - Números inválidos na lista
+  - Instância com problemas
+  - Intervalos muito curtos
+</Warning>
+
+#### Como melhorar:
+1. Valide os números antes do envio
+2. Aumente o intervalo entre mensagens
+3. Use múltiplas instâncias
+4. Evite horários de pico
+
+### Velocidade de Envio
+
+**Cálculo**: Total de mensagens ÷ Tempo decorrido
+
+#### Referências:
+- **Lento**: < 10 msgs/minuto
+- **Normal**: 10-30 msgs/minuto
+- **Rápido**: > 30 msgs/minuto
+
+## Widgets Especiais
+
+### 🎯 Campanha em Destaque
+
+Mostra a campanha com melhor desempenho:
+- Nome e detalhes
+- Taxa de sucesso
+- Tempo de conclusão
+- Link para relatório completo
+
+### ⚡ Ações Rápidas
+
+<CardGroup cols={3}>
+  <Card title="Nova Campanha" icon="plus">
+    Criar campanha rapidamente
+  </Card>
+  <Card title="Conectar WhatsApp" icon="whatsapp">
+    Adicionar nova instância
+  </Card>
+  <Card title="Ver Relatórios" icon="chart-bar">
+    Acessar relatórios detalhados
+  </Card>
+</CardGroup>
+
+### 🔔 Notificações Recentes
+
+Lista as últimas notificações:
+- Campanhas concluídas
+- Instâncias desconectadas
+- Alertas do sistema
+- Atualizações importantes
+
+## Exportação de Dados
+
+### Formatos Disponíveis
+
+<CardGroup cols={3}>
+  <Card title="PDF" icon="file-pdf">
+    Relatório formatado
+  </Card>
+  <Card title="Excel" icon="file-excel">
+    Dados tabulados
+  </Card>
+  <Card title="CSV" icon="file-csv">
+    Dados brutos
+  </Card>
+</CardGroup>
+
+### Como Exportar
+
+1. Clique no ícone de download 📥
+2. Selecione o período desejado
+3. Escolha o formato
+4. Clique em "Exportar"
+
+## Personalização da Interface
+
+### Modo de Visualização
+
+- **Compacto**: Mais informações em menos espaço
+- **Detalhado**: Visualização expandida com gráficos maiores
+- **Minimalista**: Apenas métricas essenciais
+
+### Tema
+
+<CardGroup cols={2}>
+  <Card title="Modo Claro ☀️" icon="sun">
+    Interface clara para ambientes iluminados
+  </Card>
+  <Card title="Modo Escuro 🌙" icon="moon">
+    Reduz cansaço visual em ambientes escuros
+  </Card>
+</CardGroup>
+
+## Dicas de Uso
+
+<Tip>
+  **Produtividade:**
+  - Use atalhos de teclado (? para ver lista)
+  - Favorite campanhas importantes
+  - Configure alertas personalizados
+  - Crie dashboards para diferentes períodos
+</Tip>
+
+## Solução de Problemas
+
+<Expandable title="Dashboard não carrega">
+  - Recarregue a página (F5)
+  - Limpe o cache do navegador
+  - Verifique sua conexão
+  - Tente outro navegador
+</Expandable>
+
+<Expandable title="Métricas incorretas">
+  - Aguarde a atualização automática
+  - Clique em "Atualizar" manualmente
+  - Verifique o período selecionado
+  - Contate o suporte se persistir
+</Expandable>
+
+<Expandable title="Gráficos não aparecem">
+  - Verifique se JavaScript está ativado
+  - Desative bloqueadores de anúncios
+  - Atualize seu navegador
+  - Teste em modo incógnito
+</Expandable>
+
+## Métricas Avançadas
+
+### KPIs Importantes
+
+1. **CPM (Custo por Mil)**
+   - Custo médio por 1000 mensagens
+   - Ajuda a calcular ROI
+
+2. **Tempo Médio de Resposta**
+   - Quando os contatos respondem
+   - Útil para campanhas interativas
+
+3. **Taxa de Engajamento**
+   - Percentual de respostas
+   - Indica efetividade da mensagem
+
+## Próximos Passos
+
+<CardGroup cols={3}>
+  <Card title="Campanhas" icon="bullhorn" href="/frontend/campaigns">
+    Gerencie suas campanhas
+  </Card>
+  <Card title="Automações" icon="robot" href="/frontend/automations">
+    Configure automações
+  </Card>
+  <Card title="Configurações" icon="cog" href="/frontend/settings">
+    Personalize o sistema
+  </Card>
+</CardGroup>
