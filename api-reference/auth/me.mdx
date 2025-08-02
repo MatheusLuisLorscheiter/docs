@@ -1,0 +1,235 @@
+---
+title: "Verificar Token"
+api: "GET /api/auth/me"
+description: "Verifica a validade do token e retorna dados da empresa autenticada"
+---
+
+<Note>
+Use este endpoint para validar se o token está válido e obter informações atualizadas da empresa.
+</Note>
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa obtido no login
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X GET https://api.disparador.com/api/auth/me \
+  -H "X-Access-Token: seu-access-token"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.disparador.com/api/auth/me', {
+  method: 'GET',
+  headers: {
+    'X-Access-Token': localStorage.getItem('accessToken')
+  }
+});
+
+const data = await response.json();
+
+if (data.companyId) {
+  console.log('Token válido! Empresa:', data.companyName);
+} else {
+  console.error('Token inválido:', data.message);
+  // Redirecionar para login
+}
+```
+
+```python Python
+import requests
+
+url = "https://api.disparador.com/api/auth/me"
+headers = {
+    'X-Access-Token': 'seu-access-token'
+}
+
+response = requests.get(url, headers=headers)
+data = response.json()
+
+if data.get('companyId'):
+    print(f"Token válido! Empresa: {data['companyName']}")
+else:
+    print(f"Token inválido: {data.get('message')}")
+```
+
+```php PHP
+<?php
+$url = 'https://api.disparador.com/api/auth/me';
+$headers = [
+    'X-Access-Token: seu-access-token'
+];
+
+$options = [
+    'http' => [
+        'header' => implode("\r\n", $headers),
+        'method' => 'GET'
+    ]
+];
+
+$context = stream_context_create($options);
+$result = file_get_contents($url, false, $context);
+$response = json_decode($result, true);
+
+if (isset($response['companyId'])) {
+    echo "Token válido! Empresa: " . $response['companyName'];
+} else {
+    echo "Token inválido: " . $response['message'];
+}
+?>
+```
+
+</RequestExample>
+
+## Response
+
+<ResponseField name="accessToken" type="string">
+  O mesmo token de acesso enviado na requisição
+</ResponseField>
+
+<ResponseField name="tokenType" type="string">
+  Tipo do token. Sempre retorna "Access"
+</ResponseField>
+
+<ResponseField name="companyId" type="number">
+  ID único da empresa no sistema
+</ResponseField>
+
+<ResponseField name="companyName" type="string">
+  Nome da empresa cadastrada
+</ResponseField>
+
+<ResponseField name="companyEmail" type="string">
+  Email da empresa
+</ResponseField>
+
+<ResponseField name="blockedContactsEnabled" type="boolean">
+  Indica se a funcionalidade de bloqueio inteligente está habilitada
+</ResponseField>
+
+<ResponseField name="pollCampaignsEnabled" type="boolean">
+  Indica se a funcionalidade de enquetes está habilitada
+</ResponseField>
+
+<ResponseField name="expiresAt" type="string" nullable>
+  Data de expiração do token. Sempre null (tokens não expiram)
+</ResponseField>
+
+<ResponseField name="message" type="string" nullable>
+  Mensagem de erro. Null em caso de sucesso
+</ResponseField>
+
+<ResponseExample>
+
+```json 200 - Sucesso
+{
+  "accessToken": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "tokenType": "Access",
+  "companyId": 1,
+  "companyName": "Minha Empresa LTDA",
+  "companyEmail": "contato@minhaempresa.com",
+  "blockedContactsEnabled": true,
+  "pollCampaignsEnabled": true,
+  "expiresAt": null,
+  "message": null
+}
+```
+
+```json 400 - Token Inválido
+{
+  "accessToken": null,
+  "tokenType": "Access",
+  "companyId": null,
+  "companyName": null,
+  "companyEmail": null,
+  "blockedContactsEnabled": null,
+  "pollCampaignsEnabled": null,
+  "expiresAt": null,
+  "message": "Access token inválido"
+}
+```
+
+```json 400 - Token Ausente
+{
+  "accessToken": null,
+  "tokenType": "Access",
+  "companyId": null,
+  "companyName": null,
+  "companyEmail": null,
+  "blockedContactsEnabled": null,
+  "pollCampaignsEnabled": null,
+  "expiresAt": null,
+  "message": "X-Access-Token é obrigatório"
+}
+```
+
+```json 400 - Empresa Não Encontrada
+{
+  "accessToken": null,
+  "tokenType": "Access",
+  "companyId": null,
+  "companyName": null,
+  "companyEmail": null,
+  "blockedContactsEnabled": null,
+  "pollCampaignsEnabled": null,
+  "expiresAt": null,
+  "message": "Empresa não encontrada"
+}
+```
+
+</ResponseExample>
+
+## Uso Comum
+
+Este endpoint é comumente usado para:
+
+<CardGroup cols={2}>
+  <Card title="Validação Inicial" icon="check-circle" color="#16a34a">
+    Verificar se o token salvo ainda é válido ao iniciar a aplicação
+  </Card>
+  <Card title="Refresh de Dados" icon="sync" color="#3b82f6">
+    Obter dados atualizados da empresa e suas permissões
+  </Card>
+  <Card title="Middleware de Auth" icon="shield" color="#ef4444">
+    Validar autenticação antes de cada operação crítica
+  </Card>
+  <Card title="Debug de Problemas" icon="bug" color="#8b5cf6">
+    Verificar se erros 401 são devido a token inválido
+  </Card>
+</CardGroup>
+
+## Exemplo de Middleware
+
+```javascript
+// Middleware para validar token antes de cada requisição
+async function validateAuth() {
+  const token = localStorage.getItem('accessToken');
+  
+  if (!token) {
+    window.location.href = '/login';
+    return false;
+  }
+  
+  try {
+    const response = await fetch('https://api.disparador.com/api/auth/me', {
+      headers: { 'X-Access-Token': token }
+    });
+    
+    const data = await response.json();
+    
+    if (!data.companyId) {
+      localStorage.removeItem('accessToken');
+      window.location.href = '/login';
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error('Erro ao validar token:', error);
+    return false;
+  }
+}
+```

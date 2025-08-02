@@ -51,15 +51,13 @@ Considere ao escolher:
 Crie templates reutilizáveis:
 
 ```
-Olá {{nome}}! 👋
+Olá {PrimeiroNome}! 👋
 
-{{saudacao}} Temos uma oferta especial para você!
+Temos uma oferta especial para você, {NomeCompleto}!
 
-📍 Loja: {{loja}}
-🎯 Desconto: {{desconto}}%
-📅 Válido até: {{validade}}
+Use o código PROMO2024 para garantir seu desconto.
 
-{{call_to_action}}
+Acesse agora: www.exemplo.com
 ```
 
 ## Recursos Avançados de Mensagem
@@ -86,14 +84,13 @@ Olá {{nome}}! 👋
 Use placeholders para personalização:
 
 1. **Básicas**
-   - `{{nome}}` - Nome do contato
-   - `{{numero}}` - Número
-   - `{{data}}` - Data atual
+   - `{PrimeiroNome}` - Primeiro nome do contato
+   - `{NomeCompleto}` - Nome completo do contato
 
 2. **Customizadas**
-   - Importe do CSV
-   - Colunas viram variáveis
-   - Ex: `{{cidade}}`, `{{produto}}`
+   - Campos do banco de dados externo
+   - Colunas da query SQL
+   - Definidos na configuração do banco
 
 ### Botões e Interatividade
 

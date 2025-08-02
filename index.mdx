@@ -1,10 +1,10 @@
 ---
 title: "API Disparador - Documentação"
-description: "Sistema simplificado de disparo de mensagens via WhatsApp"
+description: "Sistema avançado de disparo de mensagens via WhatsApp com interface web"
 ---
 
 <Note>
-Sistema simplificado e robusto para disparo de mensagens via WhatsApp através da Evolution API.
+Sistema completo e robusto para disparo de mensagens via WhatsApp através da Evolution API, com interface web moderna e suporte a múltiplas funcionalidades avançadas.
 </Note>
 
 ## Características Principais
@@ -19,7 +19,7 @@ A API Disparador oferece funcionalidades completas para envio de mensagens em ma
     Programe campanhas para execução futura
   </Card>
   <Card title="Múltiplos Tipos de Mídia" icon="image" color="#6366f1">
-    Suporte a texto, imagens, vídeos, áudios e documentos
+    Suporte a texto, imagens, vídeos, áudios, documentos e enquetes
   </Card>
   <Card title="Variáveis Personalizadas" icon="brackets-curly" color="#8b5cf6">
     Personalize mensagens com dados dos contatos
@@ -30,11 +30,11 @@ A API Disparador oferece funcionalidades completas para envio de mensagens em ma
   <Card title="Métricas em Tempo Real" icon="chart-bar" color="#10b981">
     Acompanhe o progresso das campanhas
   </Card>
-  <Card title="Retry Automático" icon="refresh-cw" color="#ef4444">
-    Sistema de retry inteligente para mensagens falhadas
+  <Card title="Bloqueio Inteligente" icon="user-x" color="#ef4444">
+    Sistema de bloqueio de contatos com filtro automático
   </Card>
-  <Card title="API REST" icon="code" color="#06b6d4">
-    Interface REST completa e documentada
+  <Card title="Interface Web" icon="browser" color="#06b6d4">
+    Interface moderna com React e TypeScript
   </Card>
 </CardGroup>
 
@@ -46,14 +46,20 @@ A API Disparador é construída com tecnologias modernas para garantir performan
   <Card title="Backend" icon="server" color="#16a34a">
     Spring Boot 3.2.0 com Java 17
   </Card>
-  <Card title="Banco de Dados" icon="database" color="#6366f1">
-    PostgreSQL para persistência de dados
+  <Card title="Frontend" icon="browser" color="#3b82f6">
+    React 18 com TypeScript, Tailwind CSS e Vite
   </Card>
-  <Card title="Cache" icon="zap" color="#ef4444">
-    Redis para filas e cache de alta performance
+  <Card title="Banco de Dados" icon="database" color="#6366f1">
+    PostgreSQL com Flyway para migrações
+  </Card>
+  <Card title="Cache e Filas" icon="zap" color="#ef4444">
+    Redis para filas de alta performance
   </Card>
   <Card title="WhatsApp" icon="message-circle" color="#25d366">
     Integração via Evolution API
+  </Card>
+  <Card title="Autenticação" icon="shield" color="#f59e0b">
+    Sistema baseado em Access Token por empresa
   </Card>
 </CardGroup>
 
@@ -77,13 +83,21 @@ Para usar a API Disparador, você precisa:
   Nome da instância do WhatsApp conectada na Evolution API
 </ParamField>
 
+<ParamField body="database" type="postgresql" required>
+  PostgreSQL 13+ para persistência de dados
+</ParamField>
+
+<ParamField body="redis" type="redis" required>
+  Redis 6+ para gerenciamento de filas
+</ParamField>
+
 ## Autenticação
 
-A API utiliza um sistema de autenticação simples baseado em tokens:
+A API utiliza um sistema de autenticação baseado em tokens por empresa:
 
 <CardGroup cols={3}>
-  <Card title="Registro" icon="user-plus" color="#16a34a">
-    Registre sua empresa para obter um access token
+  <Card title="Login" icon="sign-in" color="#16a34a">
+    Faça login com email e senha da empresa
   </Card>
   <Card title="Token Header" icon="key" color="#eab308">
     Use o token no header X-Access-Token
@@ -95,11 +109,10 @@ A API utiliza um sistema de autenticação simples baseado em tokens:
 
 <CodeGroup>
 
-```bash Exemplo de Autenticação
-curl -X POST https://{url-key}/api/auth/register \
+```bash Login
+curl -X POST https://api.exemplo.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Minha Empresa",
     "email": "contato@empresa.com",
     "password": "senha123"
   }'
@@ -109,15 +122,16 @@ curl -X POST https://{url-key}/api/auth/register \
 
 <ResponseExample>
 
-```json Resposta de Registro
+```json Resposta de Login
 {
   "accessToken": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
   "tokenType": "Access",
   "companyId": 1,
   "companyName": "Minha Empresa",
   "companyEmail": "contato@empresa.com",
-  "expiresAt": null,
-  "message": null
+  "blockedContactsEnabled": true,
+  "pollCampaignsEnabled": true,
+  "expiresAt": null
 }
 ```
 
@@ -130,125 +144,138 @@ A API suporta diversos tipos de mensagem para atender diferentes necessidades:
 | Tipo | Descrição | Campos Obrigatórios |
 |------|-----------|-------------------|
 | **TEXT** | Mensagem de texto simples | `message` |
-| **MEDIA** | Imagem, vídeo ou documento | `message`, `mediaUrl`, `mediaType` |
-| **AUDIO** | Áudio/arquivo de voz | `message`, `mediaUrl` |
-| **LIST** | Lista interativa | `message` |
-| **BUTTON** | Botões interativos | `message` |
-| **TEMPLATE** | Templates aprovados | `message` |
+| **IMAGE** | Imagem com legenda opcional | `mediaUrl`, `fileName`, `caption` |
+| **VIDEO** | Vídeo com legenda opcional | `mediaUrl`, `fileName`, `caption` |
+| **AUDIO** | Áudio/arquivo de voz | `mediaUrl` |
+| **DOCUMENT** | Documentos (PDF, DOC, etc) | `mediaUrl`, `fileName` |
+| **POLL** | Enquetes interativas | `pollData` |
 
 <CardGroup cols={3}>
   <Card title="Texto" icon="type" color="#16a34a">
-    Mensagens de texto puro com suporte a variáveis
+    Mensagens de texto puro com suporte a emojis e formatação
   </Card>
   <Card title="Mídia" icon="image" color="#6366f1">
-    Imagens, vídeos e documentos com legendas
+    Imagens, vídeos, áudios e documentos
   </Card>
-  <Card title="Interativo" icon="cursor-click" color="#8b5cf6">
-    Listas e botões para maior engajamento
+  <Card title="Enquetes" icon="list-check" color="#8b5cf6">
+    Enquetes interativas com múltiplas opções
+  </Card>
+</CardGroup>
+
+## Status de Campanhas
+
+As campanhas seguem um ciclo de vida bem definido:
+
+<CardGroup cols={2}>
+  <Card title="DRAFT" icon="file-text" color="#6b7280">
+    Rascunho - campanha criada mas não iniciada
+  </Card>
+  <Card title="SCHEDULED" icon="clock" color="#3b82f6">
+    Agendada - programada para execução futura
+  </Card>
+  <Card title="RUNNING" icon="play" color="#16a34a">
+    Em execução - enviando mensagens ativamente
+  </Card>
+  <Card title="PAUSED" icon="pause" color="#f59e0b">
+    Pausada - temporariamente suspensa
+  </Card>
+  <Card title="COMPLETED" icon="check-circle" color="#10b981">
+    Concluída - todas as mensagens enviadas
+  </Card>
+  <Card title="CANCELLED" icon="x-circle" color="#ef4444">
+    Cancelada - interrompida permanentemente
+  </Card>
+</CardGroup>
+
+## Interface Web
+
+O sistema inclui uma interface web moderna com:
+
+<CardGroup cols={2}>
+  <Card title="Dashboard" icon="chart-line" color="#16a34a">
+    Visão geral com métricas e atividades recentes
+  </Card>
+  <Card title="Campanhas" icon="megaphone" color="#3b82f6">
+    Gerenciamento completo de campanhas
+  </Card>
+  <Card title="Configurações" icon="settings" color="#6366f1">
+    Perfil, bloqueio inteligente e conexões
+  </Card>
+  <Card title="Super Admin" icon="shield" color="#f59e0b">
+    Painel administrativo com configurações avançadas
   </Card>
 </CardGroup>
 
 ## Fluxo Básico
 
-Siga estes passos para começar a usar a API:
+Siga estes passos para começar a usar o sistema:
 
 <CardGroup cols={2}>
-  <Card title="1. Registre sua empresa" icon="user-plus" href="/api-reference/auth/register">
-    Obtenha um access token para autenticação
+  <Card title="1. Faça login" icon="sign-in" href="/frontend/login">
+    Acesse o sistema com suas credenciais
   </Card>
-  <Card title="2. Crie uma campanha" icon="plus" href="/api-reference/campaigns/create">
+  <Card title="2. Configure WhatsApp" icon="message-circle" href="/frontend/automations/whatsapp-setup">
+    Conecte sua instância do WhatsApp
+  </Card>
+  <Card title="3. Crie uma campanha" icon="plus" href="/frontend/campaigns/creating">
     Configure contatos, mensagem e parâmetros
   </Card>
-  <Card title="3. Acompanhe o progresso" icon="chart-line" href="/api-reference/campaigns/get">
-    Monitore o status e métricas em tempo real
-  </Card>
-  <Card title="4. Gerencie campanhas" icon="settings" href="/api-reference/campaigns/pause">
-    Pause, retome ou cancele conforme necessário
-  </Card>
-</CardGroup>
-
-## Métricas e Monitoramento
-
-A API fornece métricas detalhadas para acompanhamento das campanhas:
-
-<ResponseExample>
-
-```json Exemplo de Métricas
-{
-  "id": 1,
-  "name": "Campanha Marketing",
-  "status": "ACTIVE",
-  "totalContacts": 1000,
-  "sentMessages": 750,
-  "failedMessages": 50,
-  "remainingMessages": 200,
-  "createdAt": "2024-01-15T10:30:00",
-  "message": null
-}
-```
-
-</ResponseExample>
-
-<CardGroup cols={2}>
-  <Card title="Mensagens Enviadas" icon="check-circle" color="#16a34a">
-    Contador de mensagens enviadas com sucesso
-  </Card>
-  <Card title="Mensagens Falhadas" icon="x-circle" color="#ef4444">
-    Contador de falhas com detalhes do erro
-  </Card>
-  <Card title="Status de Campanhas" icon="activity" color="#6366f1">
-    Progresso em tempo real das campanhas
-  </Card>
-  <Card title="Filas de Processamento" icon="layers" color="#8b5cf6">
-    Status das filas de mensagens pendentes
+  <Card title="4. Acompanhe" icon="chart-line" href="/frontend/dashboard">
+    Monitore o progresso em tempo real
   </Card>
 </CardGroup>
 
 ## Configuração Rápida
 
-Para desenvolvedores que desejam executar a API localmente:
+Para desenvolvedores que desejam executar o sistema localmente:
 
 <CodeGroup>
 
-```bash Configuração Local
+```bash Docker Compose
 # Clone o repositório
 git clone https://github.com/matheusluislorscheiter/api-disparador
 
 # Configure as variáveis de ambiente
-export DB_HOST=localhost
-export DB_PORT=5432
-export DB_NAME=api-disparador
-export DB_USER=postgres
-export DB_PASSWORD=password
-export REDIS_HOST=localhost
-export REDIS_PORT=6379
+cp .env.example .env
 
-# Execute a aplicação
+# Execute com Docker Compose
+docker-compose up -d
+```
+
+```bash Execução Manual
+# Backend
+cd backend
 ./mvnw spring-boot:run
+
+# Frontend (em outro terminal)
+cd frontend
+npm install
+npm run dev
 ```
 
 </CodeGroup>
 
 <Note>
-A aplicação estará disponível em `http://localhost:80` após a inicialização.
+- Backend: `http://localhost:8080`
+- Frontend: `http://localhost:5173`
+- PostgreSQL: `localhost:5432`
+- Redis: `localhost:6379`
 </Note>
 
-## Status de Campanhas
-
-As campanhas podem ter os seguintes status:
+## Recursos Avançados
 
 <CardGroup cols={2}>
-  <Card title="ACTIVE" icon="play" color="#16a34a">
-    Campanha em execução, enviando mensagens
+  <Card title="Restrições por Empresa" icon="lock" color="#ef4444">
+    Configure funcionalidades disponíveis por empresa
   </Card>
-  <Card title="PAUSED" icon="pause" color="#eab308">
-    Campanha pausada temporariamente
+  <Card title="Integração N8N" icon="workflow" color="#f59e0b">
+    Automações avançadas com N8N
   </Card>
-  <Card title="CANCELLED" icon="stop" color="#ef4444">
-    Campanha cancelada permanentemente
+  <Card title="Múltiplas Instâncias" icon="layers" color="#6366f1">
+    Suporte a múltiplas instâncias Evolution API
   </Card>
-  <Card title="COMPLETED" icon="check" color="#6366f1">
-    Campanha finalizada com sucesso
+  <Card title="Bancos de Dados Externos" icon="database" color="#16a34a">
+    Importe contatos de bancos externos
   </Card>
 </CardGroup>
 
@@ -260,27 +287,27 @@ Explore a documentação para começar:
   <Card title="Quickstart" icon="rocket" href="/quickstart">
     Comece rapidamente com exemplos práticos
   </Card>
-  <Card title="Autenticação" icon="shield" href="/authentication">
-    Configure sua conta e obtenha tokens
-  </Card>
-  <Card title="Criando Campanhas" icon="plus-circle" href="/campaigns/creating">
-    Aprenda a criar sua primeira campanha
+  <Card title="Interface Web" icon="browser" href="/frontend/introduction">
+    Conheça a interface web do sistema
   </Card>
   <Card title="API Reference" icon="book" href="/api-reference/auth/register">
     Documentação completa de todos os endpoints
+  </Card>
+  <Card title="Troubleshooting" icon="help-circle" href="/troubleshooting">
+    Solução de problemas comuns
   </Card>
 </CardGroup>
 
 ## Suporte e Recursos
 
 <CardGroup cols={3}>
-  <Card title="Documentação" icon="book-open" href="/api-reference/auth/register">
-    Consulte a documentação completa da API
-  </Card>
   <Card title="GitHub" icon="github" href="https://github.com/matheusluislorscheiter/api-disparador">
-    Acesse o código fonte e reporte issues
+    Código fonte e issues
   </Card>
-  <Card title="Suporte" icon="help-circle">
-    Entre em contato para suporte técnico
+  <Card title="Email" icon="envelope" href="mailto:suporte@chavemestragestao.com.br">
+    Suporte técnico por email
+  </Card>
+  <Card title="WhatsApp" icon="whatsapp" href="https://wa.me/5548988420158">
+    Suporte via WhatsApp
   </Card>
 </CardGroup>

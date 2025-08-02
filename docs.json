@@ -28,6 +28,7 @@
               "concepts",
               "media-features",
               "campaign-status-reference",
+              "blocked-contacts-concept",
               "deployment",
               "configuration",
               "monitoring"
@@ -47,6 +48,8 @@
           {
             "group": "Autenticação",
             "pages": [
+              "api-reference/auth/login",
+              "api-reference/auth/me",
               "api-reference/auth/register"
             ]
           },
@@ -59,6 +62,17 @@
               "api-reference/campaigns/pause",
               "api-reference/campaigns/resume",
               "api-reference/campaigns/cancel"
+            ]
+          },
+          {
+            "group": "Contatos Bloqueados",
+            "pages": [
+              "api-reference/blocked-contacts/list",
+              "api-reference/blocked-contacts/block",
+              "api-reference/blocked-contacts/unblock",
+              "api-reference/blocked-contacts/import",
+              "api-reference/blocked-contacts/check",
+              "api-reference/blocked-contacts/stats"
             ]
           },
           {
@@ -87,7 +101,8 @@
               "frontend/dashboard",
               "frontend/campaigns",
               "frontend/automations",
-              "frontend/settings"
+              "frontend/settings",
+              "frontend/settings/blocked-contacts"
             ]
           },
           {

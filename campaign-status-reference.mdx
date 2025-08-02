@@ -1,306 +1,395 @@
 ---
-title: "Status e Tipos de Campanha"
-description: "Referência completa dos status e tipos de campanha na API Disparador"
+title: "Status de Campanhas"
+description: "Referência completa dos status de campanhas no Sistema Disparador"
 ---
 
 <Note>
-Esta página descreve todos os status e tipos possíveis para campanhas na API Disparador, incluindo transições válidas e comportamentos esperados.
+Esta página descreve todos os status possíveis para campanhas, incluindo transições válidas e comportamentos esperados.
 </Note>
 
 ## Status de Campanha
 
-As campanhas possuem 6 status diferentes que representam seu ciclo de vida:
+As campanhas possuem 6 status principais que representam seu ciclo de vida:
 
 <CardGroup cols={2}>
-  <Card title="DRAFT" icon="file-edit" color="#6b7280">
-    **Rascunho** - Campanha criada mas ainda não executada
+  <Card title="DRAFT" icon="file-text" color="#6b7280">
+    **Rascunho** - Campanha criada mas ainda não iniciada
   </Card>
-  <Card title="SCHEDULED" icon="calendar" color="#2563eb">
+  <Card title="SCHEDULED" icon="clock" color="#8b5cf6">
     **Agendada** - Campanha programada para execução futura
   </Card>
-  <Card title="RUNNING" icon="play-circle" color="#16a34a">
-    **Executando** - Campanha em execução ativa
+  <Card title="RUNNING" icon="play" color="#16a34a">
+    **Em Execução** - Campanha enviando mensagens ativamente
   </Card>
-  <Card title="PAUSED" icon="pause-circle" color="#d97706">
-    **Pausada** - Campanha temporariamente pausada
+  <Card title="PAUSED" icon="pause" color="#eab308">
+    **Pausada** - Campanha temporariamente suspensa
   </Card>
-  <Card title="COMPLETED" icon="check-circle" color="#7c3aed">
-    **Concluída** - Campanha finalizada com sucesso
+  <Card title="COMPLETED" icon="check-circle" color="#3b82f6">
+    **Concluída** - Todas as mensagens foram processadas
   </Card>
-  <Card title="CANCELLED" icon="x-circle" color="#dc2626">
+  <Card title="CANCELLED" icon="x-circle" color="#ef4444">
     **Cancelada** - Campanha interrompida permanentemente
-  </Card>
-</CardGroup>
-
-## Tipos de Campanha
-
-As campanhas podem ser de 2 tipos distintos:
-
-<CardGroup cols={2}>
-  <Card title="IMMEDIATE" icon="zap" color="#16a34a">
-    **Imediata** - Execução começou imediatamente após criação
-  </Card>
-  <Card title="SCHEDULED" icon="clock" color="#2563eb">
-    **Agendada** - Execução programada para data/hora específica
   </Card>
 </CardGroup>
 
 ## Fluxo de Status
 
-### Campanha Imediata (IMMEDIATE)
+### Diagrama de Transições
 
 ```mermaid
-graph LR
-    A[DRAFT] --> B[RUNNING]
-    B --> C[PAUSED]
-    C --> B
-    B --> D[COMPLETED]
-    B --> E[CANCELLED]
-    C --> E
-```
-
-1. **DRAFT** → **RUNNING**: Quando criada sem agendamento
-2. **RUNNING** → **PAUSED**: Quando pausada pelo usuário
-3. **PAUSED** → **RUNNING**: Quando retomada (até 24h)
-4. **RUNNING** → **COMPLETED**: Quando todas as mensagens são enviadas
-5. **RUNNING/PAUSED** → **CANCELLED**: Quando cancelada pelo usuário
-
-### Campanha Agendada (SCHEDULED)
-
-```mermaid
-graph LR
+graph TD
     A[DRAFT] --> B[SCHEDULED]
-    B --> C[RUNNING]
+    A --> C[RUNNING]
+    B --> C
+    B --> G[CANCELLED]
     C --> D[PAUSED]
     D --> C
     C --> E[COMPLETED]
     C --> F[CANCELLED]
     D --> F
-    B --> F
+    
+    style A fill:#6b7280,color:#fff
+    style B fill:#8b5cf6,color:#fff
+    style C fill:#16a34a,color:#fff
+    style D fill:#eab308,color:#fff
+    style E fill:#3b82f6,color:#fff
+    style F fill:#ef4444,color:#fff
+    style G fill:#ef4444,color:#fff
 ```
-
-1. **DRAFT** → **SCHEDULED**: Quando criada com agendamento futuro
-2. **SCHEDULED** → **RUNNING**: Quando chega o horário agendado
-3. **RUNNING** → **PAUSED**: Quando pausada pelo usuário
-4. **PAUSED** → **RUNNING**: Quando retomada (até 24h)
-5. **RUNNING** → **COMPLETED**: Quando todas as mensagens são enviadas
-6. **SCHEDULED/RUNNING/PAUSED** → **CANCELLED**: Quando cancelada
 
 ## Regras de Transição
 
 ### ✅ Transições Permitidas
 
-| Status Atual | Status Destino | Ação Requerida | Condições |
-|--------------|----------------|----------------|-----------|
-| DRAFT | RUNNING | Criar campanha | Sem agendamento |
-| DRAFT | SCHEDULED | Criar campanha | Com agendamento futuro |
+| Status Atual | Status Destino | Ação/Trigger | Condições |
+|--------------|----------------|--------------|-----------|
+| DRAFT | RUNNING | Criar sem agendamento | Execução imediata |
+| DRAFT | SCHEDULED | Criar com agendamento | Data futura definida |
 | SCHEDULED | RUNNING | Automático | Horário agendado chegou |
-| SCHEDULED | CANCELLED | Cancelar | A qualquer momento |
+| SCHEDULED | CANCELLED | Cancelar | Antes da execução |
 | RUNNING | PAUSED | Pausar | A qualquer momento |
 | RUNNING | COMPLETED | Automático | Todas mensagens enviadas |
 | RUNNING | CANCELLED | Cancelar | A qualquer momento |
-| PAUSED | RUNNING | Retomar | Dentro de 24 horas |
+| PAUSED | RUNNING | Retomar | Dentro do prazo |
 | PAUSED | CANCELLED | Cancelar | A qualquer momento |
 
 ### ❌ Transições Não Permitidas
 
 | Status Atual | Status Destino | Motivo |
 |--------------|----------------|---------|
-| COMPLETED | Qualquer outro | Campanha já finalizada |
-| CANCELLED | Qualquer outro | Campanha foi cancelada |
-| PAUSED | RUNNING | Mais de 24h pausada |
+| COMPLETED | Qualquer | Campanha já finalizada |
+| CANCELLED | Qualquer | Campanha cancelada permanentemente |
+| DRAFT | PAUSED | Não pode pausar antes de iniciar |
+| SCHEDULED | PAUSED | Não pode pausar campanha agendada |
+| PAUSED | SCHEDULED | Não pode reagendar campanha pausada |
 
 ## Comportamentos por Status
 
-### DRAFT
-<div className="info-box">
-  <div className="info-title">Comportamento</div>
-  Status inicial quando a campanha é criada. A campanha ainda não está ativa e pode ser modificada.
+### DRAFT (Rascunho)
+
+<div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+  <div className="font-semibold mb-2">Características</div>
+  
+  - Status inicial de toda campanha criada com `isDraft: true`
+  - Nenhuma mensagem enviada
+  - Pode ser iniciada imediatamente ou agendada
+  - Configurações podem ser alteradas livremente
+  - Sem limite de tempo neste status
 </div>
 
-**Características:**
-- Nenhuma mensagem foi enviada
-- Configurações podem ser alteradas
-- Contatos podem ser adicionados/removidos
-- Pode ser iniciada ou agendada
+**Campos importantes:**
+- `createdAt`: Data de criação
+- `sentCount`: Sempre 0
+- `status`: "DRAFT"
+- `totalContacts`: Número de contatos definidos
 
-### SCHEDULED
-<div className="info-box">
-  <div className="info-title">Comportamento</div>
-  Campanha aguardando o horário programado para iniciar a execução.
+### SCHEDULED (Agendada)
+
+<div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+  <div className="font-semibold mb-2">Características</div>
+  
+  - Campanha aguardando horário programado
+  - Worker verifica a cada minuto por campanhas prontas
+  - Inicia automaticamente no horário definido
+  - Pode ser cancelada antes do início
+  - Notificação enviada quando inicia (se configurado)
 </div>
 
-**Características:**
-- Horário de execução definido no futuro
-- Aguardando trigger automático do scheduler
-- Pode ser cancelada antes da execução
-- Configurações ficam bloqueadas para alteração
+**Campos importantes:**
+- `scheduledFor`: Data/hora programada
+- `status`: "SCHEDULED"
+- `sentCount`: Sempre 0
+- `message`: Pode estar vazio se for enquete
 
-### RUNNING
-<div className="success-box">
-  <div className="success-title">Comportamento</div>
-  Campanha executando ativamente o envio de mensagens.
+### RUNNING (Em Execução)
+
+<div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+  <div className="font-semibold mb-2">Características</div>
+  
+  - Enviando mensagens ativamente
+  - Respeita intervalos configurados
+  - Atualiza contadores em tempo real
+  - Pode ser pausada ou cancelada
+  - Remove automaticamente contatos bloqueados
 </div>
 
-**Características:**
-- Worker processando contatos da fila
-- Mensagens sendo enviadas conforme intervalo configurado
-- Progresso atualizando em tempo real
-- Pode ser pausada ou cancelada
+**Campos importantes:**
+- `startedAt`: Momento do início real
+- `sentCount`: Incrementado a cada envio
+- `failedCount`: Contador de falhas
+- `status`: "RUNNING"
+- `progress`: Percentual calculado
 
-### PAUSED
-<div className="warning-box">
-  <div className="warning-title">Comportamento</div>
-  Campanha temporariamente suspensa. Pode ser retomada em até 24 horas.
+### PAUSED (Pausada)
+
+<div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg">
+  <div className="font-semibold mb-2">Características</div>
+  
+  - Interrupção temporária do envio
+  - Mantém posição na fila de contatos
+  - Pode ser retomada ou cancelada
+  - Tempo máximo de pausa configurável
+  - Estado preservado para continuação
 </div>
 
-**Características:**
-- Envio de mensagens interrompido
-- Progresso preservado
-- Limite de 24 horas para retomada
-- Após 24h, só pode ser cancelada
+**Campos importantes:**
+- `pausedAt`: Momento da pausa
+- `sentCount`: Congelado no valor atual
+- `status`: "PAUSED"
+- `remainingContacts`: Calculado dinamicamente
 
-### COMPLETED
-<div className="success-box">
-  <div className="success-title">Comportamento</div>
-  Campanha finalizada com sucesso. Todas as mensagens foram processadas.
+<Warning>
+Por padrão, campanhas pausadas há mais de 24 horas são canceladas automaticamente.
+</Warning>
+
+### COMPLETED (Concluída)
+
+<div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+  <div className="font-semibold mb-2">Características</div>
+  
+  - Todos os contatos foram processados
+  - Status final bem-sucedido
+  - Não pode ser modificada
+  - Estatísticas finais disponíveis
+  - Notificação de conclusão enviada (se configurado)
 </div>
 
-**Características:**
-- 100% dos contatos processados
-- Estatísticas finais disponíveis
-- Notificação de conclusão enviada (se configurada)
-- Status final imutável
+**Campos importantes:**
+- `completedAt`: Momento da conclusão
+- `sentCount`: Total de enviados com sucesso
+- `failedCount`: Total de falhas
+- `duration`: Tempo total de execução
 
-### CANCELLED
-<div className="warning-box">
-  <div className="warning-title">Comportamento</div>
-  Campanha cancelada permanentemente. Não pode ser retomada.
+### CANCELLED (Cancelada)
+
+<div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
+  <div className="font-semibold mb-2">Características</div>
+  
+  - Interrupção permanente
+  - Não pode ser retomada
+  - Mantém histórico parcial
+  - Libera recursos do sistema
+  - Registra motivo do cancelamento
 </div>
 
-**Características:**
-- Envio interrompido definitivamente
-- Progresso preservado até o momento do cancelamento
-- Estatísticas parciais disponíveis
-- Status final imutável
+**Campos importantes:**
+- `cancelledAt`: Momento do cancelamento
+- `cancelledBy`: Usuário ou sistema
+- `sentCount`: Mensagens enviadas antes do cancelamento
+- `reason`: Motivo (manual, timeout, erro)
 
-## Validações da API
+## Campos de Controle
 
-### Endpoint: Pausar Campanha
+### Timestamps
+
+```typescript
+interface CampaignTimestamps {
+  createdAt: Date;         // Criação da campanha
+  scheduledFor?: Date;     // Agendamento (se aplicável)
+  startedAt?: Date;        // Início real da execução
+  pausedAt?: Date;         // Última pausa
+  resumedAt?: Date;        // Última retomada
+  completedAt?: Date;      // Conclusão
+  cancelledAt?: Date;      // Cancelamento
+  updatedAt: Date;         // Última modificação
+}
+```
+
+### Contadores
+
+```typescript
+interface CampaignCounters {
+  totalContacts: number;         // Total de contatos
+  sentCount: number;             // Mensagens enviadas
+  failedCount: number;           // Falhas de envio
+  blockedContactsRemoved: number; // Removidos por bloqueio
+  progress: number;              // Percentual (0-100)
+}
+```
+
+## API de Transições
+
+### Pausar Campanha
+
 ```http
 PUT /api/campaigns/{id}/pause
+Authorization: Bearer {token}
 ```
 
-**Validações:**
-- Status deve ser `RUNNING`
-- Campanha deve pertencer à empresa autenticada
-- Não pode estar há mais de 24h pausada anteriormente
+**Pré-condições:**
+- Status atual: RUNNING
+- Campanha pertence à empresa do token
 
-### Endpoint: Retomar Campanha
+**Resposta:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 123,
+    "status": "PAUSED",
+    "pausedAt": "2024-01-16T10:30:00Z",
+    "sentCount": 500,
+    "totalContacts": 1000
+  }
+}
+```
+
+### Retomar Campanha
+
 ```http
 PUT /api/campaigns/{id}/resume
+Authorization: Bearer {token}
 ```
 
-**Validações:**
-- Status deve ser `PAUSED`
-- Não pode ter mais de 24 horas pausada
-- Campanha deve pertencer à empresa autenticada
+**Pré-condições:**
+- Status atual: PAUSED
+- Dentro do prazo permitido
+- Evolution API conectada
 
-### Endpoint: Cancelar Campanha
+**Resposta:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 123,
+    "status": "RUNNING",
+    "resumedAt": "2024-01-16T11:00:00Z"
+  }
+}
+```
+
+### Cancelar Campanha
+
 ```http
 PUT /api/campaigns/{id}/cancel
+Authorization: Bearer {token}
 ```
 
-**Validações:**
-- Status NÃO pode ser `COMPLETED` ou `CANCELLED`
-- Campanha deve pertencer à empresa autenticada
+**Pré-condições:**
+- Status atual: SCHEDULED, RUNNING ou PAUSED
+- Campanha pertence à empresa do token
 
-## Códigos de Exemplo
-
-### Verificar Status de Campanha
-
-<CodeGroup>
-
-```bash cURL
-curl -X GET https://{url-key}/api/campaigns/123 \
-  -H "X-Access-Token: {access_token}"
-```
-
-```javascript JavaScript
-const response = await fetch('https://{url-key}/api/campaigns/123', {
-  headers: {
-    'X-Access-Token': 'your-access-token'
+**Resposta:**
+```json
+{
+  "success": true,
+  "data": {
+    "id": 123,
+    "status": "CANCELLED",
+    "cancelledAt": "2024-01-16T11:30:00Z",
+    "cancelledBy": "user@empresa.com",
+    "sentCount": 750
   }
-});
-
-const campaign = await response.json();
-console.log('Status:', campaign.status);
-console.log('Tipo:', campaign.type);
+}
 ```
 
-```python Python
-import requests
+## Webhooks de Status
 
-headers = {'X-Access-Token': 'your-access-token'}
-response = requests.get('https://{url-key}/api/campaigns/123', headers=headers)
+### Eventos Disparados
 
-campaign = response.json()
-print(f"Status: {campaign['status']}")
-print(f"Tipo: {campaign['type']}")
-```
-
-</CodeGroup>
-
-### Lógica de Status em Frontend
-
-<CodeGroup>
-
-```javascript Status Display
-function getStatusDisplay(status) {
-  const statusConfig = {
-    'DRAFT': { label: 'Rascunho', color: 'gray', icon: '📝' },
-    'SCHEDULED': { label: 'Agendada', color: 'blue', icon: '📅' },
-    'RUNNING': { label: 'Executando', color: 'green', icon: '▶️' },
-    'PAUSED': { label: 'Pausada', color: 'yellow', icon: '⏸️' },
-    'COMPLETED': { label: 'Concluída', color: 'purple', icon: '✅' },
-    'CANCELLED': { label: 'Cancelada', color: 'red', icon: '❌' }
+```typescript
+interface StatusChangeEvent {
+  event: "campaign.status_changed";
+  campaignId: number;
+  companyId: number;
+  previousStatus: string;
+  newStatus: string;
+  timestamp: string;
+  metadata: {
+    sentCount?: number;
+    failedCount?: number;
+    progress?: number;
   };
-  
-  return statusConfig[status] || { label: 'Desconhecido', color: 'gray', icon: '❓' };
-}
-
-// Verificar se ações são permitidas
-function canPause(status) {
-  return status === 'RUNNING';
-}
-
-function canResume(status, pausedAt) {
-  if (status !== 'PAUSED') return false;
-  
-  const pausedTime = new Date(pausedAt);
-  const now = new Date();
-  const hoursDiff = (now - pausedTime) / (1000 * 60 * 60);
-  
-  return hoursDiff < 24;
-}
-
-function canCancel(status) {
-  return !['COMPLETED', 'CANCELLED'].includes(status);
 }
 ```
 
-</CodeGroup>
+### Configuração
 
-## Próximos Passos
+Configure URLs de webhook nas configurações da empresa para receber notificações de mudança de status.
 
-<CardGroup cols={3}>
-  <Card title="Criar Campanha" icon="plus" href="/api-reference/campaigns/create">
-    Como criar uma nova campanha
+## Boas Práticas
+
+<CardGroup cols={2}>
+  <Card title="Monitoramento" icon="eye" color="#16a34a">
+    Acompanhe campanhas RUNNING regularmente
   </Card>
-  <Card title="Gerenciar Status" icon="settings" href="/api-reference/campaigns">
-    Operações de status disponíveis
+  <Card title="Timeouts" icon="clock" color="#3b82f6">
+    Configure timeouts apropriados para PAUSED
   </Card>
-  <Card title="Monitoramento" icon="chart-bar" href="/monitoring">
-    Monitore campanhas em tempo real
+  <Card title="Limpeza" icon="trash" color="#8b5cf6">
+    Archive campanhas COMPLETED antigas
+  </Card>
+  <Card title="Logs" icon="file-text" color="#eab308">
+    Mantenha logs de transições para auditoria
   </Card>
 </CardGroup>
+
+## Troubleshooting
+
+### Campanha travada em RUNNING
+
+**Possíveis causas:**
+1. Worker parado ou com erro
+2. Evolution API desconectada
+3. Fila Redis congestionada
+
+**Soluções:**
+1. Verificar logs do worker
+2. Confirmar conexão Evolution
+3. Pausar e retomar campanha
+4. Reiniciar worker se necessário
+
+### Campanha não inicia no horário agendado
+
+**Possíveis causas:**
+1. Fuso horário incorreto
+2. Worker não está rodando
+3. Campanha foi cancelada
+
+**Soluções:**
+1. Verificar configuração de timezone
+2. Confirmar worker ativo
+3. Verificar logs de sistema
+
+### Status inconsistente
+
+**Possíveis causas:**
+1. Modificação manual no banco
+2. Erro durante transição
+3. Concorrência de processos
+
+**Soluções:**
+1. Usar apenas APIs oficiais
+2. Verificar logs de erro
+3. Implementar locks apropriados
+
+## Referência Rápida
+
+| Status | Cor | Pode Pausar | Pode Cancelar | Pode Retomar | É Final |
+|--------|-----|-------------|---------------|--------------|---------|
+| DRAFT | Cinza | ❌ | ❌ | ❌ | ❌ |
+| SCHEDULED | Roxo | ❌ | ✅ | ❌ | ❌ |
+| RUNNING | Verde | ✅ | ✅ | ❌ | ❌ |
+| PAUSED | Amarelo | ❌ | ✅ | ✅ | ❌ |
+| COMPLETED | Azul | ❌ | ❌ | ❌ | ✅ |
+| CANCELLED | Vermelho | ❌ | ❌ | ❌ | ✅ |

@@ -1,0 +1,187 @@
+---
+title: 'Verificar Contatos Bloqueados'
+api: 'POST /api/companies/{companyId}/blocked-contacts/check'
+description: 'Verifica quais números de uma lista estão bloqueados'
+---
+
+<Note>
+  Útil para validar listas de contatos antes de criar campanhas.
+</Note>
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="companyId" type="number" required>
+  ID da empresa (deve corresponder ao token)
+</ParamField>
+
+## Body
+
+<ParamField body="phoneNumbers" type="array" required>
+  Lista de números de telefone para verificar
+  
+  <Note>
+    Máximo recomendado: 1000 números por requisição
+  </Note>
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST https://api.disparador.com/api/companies/1/blocked-contacts/check \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: seu-access-token" \
+  -d '[
+    "5511999887766",
+    "5511888776655",
+    "5511777665544"
+  ]'
+```
+
+```javascript JavaScript
+const phoneNumbers = [
+  '5511999887766',
+  '5511888776655',
+  '5511777665544'
+];
+
+const response = await fetch('https://api.disparador.com/api/companies/1/blocked-contacts/check', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Access-Token': 'seu-access-token'
+  },
+  body: JSON.stringify(phoneNumbers)
+});
+
+const result = await response.json();
+console.log('Bloqueados:', Object.entries(result).filter(([_, blocked]) => blocked));
+```
+
+```python Python
+import requests
+
+url = "https://api.disparador.com/api/companies/1/blocked-contacts/check"
+headers = {
+    'Content-Type': 'application/json',
+    'X-Access-Token': 'seu-access-token'
+}
+phone_numbers = [
+    '5511999887766',
+    '5511888776655',
+    '5511777665544'
+]
+
+response = requests.post(url, json=phone_numbers, headers=headers)
+result = response.json()
+
+for number, is_blocked in result.items():
+    if is_blocked:
+        print(f'{number} está bloqueado')
+```
+
+```php PHP
+<?php
+$url = 'https://api.disparador.com/api/companies/1/blocked-contacts/check';
+$phoneNumbers = [
+    '5511999887766',
+    '5511888776655',
+    '5511777665544'
+];
+
+$options = [
+    'http' => [
+        'header' => "Content-Type: application/json\r\n" .
+                   "X-Access-Token: seu-access-token\r\n",
+        'method' => 'POST',
+        'content' => json_encode($phoneNumbers)
+    ]
+];
+
+$context = stream_context_create($options);
+$result = file_get_contents($url, false, $context);
+$response = json_decode($result, true);
+
+foreach ($response as $number => $isBlocked) {
+    if ($isBlocked) {
+        echo "{$number} está bloqueado\n";
+    }
+}
+?>
+```
+
+</RequestExample>
+
+## Response
+
+Retorna um objeto onde as chaves são os números verificados e os valores são booleanos indicando se estão bloqueados.
+
+<ResponseExample>
+
+```json 200 - Sucesso
+{
+  "5511999887766": true,
+  "5511888776655": false,
+  "5511777665544": true
+}
+```
+
+```json 401 - Token Inválido
+{
+  "error": "Token inválido ou sem permissão"
+}
+```
+
+```json 500 - Erro Interno
+{
+  "error": "Erro ao verificar contatos"
+}
+```
+
+</ResponseExample>
+
+## Caso de Uso
+
+```javascript
+// Filtrar lista antes de criar campanha
+async function filterBlockedContacts(contacts, companyId, token) {
+  const response = await fetch(
+    `https://api.disparador.com/api/companies/${companyId}/blocked-contacts/check`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Token': token
+      },
+      body: JSON.stringify(contacts)
+    }
+  );
+  
+  const blockedStatus = await response.json();
+  
+  // Retorna apenas contatos não bloqueados
+  return contacts.filter(contact => !blockedStatus[contact]);
+}
+
+// Uso
+const allContacts = ['5511999887766', '5511888776655', '5511777665544'];
+const validContacts = await filterBlockedContacts(allContacts, 1, 'seu-token');
+console.log(`${validContacts.length} contatos válidos de ${allContacts.length} total`);
+```
+
+## Performance
+
+<Note>
+- Para listas grandes, considere dividir em lotes de 1000 números
+- A verificação é otimizada e responde rapidamente mesmo para listas grandes
+- Use este endpoint antes de criar campanhas para evitar erros
+</Note>

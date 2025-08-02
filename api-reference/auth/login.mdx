@@ -1,0 +1,215 @@
+---
+title: "Login"
+api: "POST /api/auth/login"
+description: "Autentica uma empresa e retorna o access token"
+---
+
+<Note>
+O token retornado não expira automaticamente e deve ser usado em todas as requisições subsequentes.
+</Note>
+
+## Body
+
+<ParamField body="email" type="string" required>
+  Email da empresa cadastrada
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  Senha da empresa (mínimo 6 caracteres)
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST https://api.disparador.com/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "contato@minhaempresa.com",
+    "password": "senha123"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.disparador.com/api/auth/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    email: 'contato@minhaempresa.com',
+    password: 'senha123'
+  })
+});
+
+const data = await response.json();
+
+if (data.accessToken) {
+  // Salvar o token para usar em requisições futuras
+  localStorage.setItem('accessToken', data.accessToken);
+  console.log('Login realizado com sucesso!');
+} else {
+  console.error('Erro no login:', data.message);
+}
+```
+
+```python Python
+import requests
+
+url = "https://api.disparador.com/api/auth/login"
+payload = {
+    "email": "contato@minhaempresa.com",
+    "password": "senha123"
+}
+
+response = requests.post(url, json=payload)
+data = response.json()
+
+if data.get('accessToken'):
+    # Salvar o token para usar em requisições futuras
+    access_token = data['accessToken']
+    print(f"Login realizado! Token: {access_token}")
+else:
+    print(f"Erro no login: {data.get('message')}")
+```
+
+```php PHP
+<?php
+$url = 'https://api.disparador.com/api/auth/login';
+$data = [
+    'email' => 'contato@minhaempresa.com',
+    'password' => 'senha123'
+];
+
+$options = [
+    'http' => [
+        'header' => "Content-Type: application/json\r\n",
+        'method' => 'POST',
+        'content' => json_encode($data)
+    ]
+];
+
+$context = stream_context_create($options);
+$result = file_get_contents($url, false, $context);
+$response = json_decode($result, true);
+
+if (isset($response['accessToken'])) {
+    // Salvar o token para usar em requisições futuras
+    $accessToken = $response['accessToken'];
+    echo "Login realizado! Token: " . $accessToken;
+} else {
+    echo "Erro no login: " . $response['message'];
+}
+?>
+```
+
+</RequestExample>
+
+## Response
+
+<ResponseField name="accessToken" type="string">
+  Token de acesso único para autenticação. Use no header X-Access-Token
+</ResponseField>
+
+<ResponseField name="tokenType" type="string">
+  Tipo do token. Sempre retorna "Access"
+</ResponseField>
+
+<ResponseField name="companyId" type="number">
+  ID único da empresa no sistema
+</ResponseField>
+
+<ResponseField name="companyName" type="string">
+  Nome da empresa cadastrada
+</ResponseField>
+
+<ResponseField name="companyEmail" type="string">
+  Email da empresa
+</ResponseField>
+
+<ResponseField name="blockedContactsEnabled" type="boolean">
+  Indica se a funcionalidade de bloqueio inteligente está habilitada
+</ResponseField>
+
+<ResponseField name="pollCampaignsEnabled" type="boolean">
+  Indica se a funcionalidade de enquetes está habilitada
+</ResponseField>
+
+<ResponseField name="expiresAt" type="string" nullable>
+  Data de expiração do token. Sempre null (tokens não expiram)
+</ResponseField>
+
+<ResponseField name="message" type="string" nullable>
+  Mensagem de erro. Null em caso de sucesso
+</ResponseField>
+
+<ResponseExample>
+
+```json 200 - Sucesso
+{
+  "accessToken": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "tokenType": "Access",
+  "companyId": 1,
+  "companyName": "Minha Empresa LTDA",
+  "companyEmail": "contato@minhaempresa.com",
+  "blockedContactsEnabled": true,
+  "pollCampaignsEnabled": true,
+  "expiresAt": null,
+  "message": null
+}
+```
+
+```json 400 - Credenciais Inválidas
+{
+  "accessToken": null,
+  "tokenType": "Access",
+  "companyId": null,
+  "companyName": null,
+  "companyEmail": null,
+  "blockedContactsEnabled": null,
+  "pollCampaignsEnabled": null,
+  "expiresAt": null,
+  "message": "Email ou senha incorretos"
+}
+```
+
+```json 400 - Conta Desativada
+{
+  "accessToken": null,
+  "tokenType": "Access",
+  "companyId": null,
+  "companyName": null,
+  "companyEmail": null,
+  "blockedContactsEnabled": null,
+  "pollCampaignsEnabled": null,
+  "expiresAt": null,
+  "message": "Conta desativada. Entre em contato com o suporte"
+}
+```
+
+```json 400 - Dados Inválidos
+{
+  "accessToken": null,
+  "tokenType": "Access",
+  "companyId": null,
+  "companyName": null,
+  "companyEmail": null,
+  "blockedContactsEnabled": null,
+  "pollCampaignsEnabled": null,
+  "expiresAt": null,
+  "message": "Email e senha são obrigatórios"
+}
+```
+
+</ResponseExample>
+
+## Próximos Passos
+
+Após obter o access token:
+
+1. **Armazene o token com segurança** - Use variáveis de ambiente ou storage seguro
+2. **Use o token em todas as requisições** - Adicione no header `X-Access-Token`
+3. **Verifique a validade** - Use o endpoint `/api/auth/me` para validar o token
+
+<Card title="Verificar Token" icon="shield-check" href="/api-reference/auth/me">
+  Verifique se seu token está válido
+</Card>

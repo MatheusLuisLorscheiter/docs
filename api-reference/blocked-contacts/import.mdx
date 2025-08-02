@@ -1,0 +1,294 @@
+---
+title: 'Importar Contatos Bloqueados'
+api: 'POST /api/companies/{companyId}/blocked-contacts/import'
+description: 'Importa uma lista de números para bloquear em lote'
+---
+
+<Note>
+  Ideal para importar listas de opt-out ou bloqueios em massa.
+</Note>
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="companyId" type="number" required>
+  ID da empresa (deve corresponder ao token)
+</ParamField>
+
+## Body
+
+<ParamField body="phoneNumbers" type="array" required>
+  Lista de números de telefone para bloquear
+  
+  <Warning>
+    Limite máximo: 1000 números por importação
+  </Warning>
+</ParamField>
+
+<ParamField body="reason" type="string" optional>
+  Motivo do bloqueio para todos os números
+  
+  Exemplos:
+  - "Importação lista opt-out"
+  - "LGPD - Solicitação de exclusão"
+  - "Lista de números inválidos"
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST https://api.disparador.com/api/companies/1/blocked-contacts/import \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: seu-access-token" \
+  -d '{
+    "phoneNumbers": [
+      "5511999887766",
+      "5511888776655",
+      "5511777665544"
+    ],
+    "reason": "Importação lista opt-out"
+  }'
+```
+
+```javascript JavaScript
+const importData = {
+  phoneNumbers: [
+    '5511999887766',
+    '5511888776655',
+    '5511777665544'
+  ],
+  reason: 'Importação lista opt-out'
+};
+
+const response = await fetch('https://api.disparador.com/api/companies/1/blocked-contacts/import', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Access-Token': 'seu-access-token'
+  },
+  body: JSON.stringify(importData)
+});
+
+const result = await response.json();
+console.log(`Importados: ${result.imported}`);
+console.log(`Já bloqueados: ${result.alreadyBlocked}`);
+console.log(`Inválidos: ${result.invalid}`);
+```
+
+```python Python
+import requests
+
+url = "https://api.disparador.com/api/companies/1/blocked-contacts/import"
+headers = {
+    'Content-Type': 'application/json',
+    'X-Access-Token': 'seu-access-token'
+}
+data = {
+    'phoneNumbers': [
+        '5511999887766',
+        '5511888776655',
+        '5511777665544'
+    ],
+    'reason': 'Importação lista opt-out'
+}
+
+response = requests.post(url, json=data, headers=headers)
+result = response.json()
+
+if result['success']:
+    print(f"Total processados: {result['totalProcessed']}")
+    print(f"Importados com sucesso: {result['imported']}")
+    print(f"Já estavam bloqueados: {result['alreadyBlocked']}")
+    print(f"Números inválidos: {result['invalid']}")
+```
+
+```php PHP
+<?php
+$url = 'https://api.disparador.com/api/companies/1/blocked-contacts/import';
+$data = [
+    'phoneNumbers' => [
+        '5511999887766',
+        '5511888776655',
+        '5511777665544'
+    ],
+    'reason' => 'Importação lista opt-out'
+];
+
+$options = [
+    'http' => [
+        'header' => "Content-Type: application/json\r\n" .
+                   "X-Access-Token: seu-access-token\r\n",
+        'method' => 'POST',
+        'content' => json_encode($data)
+    ]
+];
+
+$context = stream_context_create($options);
+$result = file_get_contents($url, false, $context);
+$response = json_decode($result, true);
+
+if ($response['success']) {
+    echo "Importados: " . $response['imported'] . "\n";
+    echo "Já bloqueados: " . $response['alreadyBlocked'] . "\n";
+    echo "Inválidos: " . $response['invalid'] . "\n";
+}
+?>
+```
+
+</RequestExample>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indica se a operação foi bem-sucedida
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Mensagem de resultado da operação
+</ResponseField>
+
+<ResponseField name="totalProcessed" type="number">
+  Total de números processados
+</ResponseField>
+
+<ResponseField name="imported" type="number">
+  Quantidade de números bloqueados com sucesso
+</ResponseField>
+
+<ResponseField name="alreadyBlocked" type="number">
+  Quantidade de números que já estavam bloqueados
+</ResponseField>
+
+<ResponseField name="invalid" type="number">
+  Quantidade de números inválidos
+</ResponseField>
+
+<ResponseField name="details" type="object" optional>
+  Detalhes sobre números inválidos (quando houver)
+  
+  <Expandable title="Detalhes dos erros">
+    <ResponseField name="invalidNumbers" type="array">
+      Lista dos números que foram considerados inválidos
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+
+```json 200 - Sucesso Total
+{
+  "success": true,
+  "message": "Importação concluída com sucesso",
+  "totalProcessed": 3,
+  "imported": 3,
+  "alreadyBlocked": 0,
+  "invalid": 0
+}
+```
+
+```json 200 - Sucesso Parcial
+{
+  "success": true,
+  "message": "Importação concluída com avisos",
+  "totalProcessed": 5,
+  "imported": 2,
+  "alreadyBlocked": 2,
+  "invalid": 1,
+  "details": {
+    "invalidNumbers": ["123"]
+  }
+}
+```
+
+```json 400 - Limite Excedido
+{
+  "error": "Máximo de 1000 números por importação"
+}
+```
+
+```json 401 - Token Inválido
+{
+  "error": "Token inválido ou sem permissão"
+}
+```
+
+```json 500 - Erro Interno
+{
+  "error": "Erro ao importar contatos"
+}
+```
+
+</ResponseExample>
+
+## Processamento em Lote
+
+Para listas com mais de 1000 números:
+
+```javascript
+async function importLargeBlocklist(allNumbers, companyId, token, reason) {
+  const batchSize = 1000;
+  const results = {
+    totalImported: 0,
+    totalAlreadyBlocked: 0,
+    totalInvalid: 0
+  };
+  
+  // Dividir em lotes
+  for (let i = 0; i < allNumbers.length; i += batchSize) {
+    const batch = allNumbers.slice(i, i + batchSize);
+    
+    const response = await fetch(
+      `https://api.disparador.com/api/companies/${companyId}/blocked-contacts/import`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Access-Token': token
+        },
+        body: JSON.stringify({
+          phoneNumbers: batch,
+          reason: reason
+        })
+      }
+    );
+    
+    const result = await response.json();
+    if (result.success) {
+      results.totalImported += result.imported;
+      results.totalAlreadyBlocked += result.alreadyBlocked;
+      results.totalInvalid += result.invalid;
+    }
+    
+    // Aguardar um pouco entre lotes para não sobrecarregar
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+  
+  return results;
+}
+```
+
+## Boas Práticas
+
+<CardGroup cols={2}>
+  <Card title="Validação Prévia" icon="check" color="#16a34a">
+    Valide os números antes de importar para reduzir erros
+  </Card>
+  <Card title="Motivo Descritivo" icon="file-text" color="#3b82f6">
+    Sempre forneça um motivo claro para facilitar auditoria
+  </Card>
+  <Card title="Lotes Menores" icon="layer-group" color="#ef4444">
+    Use lotes de 500-1000 números para melhor performance
+  </Card>
+  <Card title="Monitoramento" icon="chart-line" color="#8b5cf6">
+    Acompanhe os resultados para identificar problemas
+  </Card>
+</CardGroup>

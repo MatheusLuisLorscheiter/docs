@@ -1,347 +1,273 @@
 ---
 title: "Configurações"
-description: "Personalize e configure o sistema"
+description: "Gerencie suas configurações pessoais e da empresa"
 ---
 
-## Página de Configurações
+## Visão Geral
 
-A página de Configurações permite personalizar o sistema de acordo com as necessidades da sua empresa.
+A página de Configurações permite gerenciar informações pessoais, conexões WhatsApp e acessar áreas administrativas.
 
 <Note>
-  Algumas configurações requerem permissões de administrador.
+  A página foi simplificada e focada nas funcionalidades essenciais, com acesso direto às configurações mais importantes.
 </Note>
 
 ## Seções Disponíveis
 
-<CardGroup cols={3}>
-  <Card title="Perfil da Empresa" icon="building" color="#16a34a">
-    Dados e informações
-  </Card>
-  <Card title="Notificações" icon="bell" color="#2563eb">
-    Alertas e relatórios
-  </Card>
-  <Card title="Preferências" icon="sliders" color="#7c3aed">
-    Interface e comportamento
-  </Card>
-</CardGroup>
-
-## Perfil da Empresa
-
-### Informações Básicas
-
-<Tip>
-  Mantenha estas informações atualizadas para garantir comunicações corretas.
-</Tip>
-
-#### Campos Editáveis
-
-1. **Nome da Empresa**
-   - Aparece em relatórios
-   - Usado em notificações
-
-2. **Email Principal**
-   - Recebe alertas importantes
-   - Usado para recuperação
-
-3. **Telefone**
-   - Contato administrativo
-   - Formato: +55 11 99999-9999
-
-4. **Endereço**
-   - Informação legal
-   - Pode ser usado em faturas
-
-### Logo e Identidade Visual
+A página é organizada em cards distintos:
 
 <CardGroup cols={2}>
-  <Card title="Logo da Empresa" icon="image">
-    - Formato: PNG, JPG, SVG
-    - Tamanho máximo: 2MB
-    - Proporção recomendada: 1:1
+  <Card title="Conexão Evolution API" icon="whatsapp" color="#16a34a">
+    Status e gerenciamento da conexão WhatsApp
   </Card>
-  <Card title="Cores do Tema" icon="palette">
-    - Cor primária
-    - Cor secundária
-    - Aplicadas na interface
+  <Card title="Informações do Perfil" icon="user" color="#3b82f6">
+    Dados da conta e alteração de senha
+  </Card>
+  <Card title="Bloqueio Inteligente" icon="user-x" color="#ef4444">
+    Gerenciamento de contatos bloqueados
+  </Card>
+  <Card title="Área Super Admin" icon="shield" color="#eab308">
+    Acesso às configurações avançadas
   </Card>
 </CardGroup>
 
-## Configurações de Notificações
+## Conexão Evolution API
 
-### Tipos de Notificação
+### Card de Status
+
+O primeiro card mostra o status atual da conexão WhatsApp:
+
+#### Informações Exibidas
+- **Instância**: Nome da instância conectada
+- **Status**: Badge colorido indicando o estado
+  - 🟢 **Conectado** - WhatsApp ativo e pronto
+  - 🔴 **Desconectado** - Necessita reconexão
+  - 🟡 **Conectando** - Em processo de conexão
+- **Número**: Telefone conectado (quando disponível)
+
+#### Ações Disponíveis
+
+<Tabs>
+  <Tab title="Quando Desconectado">
+    - **Gerar QR Code** - Inicia processo de conexão
+    - **Atualizar Status** - Verifica estado atual
+  </Tab>
+  <Tab title="Quando Conectado">
+    - **Desconectar** - Remove a conexão atual
+    - **Atualizar Status** - Verifica estado atual
+  </Tab>
+</Tabs>
+
+### Modal QR Code
+
+Ao clicar em "Gerar QR Code":
+1. Modal abre com código QR
+2. Instruções para escanear
+3. Código expira em 60 segundos
+4. Opção de gerar novo código
+
+### Estados de Carregamento
+
+- **Gerando QR**: Spinner com mensagem
+- **Desconectando**: Botão desabilitado
+- **Atualizando**: Ícone de refresh animado
+
+## Informações do Perfil
+
+### Dados Exibidos
+
+- **Email**: Email de login da conta
+- **ID da Empresa**: Identificador único
+- Descrição sobre atualização de dados
+
+### Alteração de Credenciais
+
+<Info>
+  O botão "Alterar Email ou Senha" abre um modal para atualização segura dos dados de acesso.
+</Info>
+
+#### Modal de Perfil
+
+Permite alterar:
+- **Email de Login** - Com confirmação
+- **Senha** - Com validação de força
+- Requer senha atual para confirmar
+
+## Bloqueio Inteligente
+
+### Sobre a Funcionalidade
+
+Sistema que filtra automaticamente contatos bloqueados de todas as campanhas.
 
 <Warning>
-  Configure corretamente para não perder informações importantes sobre suas campanhas.
+  Esta funcionalidade pode estar desabilitada para algumas empresas. Verifique com o administrador.
 </Warning>
 
-#### 📱 WhatsApp
+### Estados do Card
 
-Configure número para receber:
-- ✅ Relatórios de campanha concluída
-- ✅ Alertas de instância desconectada
-- ✅ Resumo diário
-- ✅ Avisos de erro
+<Tabs>
+  <Tab title="Habilitado">
+    - Descrição completa da funcionalidade
+    - Botão vermelho "Gerenciar Contatos Bloqueados"
+    - Nota sobre filtragem automática
+  </Tab>
+  <Tab title="Desabilitado">
+    - Mensagem em vermelho informando
+    - Botão cinza desabilitado
+    - Orientação para contatar admin
+  </Tab>
+</Tabs>
 
-#### 📧 Email
+### Modal de Contatos Bloqueados
 
-Configure endereços para:
-- Relatórios detalhados
-- Backups de dados
-- Alertas de segurança
-- Atualizações do sistema
+Ao clicar no botão (quando habilitado):
+- Lista de contatos bloqueados
+- Opção de adicionar novos
+- Importação em massa
+- Remoção individual
 
-### Configurar Notificações WhatsApp
+## Área Super Admin
 
-1. **Digite o número**
-   ```
-   5511999999999
-   ```
+### Acesso Administrativo
 
-2. **Selecione eventos**
-   - [ ] Campanha iniciada
-   - [x] Campanha concluída
-   - [x] Erro em campanha
-   - [x] Instância desconectada
+Card especial para acessar configurações avançadas da empresa.
 
-3. **Configure horários**
-   - Ativo das: 08:00 às 22:00
-   - Dias: Segunda a Sábado
+<Note>
+  Redireciona para `/empresa/{companyId}/super-admin` com autenticação adicional.
+</Note>
 
-### Relatórios Automáticos
+### Funcionalidades do Super Admin
 
-<CardGroup cols={3}>
-  <Card title="Diário" icon="calendar-day">
-    Resumo do dia às 18h
-  </Card>
-  <Card title="Semanal" icon="calendar-week">
-    Relatório toda segunda
-  </Card>
-  <Card title="Mensal" icon="calendar">
-    Análise completa
-  </Card>
-</CardGroup>
+No painel administrativo é possível:
+- Configurar bancos de dados
+- Gerenciar Evolution APIs
+- Configurar N8N
+- Administrar usuários
+- Ver logs e auditoria
 
-## Preferências do Sistema
+### Requisitos
 
-### Interface
+- Senha de administrador da empresa
+- Permissões especiais
+- Acesso restrito por IP (opcional)
 
-#### Tema Visual
+## Interface e Responsividade
 
-<CardGroup cols={2}>
-  <Card title="Modo Claro" icon="sun">
-    Interface clara e limpa
-  </Card>
-  <Card title="Modo Escuro" icon="moon">
-    Reduz cansaço visual
-  </Card>
-</CardGroup>
+### Layout
 
-#### Idioma e Localização
+- Cards com sombra e bordas arredondadas
+- Espaçamento consistente entre seções
+- Ícones ilustrativos em cada título
 
-- **Idioma**: Português (BR)
-- **Formato de Data**: DD/MM/AAAA
-- **Formato de Hora**: 24h
-- **Fuso Horário**: America/Sao_Paulo
+### Dark Mode
 
-### Comportamento
+<Info>
+  Todos os elementos se adaptam automaticamente ao tema escuro do sistema.
+</Info>
 
-#### Campanhas
+Adaptações incluem:
+- Fundos escuros para cards
+- Textos com contraste apropriado
+- Botões com cores ajustadas
+- Transições suaves
 
-1. **Valores Padrão**
-   - Intervalo mínimo: 3 segundos
-   - Intervalo máximo: 30 segundos
-   - Horário permitido: 08:00 - 22:00
+### Mobile
 
-2. **Validações**
-   - [x] Verificar números duplicados
-   - [x] Validar formato de número
-   - [x] Alertar campanhas grandes (>1000)
+Em dispositivos móveis:
+- Cards empilhados verticalmente
+- Botões ocupam largura total
+- Modais em tela cheia
+- Touch-friendly
 
-#### Dashboard
+## Mensagens e Feedback
 
-- **Atualização automática**: A cada 30 segundos
-- **Período padrão**: Últimos 7 dias
-- **Métricas visíveis**: Personalizável
+### Toast Notifications
 
-## Segurança e Privacidade
+Ações geram notificações:
+- ✅ "QR Code gerado"
+- ✅ "Desconectado com sucesso"
+- ❌ "Erro ao gerar QR Code"
+- ❌ "Erro ao desconectar"
+- ❌ "Erro ao acessar área administrativa"
 
-### Autenticação
+### Estados de Loading
 
-<Warning>
-  Mantenha suas credenciais seguras e atualize regularmente.
-</Warning>
+- Botões mostram estado de carregamento
+- Desabilitados durante processamento
+- Spinners animados onde apropriado
 
-#### Senha
+## Integração com API
 
-- **Alterar senha**
-  - Senha atual
-  - Nova senha (mín. 8 caracteres)
-  - Confirmar nova senha
+### Endpoints Utilizados
 
-- **Requisitos**
-  - ✅ Mínimo 8 caracteres
-  - ✅ Letras e números
-  - ✅ Recomendado: símbolos
+```typescript
+// Status da instância Evolution
+GET /api/evolution/instance/status
 
-#### Sessões Ativas
+// Gerar QR Code
+GET /api/evolution/instance/qrcode
 
-Visualize e gerencie:
-- Dispositivos conectados
-- Última atividade
-- Localização (IP)
-- Opção de desconectar
+// Desconectar instância
+DELETE /api/evolution/instance/logout
 
-### Privacidade de Dados
-
-<CardGroup cols={2}>
-  <Card title="Retenção de Dados" icon="database">
-    - Logs: 90 dias
-    - Campanhas: 1 ano
-    - Configurável
-  </Card>
-  <Card title="Exportação" icon="download">
-    - Baixar todos os dados
-    - Formato: JSON/CSV
-    - Inclui campanhas e contatos
-  </Card>
-</CardGroup>
-
-## Integrações
-
-### APIs e Webhooks
-
-#### Token de API
-
-```
-Seu token: xxxxxx-xxxxxx-xxxxxx-xxxxxx
+// Gerenciar contatos bloqueados
+GET/POST/DELETE /api/companies/{companyId}/blocked-contacts
 ```
 
-<Tip>
-  Use este token para integrar com sistemas externos. Mantenha-o seguro!
-</Tip>
+## Fluxo de Navegação
 
-#### Webhooks Globais
+```mermaid
+graph TD
+    A[Settings] --> B[Evolution API]
+    A --> C[Perfil]
+    A --> D[Bloqueados]
+    A --> E[Super Admin]
+    B --> F[Modal QR Code]
+    C --> G[Modal Perfil]
+    D --> H[Modal Contatos]
+    E --> I[/empresa/id/super-admin]
+```
 
-Configure URLs para receber eventos:
-
-1. **URL do Webhook**
-   ```
-   https://seu-sistema.com/webhook
-   ```
-
-2. **Eventos**
-   - [ ] Nova campanha
-   - [x] Campanha concluída
-   - [x] Instância conectada
-   - [x] Instância desconectada
-
-3. **Headers Customizados**
-   ```
-   X-API-Key: seu-token
-   Content-Type: application/json
-   ```
-
-## Configurações Avançadas
-
-### Limites e Quotas
-
-<Warning>
-  Ajuste com cuidado. Limites muito altos podem causar problemas.
-</Warning>
-
-#### Por Campanha
-- Máximo de contatos: 10.000
-- Timeout de campanha: 24 horas
-- Tentativas de retry: 3
-
-#### Por Instância
-- Mensagens/dia: 1.000
-- Mensagens/hora: 100
-- Pausa após erro: 5 minutos
-
-### Backup e Restauração
+## Dicas de Uso
 
 <CardGroup cols={2}>
-  <Card title="Backup Automático" icon="save">
-    - Frequência: Diário
-    - Horário: 03:00
-    - Retenção: 30 dias
+  <Card title="WhatsApp Estável" icon="whatsapp" color="#16a34a">
+    Mantenha o WhatsApp do celular sempre conectado à internet
   </Card>
-  <Card title="Backup Manual" icon="download">
-    - Exportar agora
-    - Incluir: Tudo
-    - Formato: ZIP
+  <Card title="Senha Forte" icon="lock" color="#3b82f6">
+    Use senhas complexas e únicas para maior segurança
+  </Card>
+  <Card title="Lista Limpa" icon="user-check" color="#ef4444">
+    Revise periodicamente os contatos bloqueados
+  </Card>
+  <Card title="Backup Regular" icon="save" color="#eab308">
+    Use o painel admin para fazer backups dos dados
   </Card>
 </CardGroup>
-
-## Logs e Auditoria
-
-### Visualizar Logs
-
-Filtros disponíveis:
-- **Período**: Últimos 7 dias
-- **Tipo**: Todos
-- **Usuário**: Todos
-- **Ação**: Todas
-
-### Tipos de Log
-
-1. **Acesso**
-   - Login/Logout
-   - Tentativas falhas
-   - Mudanças de senha
-
-2. **Campanhas**
-   - Criação
-   - Modificação
-   - Execução
-
-3. **Sistema**
-   - Configurações alteradas
-   - Erros
-   - Manutenção
 
 ## Solução de Problemas
 
-<Expandable title="Não consigo salvar configurações">
-  - Verifique permissões da conta
-  - Tente fazer logout e login
-  - Limpe cache do navegador
-</Expandable>
+### QR Code não aparece
+1. Verifique conexão com internet
+2. Confirme que Evolution API está configurada
+3. Tente atualizar a página
+4. Contate o administrador
 
-<Expandable title="Notificações não chegam">
-  - Confirme número correto
-  - Verifique horários configurados
-  - Teste com notificação manual
-</Expandable>
+### Bloqueio desabilitado
+1. Funcionalidade depende do plano
+2. Administrador pode habilitar
+3. Verifique com suporte
 
-<Expandable title="Tema não muda">
-  - Recarregue a página (F5)
-  - Limpe cache do navegador
-  - Verifique configurações do sistema
-</Expandable>
+### Erro ao acessar admin
+1. Confirme ID da empresa
+2. Limpe cookies e cache
+3. Tente logout e login
+4. Verifique permissões
 
-## Dicas de Configuração
+## Limitações
 
-<Tip>
-  **Melhores Práticas:**
-  - Configure notificações para não perder informações
-  - Use senhas fortes e únicas
-  - Faça backups regularmente
-  - Revise logs periodicamente
-  - Mantenha contatos de emergência atualizados
-</Tip>
-
-## Próximos Passos
-
-<CardGroup cols={3}>
-  <Card title="Dashboard" icon="chart-line" href="/frontend/dashboard">
-    Voltar ao painel
-  </Card>
-  <Card title="Campanhas" icon="bullhorn" href="/frontend/campaigns">
-    Gerenciar campanhas
-  </Card>
-  <Card title="Suporte" icon="headset" href="/troubleshooting">
-    Obter ajuda
-  </Card>
-</CardGroup>
+<Warning>
+  - Apenas uma instância WhatsApp por empresa
+  - Bloqueio inteligente pode estar desabilitado
+  - Super Admin requer senha adicional
+  - Algumas configurações só via administrador geral
+</Warning>

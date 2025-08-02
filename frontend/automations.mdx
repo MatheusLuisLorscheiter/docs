@@ -1,325 +1,263 @@
 ---
 title: "Automações"
-description: "Gerencie suas instâncias do WhatsApp"
+description: "Configure integrações e automações avançadas"
 ---
-
-## Página de Automações
-
-A página de Automações é onde você conecta e gerencia suas instâncias do WhatsApp para enviar mensagens.
-
-<Note>
-  Você precisa de pelo menos uma instância conectada para enviar campanhas.
-</Note>
 
 ## Visão Geral
 
-<CardGroup cols={3}>
-  <Card title="Instâncias Ativas" icon="whatsapp" color="#16a34a">
-    WhatsApp conectados e prontos
-  </Card>
-  <Card title="QR Code" icon="qrcode" color="#2563eb">
-    Conecte novos números
-  </Card>
-  <Card title="Monitoramento" icon="activity" color="#7c3aed">
-    Status em tempo real
-  </Card>
-</CardGroup>
+A página de Automações permite configurar e gerenciar integrações com ferramentas externas para automatizar processos.
 
-## Lista de Instâncias
+<Note>
+  Atualmente, a integração principal disponível é com o N8N para workflows automatizados. Outras integrações estão em desenvolvimento.
+</Note>
 
-### Informações Exibidas
+## Interface Principal
 
-Para cada instância, você visualiza:
+### Cards de Automação
 
-1. **Identificação**
-   - Nome da instância
-   - Número do WhatsApp
-   - Avatar/foto do perfil
-
-2. **Status de Conexão**
-   - 🟢 **Conectada**: Pronta para uso
-   - 🟡 **Conectando**: Processando conexão
-   - 🔴 **Desconectada**: Precisa reconectar
-   - ⚫ **Erro**: Problema na instância
-
-3. **Estatísticas**
-   - Campanhas usando a instância
-   - Mensagens enviadas hoje
-   - Última atividade
-
-4. **Ações Disponíveis**
-   - Ver QR Code
-   - Desconectar
-   - Configurações
-   - Excluir
-
-## Conectando uma Instância
-
-### Passo a Passo
-
-1. **Clique em "Nova Instância"**
-   - Botão verde no topo da página
-
-2. **Digite um nome**
-   - Use nomes descritivos
-   - Ex: "Vendas", "Suporte", "Marketing"
-
-3. **Gere o QR Code**
-   - Clique em "Gerar QR Code"
-   - Aguarde o código aparecer
-
-4. **Escaneie com WhatsApp**
-   - Abra WhatsApp no celular
-   - Vá em Configurações > Dispositivos conectados
-   - Toque em "Conectar dispositivo"
-   - Aponte a câmera para o QR Code
-
-5. **Aguarde confirmação**
-   - Status mudará para "Conectada"
-   - Número aparecerá na lista
-
-<Warning>
-  O QR Code expira em 60 segundos. Se expirar, clique em "Gerar Novo QR Code".
-</Warning>
-
-## Gerenciamento de Instâncias
-
-### Estados e Ações
-
-<Expandable title="Instância Conectada">
-  **Ações disponíveis:**
-  - Visualizar estatísticas
-  - Usar em campanhas
-  - Desconectar temporariamente
-  - Configurar webhooks
-</Expandable>
-
-<Expandable title="Instância Desconectada">
-  **Como reconectar:**
-  1. Clique em "Reconectar"
-  2. Escaneie novo QR Code
-  3. Aguarde confirmação
-</Expandable>
-
-<Expandable title="Instância com Erro">
-  **Soluções:**
-  - Verifique conexão internet
-  - Confirme WhatsApp ativo no celular
-  - Tente reconectar
-  - Delete e crie nova se persistir
-</Expandable>
-
-### Configurações da Instância
-
-<CardGroup cols={2}>
-  <Card title="Nome e Identificação" icon="tag">
-    - Renomear instância
-    - Adicionar descrição
-    - Definir tags
-  </Card>
-  <Card title="Limites e Controles" icon="sliders">
-    - Limite diário de mensagens
-    - Horário de funcionamento
-    - Pausas automáticas
-  </Card>
-</CardGroup>
-
-## Recursos Avançados
-
-### Múltiplas Instâncias
-
-<Tip>
-  Use múltiplas instâncias para:
-  - Aumentar velocidade de envio
-  - Separar por departamento
-  - Redundância em caso de falhas
-  - Distribuir carga
-</Tip>
-
-#### Estratégias de Uso
-
-1. **Por Departamento**
-   - Vendas: 1 instância
-   - Suporte: 1 instância
-   - Marketing: 2 instâncias
-
-2. **Por Volume**
-   - Campanhas pequenas: 1 instância
-   - Campanhas grandes: 3+ instâncias
-
-3. **Por Horário**
-   - Comercial: Instâncias 1-2
-   - Noturno: Instância 3
-
-### Balanceamento de Carga
-
-O sistema distribui automaticamente:
-- Mensagens entre instâncias ativas
-- Prioriza instâncias menos utilizadas
-- Evita sobrecarga
-
-### Monitoramento em Tempo Real
+A página apresenta cards para diferentes tipos de automação:
 
 <CardGroup cols={3}>
-  <Card title="Taxa de Envio" icon="tachometer-alt">
-    Mensagens por minuto
+  <Card title="N8N" icon="zap" color="#6366f1">
+    **Disponível** - Automações avançadas com workflows visuais
   </Card>
-  <Card title="Fila de Mensagens" icon="list">
-    Pendentes por instância
+  <Card title="IA - Assistente Virtual" icon="bot" color="#9333ea">
+    **Em Breve** - Assistente inteligente para atendimento automatizado
   </Card>
-  <Card title="Saúde da Conexão" icon="heartbeat">
-    Latência e estabilidade
+  <Card title="E-Mails" icon="mail" color="#3b82f6">
+    **Em Breve** - Automação de campanhas e respostas por e-mail
   </Card>
 </CardGroup>
 
-## Boas Práticas
+## Integração N8N
 
-### Manutenção Preventiva
+### Sobre o N8N
+
+O N8N é uma plataforma de automação de código aberto que permite criar workflows complexos com interface visual.
+
+<Info>
+  A integração com N8N permite criar automações como:
+  - Respostas automáticas baseadas em palavras-chave
+  - Integração com CRMs e outros sistemas
+  - Processamento de dados e relatórios
+  - Gatilhos baseados em eventos
+</Info>
+
+### Requisitos
+
+Para usar a integração N8N:
+1. **Configuração pelo Administrador** - O admin deve configurar a URL e credenciais do N8N
+2. **Workflows Criados** - Os workflows devem ser criados no N8N
+3. **Webhooks Configurados** - Cada workflow deve ter os webhooks apropriados
+
+### Modal de Workflows
+
+Ao clicar no card N8N, um modal é aberto mostrando:
+
+#### Estados Possíveis
+
+<Tabs>
+  <Tab title="N8N Não Configurado">
+    Exibe mensagem informando que é necessário configurar a integração:
+    - Ícone de alerta amarelo
+    - Instruções para contatar o administrador
+    - Fundo amarelo suave
+  </Tab>
+  <Tab title="Sem Workflows">
+    Quando configurado mas sem workflows:
+    - Ícone grande do N8N
+    - Mensagem "Nenhuma automação encontrada"
+    - Instrução para criar workflows no N8N
+  </Tab>
+  <Tab title="Com Workflows">
+    Lista de workflows disponíveis com:
+    - Nome e ID do workflow
+    - Toggle para ativar/desativar
+    - Indicador visual de status
+  </Tab>
+</Tabs>
+
+### Lista de Workflows
+
+Cada workflow é exibido em um card com:
+
+#### Informações
+- **Nome** - Título do workflow
+- **ID** - Identificador único
+- **Status** - Ativo ou inativo
+
+#### Visual
+- **Ícone** - Raio colorido baseado no status
+- **Cores**:
+  - Verde quando ativo
+  - Cinza quando inativo
+- **Toggle** - Botão deslizante para ativar/desativar
+
+#### Ações
+- **Ativar/Desativar** - Toggle switch animado
+- **Atualizar** - Botão de refresh no cabeçalho do modal
+
+### Comportamento
+
+#### Carregamento
+1. Verifica se N8N está configurado
+2. Busca lista de workflows da empresa
+3. Para cada workflow, busca status atualizado
+4. Exibe com indicadores visuais apropriados
+
+#### Ativação/Desativação
+- **Click no Toggle** - Alterna estado do workflow
+- **Feedback Visual** - Toggle animado e mudança de cores
+- **Atualização** - Lista recarrega automaticamente
+- **Desabilitado** - Durante processamento da requisição
+
+## Estados e Feedback
+
+### Carregando
+- Spinner animado centralizado
+- Aparece ao buscar dados do servidor
+
+### Erro de Configuração
+- Mensagem clara sobre necessidade de configuração
+- Orientação para contatar administrador
+- Visual destacado em amarelo
+
+### Vazio
+- Ilustração e mensagem amigável
+- Instruções sobre próximos passos
+- Link implícito para documentação
+
+## Responsividade
+
+A interface se adapta a diferentes tamanhos de tela:
+
+<Tabs>
+  <Tab title="Desktop">
+    - Grid de 3 colunas para cards
+    - Modal amplo com espaço confortável
+    - Todos os elementos visíveis
+  </Tab>
+  <Tab title="Tablet">
+    - Grid de 2 colunas para cards
+    - Modal adaptado
+    - Layout otimizado
+  </Tab>
+  <Tab title="Mobile">
+    - Grid de 1 coluna
+    - Modal em tela cheia
+    - Touch-friendly
+  </Tab>
+</Tabs>
+
+## Dark Mode
+
+Suporte completo a tema escuro:
+- Cards com fundos adaptados
+- Textos com contraste apropriado
+- Borders e shadows ajustados
+- Transições suaves entre temas
+
+## Integração com API
+
+### Endpoints Utilizados
+
+```typescript
+// Verificar configuração N8N
+GET /api/admin/n8n-config
+
+// Listar workflows da empresa
+GET /api/admin/n8n-workflows/{companyId}
+
+// Status de um workflow
+GET /api/n8n/workflows/{workflowId}
+
+// Ativar workflow
+POST /api/n8n/workflows/{workflowId}/activate
+
+// Desativar workflow  
+POST /api/n8n/workflows/{workflowId}/deactivate
+```
+
+## Futuras Integrações
+
+### IA - Assistente Virtual
+<Note>
+  Em desenvolvimento:
+  - Chatbot inteligente com IA
+  - Respostas contextuais
+  - Aprendizado contínuo
+  - Integração com GPT/Claude
+</Note>
+
+### E-Mails
+<Note>
+  Planejado:
+  - Campanhas de email marketing
+  - Respostas automáticas
+  - Templates personalizados
+  - Analytics de abertura
+</Note>
+
+## Configuração Evolution API
 
 <Warning>
-  **Evite problemas:**
-  - Mantenha WhatsApp atualizado
-  - Não use mesmo número em múltiplos lugares
-  - Evite desconectar frequentemente
-  - Monitore limites do WhatsApp
+  A configuração das instâncias Evolution API (WhatsApp) foi movida para a área administrativa e não está mais nesta página.
 </Warning>
 
-### Segurança
+### Onde Configurar Evolution API
 
-1. **Proteção da Conta**
-   - Use números comerciais
-   - Evite números pessoais
-   - Configure 2FA no WhatsApp
+As instâncias Evolution API são configuradas em:
+- **Admin Geral**: `/admin` > Selecionar empresa > Aba "Evolution API"
+- **Admin da Empresa**: `/company-admin` > Aba "Evolution API"
+- **Super Admin**: Acesso direto às configurações
 
-2. **Backup**
-   - Mantenha instância reserva
-   - Documente configurações
-   - Teste reconexão periodicamente
+### O que é Possível Configurar
 
-### Performance
+- Adicionar múltiplas instâncias
+- Definir nome e URL da API
+- Configurar API Key
+- Testar conexão
+- Ativar/desativar instâncias
 
-<Tip>
-  **Otimize seus envios:**
-  - Use 2-3 instâncias para grandes volumes
-  - Alterne instâncias em campanhas longas
-  - Monitore temperatura das contas
-  - Respeite limites do WhatsApp
-</Tip>
-
-## Limites e Restrições
-
-### Limites do WhatsApp
+## Dicas de Uso
 
 <CardGroup cols={2}>
-  <Card title="Conta Nova" icon="seedling">
-    - 250 conversas/dia
-    - Aumenta gradualmente
-    - Evite picos súbitos
+  <Card title="Workflows Eficientes" icon="zap" color="#6366f1">
+    Crie workflows simples e teste antes de complexificar
   </Card>
-  <Card title="Conta Estabelecida" icon="tree">
-    - 1000+ conversas/dia
-    - Baseado no histórico
-    - Mantém com uso regular
+  <Card title="Monitoramento" icon="eye" color="#16a34a">
+    Verifique regularmente o status dos workflows ativos
+  </Card>
+  <Card title="Documentação" icon="book" color="#8b5cf6">
+    Documente seus workflows para facilitar manutenção
+  </Card>
+  <Card title="Backup" icon="save" color="#f59e0b">
+    Exporte workflows importantes do N8N regularmente
   </Card>
 </CardGroup>
-
-### Sinais de Alerta
-
-⚠️ **Atenção para:**
-- Muitas mensagens não entregues
-- Bloqueios temporários
-- Relatos de spam
-- Desconexões frequentes
 
 ## Solução de Problemas
 
-<Expandable title="QR Code não aparece">
-  - Verifique conexão internet
-  - Tente outro navegador
-  - Desabilite bloqueadores
-  - Limpe cache
-</Expandable>
+### N8N não aparece configurado
+1. Verifique com o administrador se foi configurado
+2. Confirme se sua empresa tem permissão
+3. Teste a conexão nas configurações admin
 
-<Expandable title="Instância desconecta sozinha">
-  - Verifique internet do celular
-  - WhatsApp pode estar desatualizado
-  - Celular pode estar sem bateria
-  - Verifique configurações de economia
-</Expandable>
+### Workflows não aparecem
+1. Verifique se foram criados no N8N
+2. Confirme se estão associados à sua empresa
+3. Use o botão refresh para atualizar
 
-<Expandable title="Mensagens não enviando">
-  - Confirme instância conectada
-  - Verifique limites diários
-  - Teste com seu número
-  - Pode estar bloqueada temporariamente
-</Expandable>
+### Toggle não funciona
+1. Verifique conexão com internet
+2. Confirme permissões no N8N
+3. Tente atualizar a página
 
-<Expandable title="Erro ao conectar">
-  - QR Code pode ter expirado
-  - Número já conectado em outro lugar
-  - Limpe dados do navegador
-  - Tente modo incógnito
-</Expandable>
+## Limitações Conhecidas
 
-## Webhooks e Integrações
-
-### Configurar Webhooks
-
-1. **Acesse configurações da instância**
-2. **Adicione URL do webhook**
-3. **Selecione eventos:**
-   - Mensagem recebida
-   - Mensagem enviada
-   - Status alterado
-   - Erro ocorrido
-
-### Eventos Disponíveis
-
-```json
-{
-  "event": "message.received",
-  "instance": "vendas-01",
-  "data": {
-    "from": "5511999999999",
-    "message": "Texto da mensagem",
-    "timestamp": "2024-01-01T10:00:00Z"
-  }
-}
-```
-
-## Estatísticas e Relatórios
-
-### Métricas por Instância
-
-- **Volume diário/mensal**
-- **Taxa de sucesso**
-- **Tempo de atividade**
-- **Velocidade média**
-
-### Exportar Dados
-
-<CardGroup cols={3}>
-  <Card title="Logs Detalhados" icon="file-alt">
-    Histórico completo
-  </Card>
-  <Card title="Resumo Mensal" icon="calendar">
-    Estatísticas do mês
-  </Card>
-  <Card title="Análise de Saúde" icon="heartbeat">
-    Performance e problemas
-  </Card>
-</CardGroup>
-
-## Próximos Passos
-
-<CardGroup cols={3}>
-  <Card title="Conectar WhatsApp" icon="whatsapp" href="/frontend/automations/whatsapp-setup">
-    Guia detalhado
-  </Card>
-  <Card title="Gerenciar Instâncias" icon="cogs" href="/frontend/automations/instance-management">
-    Administração avançada
-  </Card>
-  <Card title="QR Code" icon="qrcode" href="/frontend/automations/qr-code">
-    Processo de conexão
-  </Card>
-</CardGroup>
+<Warning>
+  - Apenas administradores podem configurar N8N
+  - Workflows devem ser criados diretamente no N8N
+  - Não há editor visual de workflows na plataforma
+  - Limite de workflows ativos depende do plano
+</Warning>

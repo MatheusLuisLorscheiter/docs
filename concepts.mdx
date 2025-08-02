@@ -1,425 +1,407 @@
 ---
 title: "Conceitos Fundamentais"
-description: "Entenda os conceitos principais da API Disparador"
+description: "Entenda os conceitos principais do Sistema Disparador"
 ---
 
 <Note>
-Este guia aborda os conceitos fundamentais por trás da API Disparador, explicando como ela se integra com a Evolution API para o envio de mensagens e como nosso sistema de filas garante o processamento eficiente das campanhas.
+Este guia aborda os conceitos fundamentais do Sistema Disparador, explicando a arquitetura, integração com Evolution API, sistema de filas, e principais funcionalidades.
 </Note>
 
 ## Visão Geral da Arquitetura
 
-A API Disparador é construída sobre uma arquitetura robusta que combina:
+O Sistema Disparador é construído sobre uma arquitetura robusta e escalável:
 
 <CardGroup cols={3}>
   <Card title="Spring Boot" icon="server" color="#16a34a">
-    Framework Java para APIs REST
+    Backend Java com APIs REST
+  </Card>
+  <Card title="PostgreSQL" icon="database" color="#336791">
+    Banco de dados relacional
   </Card>
   <Card title="Redis" icon="database" color="#dc2626">
     Sistema de filas e cache
   </Card>
-  <Card title="Evolution API" icon="message-circle" color="#2563eb">
-    Integração com WhatsApp
-  </Card>
 </CardGroup>
+
+### Stack Tecnológica
+
+#### Backend
+- **Java 17** com Spring Boot 3.x
+- **Spring Security** para autenticação
+- **Spring Data JPA** para persistência
+- **Spring Actuator** para monitoramento
+- **Lombok** para redução de boilerplate
+- **Jackson** para serialização JSON
+
+#### Frontend
+- **React 18** com TypeScript
+- **Vite** como build tool
+- **Tailwind CSS** para estilização
+- **React Query** para gerenciamento de estado
+- **React Router** para navegação
+- **React Hot Toast** para notificações
+
+#### Infraestrutura
+- **Docker** para containerização
+- **Kubernetes** ready
+- **GitHub Actions** para CI/CD
+- **Evolution API** para WhatsApp
 
 ## Evolution API
 
-A **Evolution API** é a espinha dorsal para o envio de mensagens de WhatsApp. Nossa API se integra diretamente com ela para:
+A **Evolution API** é o motor de comunicação WhatsApp do sistema:
+
+### Funcionalidades Principais
 
 <CardGroup cols={2}>
-  <Card title="Conectividade" icon="wifi" color="#16a34a">
-    Estabelecer e manter a conexão com as instâncias do WhatsApp
+  <Card title="Multi-Instância" icon="layers" color="#16a34a">
+    Suporte a múltiplas contas WhatsApp simultâneas
   </Card>
-  <Card title="Envio de Mensagens" icon="send" color="#2563eb">
-    Enviar mensagens de texto, mídias e legendas
+  <Card title="Tipos de Mensagem" icon="message-square" color="#2563eb">
+    Texto, imagem, vídeo, documento e enquetes
   </Card>
-  <Card title="Gerenciamento de Instâncias" icon="settings" color="#7c3aed">
-    Utilizar evolutionUrl, evolutionApiKey e evolutionInstance
+  <Card title="QR Code" icon="qrcode" color="#7c3aed">
+    Conexão fácil via QR Code no frontend
   </Card>
-  <Card title="Status de Entrega" icon="check-circle" color="#ea580c">
-    Verificar status de entrega das mensagens
+  <Card title="Webhooks" icon="webhook" color="#ea580c">
+    Callbacks para status de mensagens
   </Card>
 </CardGroup>
 
-### Configuração da Evolution API
+### Configuração por Empresa
 
-Para usar a API Disparador, você precisa configurar:
+Cada empresa pode configurar múltiplas instâncias Evolution:
 
-<ParamField body="evolutionUrl" type="string" required>
-  URL da sua Evolution API (ex: https://sua-evolution-api.com)
-</ParamField>
+```typescript
+interface EvolutionConfig {
+  id: number;
+  name: string;
+  url: string;          // URL da Evolution API
+  apiKey: string;       // Chave de autenticação
+  instanceName: string; // Nome da instância
+  isActive: boolean;    // Status de ativação
+  isConnected: boolean; // Status de conexão
+}
+```
 
-<ParamField body="evolutionApiKey" type="string" required>
-  Sua chave de API da Evolution
-</ParamField>
+## Sistema de Campanhas
 
-<ParamField body="evolutionInstance" type="string" required>
-  Nome da instância do WhatsApp conectada
-</ParamField>
+### Tipos de Campanha
 
-<Warning>
-Certifique-se de que sua Evolution API está configurada e funcionando antes de usar a API Disparador. Para mais detalhes, consulte a [documentação oficial da Evolution API](https://doc.evolution-api.com/v2/pt/get-started/introduction).
-</Warning>
+<Tabs>
+  <Tab title="Imediata">
+    ```json
+    {
+      "name": "Promoção Flash",
+      "message": "Olá {PrimeiroNome}! Aproveite 50% OFF hoje!",
+      "contacts": [...],
+      "evolutionUrl": "https://api.evolution.com",
+      "evolutionApiKey": "sua-chave",
+      "evolutionInstance": "vendas"
+    }
+    ```
+  </Tab>
+  <Tab title="Agendada">
+    ```json
+    {
+      "name": "Lembrete Evento",
+      "message": "{PrimeiroNome}, não esqueça do evento amanhã!",
+      "scheduledFor": "2024-01-20T09:00:00",
+      "contacts": [...],
+      "evolutionUrl": "https://api.evolution.com",
+      "evolutionApiKey": "sua-chave",
+      "evolutionInstance": "eventos"
+    }
+    ```
+  </Tab>
+  <Tab title="Com Mídia">
+    ```json
+    {
+      "name": "Catálogo Produtos",
+      "mediaUrl": "https://exemplo.com/catalogo.pdf",
+      "mediaType": "document",
+      "fileName": "catalogo-2024.pdf",
+      "caption": "Confira nossos produtos!",
+      "contacts": [...],
+      "evolutionUrl": "https://api.evolution.com",
+      "evolutionApiKey": "sua-chave",
+      "evolutionInstance": "marketing"
+    }
+    ```
+  </Tab>
+  <Tab title="Enquete">
+    ```json
+    {
+      "name": "Pesquisa Satisfação",
+      "pollData": {
+        "name": "Como foi sua experiência?",
+        "selectableCount": 1,
+        "options": ["Excelente", "Boa", "Regular", "Ruim"]
+      },
+      "contacts": [...],
+      "evolutionUrl": "https://api.evolution.com",
+      "evolutionApiKey": "sua-chave",
+      "evolutionInstance": "pesquisa"
+    }
+    ```
+  </Tab>
+</Tabs>
 
-## Sistema de Filas de Mensagens
-
-A API Disparador utiliza um robusto sistema de filas de mensagens para processar e disparar campanhas de forma assíncrona e eficiente.
-
-### Benefícios do Sistema de Filas
-
-<CardGroup cols={2}>
-  <Card title="Escalabilidade" icon="trending-up" color="#16a34a">
-    Campanhas com grande número de contatos processadas sem sobrecarga
-  </Card>
-  <Card title="Confiabilidade" icon="shield-check" color="#2563eb">
-    Mensagens enfileiradas e retentadas em caso de falha
-  </Card>
-  <Card title="Agendamento" icon="clock" color="#7c3aed">
-    Campanhas agendadas processadas no momento correto
-  </Card>
-  <Card title="Controle de Fluxo" icon="sliders" color="#ea580c">
-    Intervalo controlado entre envios para evitar bloqueios
-  </Card>
-</CardGroup>
-
-### Como Funciona o Processamento
-
-<CodeGroup>
+### Estados da Campanha
 
 ```mermaid
-graph TD
-    A[Criação da Campanha] --> B[Validação de Dados]
-    B --> C[Inserção na Fila]
-    C --> D[Worker Processa]
-    D --> E[Criação de Tarefas]
-    E --> F[Envio via Evolution API]
-    F --> G[Atualização de Status]
-    G --> H[Notificação de Conclusão]
+graph LR
+    A[DRAFT] --> B[SCHEDULED]
+    A --> C[RUNNING]
+    B --> C
+    C --> D[PAUSED]
+    D --> C
+    C --> E[COMPLETED]
+    C --> F[CANCELLED]
+    D --> F
+    B --> F
+    
+    style A fill:#6b7280
+    style B fill:#8b5cf6
+    style C fill:#16a34a
+    style D fill:#eab308
+    style E fill:#3b82f6
+    style F fill:#ef4444
 ```
-
-</CodeGroup>
-
-#### 1. Criação da Campanha
-
-Ao criar uma campanha via endpoint `POST /api/campaigns`:
-
-- A API valida todos os dados fornecidos
-- Verifica a configuração da Evolution API
-- Insere a campanha no banco de dados
-- Adiciona a campanha à fila de processamento
-
-#### 2. Processamento Assíncrono
-
-Um **worker** (`MessageQueueWorker`) monitora a fila de processamento:
-
-- Detecta novas campanhas automaticamente
-- Processa cada campanha individualmente
-- Cria tarefas de envio para cada contato
-- Gerencia retry automático em caso de falhas
-
-#### 3. Envio de Mensagens
-
-Cada tarefa de envio é processada:
-
-- Respeita intervalos configurados (3-30 segundos)
-- Evita limites de taxa da Evolution API
-- Processa variáveis personalizadas na mensagem
-- Suporta diferentes tipos de mídia
-
-#### 4. Atualização de Status
-
-O status é atualizado em tempo real:
-
-- **Campanha**: progresso geral e contadores
-- **Contatos**: status individual de cada envio
-- **Mensagens**: detalhes de entrega e falhas
-
-### Tecnologias Utilizadas
-
-<CardGroup cols={3}>
-  <Card title="Redis" icon="database" color="#dc2626">
-    Broker da fila com persistência
-  </Card>
-  <Card title="Spring Boot" icon="server" color="#16a34a">
-    Framework principal da aplicação
-  </Card>
-  <Card title="Spring AMQP" icon="message-circle" color="#2563eb">
-    Integração com Redis para filas
-  </Card>
-  <Card title="Workers Dedicados" icon="cpu" color="#7c3aed">
-    Processos em segundo plano
-  </Card>
-  <Card title="Micrometer" icon="chart-bar" color="#ea580c">
-    Métricas e monitoramento
-  </Card>
-  <Card title="Hibernate" icon="database" color="#059669">
-    Persistência de dados
-  </Card>
-</CardGroup>
-
-## Tipos de Campanha
-
-### Campanha Imediata
-
-Campanhas que começam a ser processadas imediatamente após a criação:
-
-<CodeGroup>
-
-```json
-{
-  "name": "Campanha Imediata",
-  "message": "Olá {{PrimeiroNome}}! Bem-vindo!",
-  "contacts": [...],
-  "evolutionUrl": "https://sua-evolution-api.com",
-  "evolutionApiKey": "sua-api-key",
-  "evolutionInstance": "minha-instancia"
-}
-```
-
-</CodeGroup>
-
-### Campanha Agendada
-
-Campanhas programadas para execução futura:
-
-<CodeGroup>
-
-```json
-{
-  "name": "Campanha Agendada",
-  "message": "Lembrete: Reunião amanhã!",
-  "scheduledFor": "2024-01-16T09:00:00",
-  "contacts": [...],
-  "evolutionUrl": "https://sua-evolution-api.com",
-  "evolutionApiKey": "sua-api-key",
-  "evolutionInstance": "minha-instancia"
-}
-```
-
-</CodeGroup>
-
-<Note>
-Campanhas agendadas devem ter pelo menos 5 minutos de antecedência para garantir processamento adequado.
-</Note>
-
-## Estados da Campanha
 
 <CardGroup cols={3}>
   <Card title="DRAFT" icon="file-text" color="#6b7280">
-    Rascunho - campanha criada mas não processada
+    Rascunho salvado
   </Card>
-  <Card title="SCHEDULED" icon="clock" color="#2563eb">
-    Agendada - aguardando horário de execução
+  <Card title="SCHEDULED" icon="clock" color="#8b5cf6">
+    Agendada para futuro
   </Card>
   <Card title="RUNNING" icon="play" color="#16a34a">
-    Executando - enviando mensagens ativamente
+    Enviando ativamente
   </Card>
-  <Card title="PAUSED" icon="pause" color="#ea580c">
-    Pausada - interrompida temporariamente
+  <Card title="PAUSED" icon="pause" color="#eab308">
+    Pausada temporariamente
   </Card>
-  <Card title="COMPLETED" icon="check-circle" color="#059669">
-    Concluída - todas as mensagens processadas
+  <Card title="COMPLETED" icon="check" color="#3b82f6">
+    Finalizada com sucesso
   </Card>
-  <Card title="CANCELLED" icon="x-circle" color="#dc2626">
-    Cancelada - interrompida permanentemente
-  </Card>
-</CardGroup>
-
-## Tipos de Mensagem
-
-### Mensagem de Texto
-
-Mensagem simples de texto com suporte a variáveis:
-
-<CodeGroup>
-
-```json
-{
-  "message": "Olá {{PrimeiroNome}}! Sua compra foi confirmada.",
-  "contacts": [
-    {
-      "phoneNumber": "5511999999999",
-      "name": "João Silva"
-    }
-  ]
-}
-```
-
-</CodeGroup>
-
-### Mensagem com Mídia
-
-Mensagem com imagem, vídeo, áudio ou documento:
-
-<CodeGroup>
-
-```json
-{
-  "message": "Confira nossa nova promoção!",
-  "mediaUrl": "https://exemplo.com/imagem.jpg",
-  "mediaType": "image",
-  "caption": "Oferta especial para você!",
-  "contacts": [...]
-}
-```
-
-</CodeGroup>
-
-#### Suporte a Base64
-
-Você também pode enviar arquivos como dados base64:
-
-<CodeGroup>
-
-```json
-{
-  "message": "Documento importante",
-  "mediaUrl": "data:application/pdf;base64,JVBERi0xLjQKJeLj...",
-  "caption": "Por favor, leia com atenção",
-  "contacts": [...]
-}
-```
-
-</CodeGroup>
-
-### Tipos de Mídia Suportados
-
-<CardGroup cols={2}>
-  <Card title="image" icon="image" color="#16a34a">
-    Imagens (JPG, PNG, GIF, WebP, SVG) - até 5MB
-  </Card>
-  <Card title="video" icon="video" color="#2563eb">
-    Vídeos (MP4, AVI, MOV, WMV, FLV, WebM, MKV, 3GP) - até 16MB
-  </Card>
-  <Card title="audio" icon="music" color="#7c3aed">
-    Áudios (MP3, WAV, OGG, M4A, AAC, OPUS, AMR) - até 16MB
-  </Card>
-  <Card title="document" icon="file-text" color="#ea580c">
-    Documentos (PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, ZIP, RAR, TXT, CSV) - até 100MB
+  <Card title="CANCELLED" icon="x" color="#ef4444">
+    Cancelada permanentemente
   </Card>
 </CardGroup>
 
-<Note>
-**Detecção Automática**: O sistema detecta automaticamente o tipo de mídia e MIME type baseado na extensão do arquivo ou header base64.
+## Sistema de Filas
 
-**Áudio com Texto**: Para áudios, se uma mensagem de texto for fornecida, ela será enviada após o áudio com 1 segundo de intervalo.
-</Note>
+### Arquitetura de Processamento
 
-## Variáveis Personalizadas
+<Info>
+O sistema usa Redis como broker de mensagens para processar campanhas de forma assíncrona e escalável.
+</Info>
 
-A API suporta variáveis personalizadas nas mensagens:
+```mermaid
+sequenceDiagram
+    participant API
+    participant Redis
+    participant Worker
+    participant Evolution
+    
+    API->>Redis: Enfileira campanha
+    Redis->>Worker: Campanha disponível
+    Worker->>Worker: Processa contatos
+    loop Para cada contato
+        Worker->>Evolution: Envia mensagem
+        Evolution->>Worker: Confirmação
+        Worker->>Redis: Atualiza progresso
+    end
+    Worker->>API: Campanha concluída
+```
 
-<CardGroup cols={2}>
-  <Card title="{{NomeCompleto}}" icon="user" color="#16a34a">
-    Nome completo do contato
-  </Card>
-  <Card title="{{PrimeiroNome}}" icon="users" color="#6366f1">
-    Primeiro nome do contato
-  </Card>
-</CardGroup>
+### Benefícios
 
-<CodeGroup>
+1. **Escalabilidade**: Múltiplos workers podem processar em paralelo
+2. **Resiliência**: Falhas são tratadas com retry automático
+3. **Performance**: Processamento assíncrono não bloqueia API
+4. **Controle**: Intervalos configuráveis entre mensagens
 
-```json
-{
-  "message": "Olá {{PrimeiroNome}}! Bem-vindo {{NomeCompleto}}.",
-  "contacts": [
-    {
-      "phoneNumber": "5511999999999",
-      "name": "João Silva"
-    }
-  ]
+## Autenticação e Segurança
+
+### Sistema de Tokens
+
+<Warning>
+Tokens não expiram automaticamente. Revogue manualmente se necessário.
+</Warning>
+
+```typescript
+interface AuthResponse {
+  accessToken: string;
+  tokenType: "Bearer";
+  companyId: number;
+  companyName: string;
+  companyEmail: string;
+  blockedContactsEnabled: boolean;
+  pollCampaignsEnabled: boolean;
+  expiresAt: null; // Tokens não expiram
 }
 ```
 
-</CodeGroup>
-
-## Sistema de Notificações
-
-### Notificação de Conclusão
-
-A API pode enviar notificação quando uma campanha é concluída:
-
-<CodeGroup>
-
-```json
-{
-  "name": "Campanha com Notificação",
-  "message": "Teste de notificação",
-  "notificationPhone": "5511999999999",
-  "contacts": [...]
-}
-```
-
-</CodeGroup>
-
-### Tipos de Notificação
-
-<CardGroup cols={2}>
-  <Card title="Conclusão" icon="check-circle" color="#16a34a">
-    Quando todas as mensagens são processadas
-  </Card>
-  <Card title="Falhas" icon="alert-triangle" color="#dc2626">
-    Quando há falhas significativas
-  </Card>
-  <Card title="Pausa" icon="pause" color="#ea580c">
-    Quando uma campanha é pausada
-  </Card>
-  <Card title="Cancelamento" icon="x-circle" color="#dc2626">
-    Quando uma campanha é cancelada
-  </Card>
-</CardGroup>
-
-## Métricas e Monitoramento
-
-### Métricas Disponíveis
+### Níveis de Acesso
 
 <CardGroup cols={3}>
-  <Card title="Mensagens Enviadas" icon="send" color="#16a34a">
-    Contador de mensagens entregues
+  <Card title="Usuário" icon="user" color="#3b82f6">
+    Acesso às funcionalidades básicas
   </Card>
-  <Card title="Mensagens Falhadas" icon="x-circle" color="#dc2626">
-    Contador de falhas de envio
+  <Card title="Admin Empresa" icon="building" color="#8b5cf6">
+    Configurações da empresa
   </Card>
-  <Card title="Taxa de Sucesso" icon="percent" color="#2563eb">
-    Porcentagem de envios bem-sucedidos
-  </Card>
-  <Card title="Tempo de Processamento" icon="clock" color="#7c3aed">
-    Latência média de envio
-  </Card>
-  <Card title="Campanhas Ativas" icon="play" color="#ea580c">
-    Número de campanhas em execução
-  </Card>
-  <Card title="Fila de Processamento" icon="list" color="#059669">
-    Mensagens aguardando envio
+  <Card title="Super Admin" icon="shield" color="#eab308">
+    Acesso total ao sistema
   </Card>
 </CardGroup>
 
-### Logs e Debugging
+## Contatos Bloqueados
 
-A API fornece logs detalhados para:
+### Sistema de Bloqueio Inteligente
 
-- **Processamento de campanhas**: status e progresso
-- **Envio de mensagens**: sucesso e falhas
-- **Integração Evolution API**: requisições e respostas
-- **Sistema de filas**: performance e gargalos
-- **Erros e exceções**: stack traces completos
+<Note>
+Contatos bloqueados são automaticamente excluídos de todas as campanhas futuras.
+</Note>
 
-## Segurança e Boas Práticas
+#### Funcionalidades
+
+- **Bloqueio Individual**: Via API ou interface
+- **Importação em Massa**: Até 10.000 números por vez
+- **Verificação Automática**: Durante criação de campanhas
+- **Histórico**: Registro de quem e quando bloqueou
+
+#### Estrutura
+
+```typescript
+interface BlockedContact {
+  id: number;
+  companyId: number;
+  phoneNumber: string;
+  reason?: string;
+  blockedBy: string;
+  blockedAt: Date;
+  isActive: boolean;
+}
+```
+
+## Integração com Bancos de Dados
+
+### Fontes de Contatos Dinâmicas
+
+O sistema permite integração com bancos externos para buscar contatos:
 
 <CardGroup cols={2}>
-  <Card title="Tokens Seguros" icon="shield" color="#16a34a">
-    Mantenha access tokens em variáveis de ambiente
+  <Card title="PostgreSQL" icon="database" color="#336791">
+    Suporte nativo otimizado
   </Card>
-  <Card title="HTTPS Obrigatório" icon="lock" color="#2563eb">
-    Sempre use conexões seguras
+  <Card title="MySQL" icon="database" color="#4479a1">
+    Compatibilidade total
   </Card>
-  <Card title="Validação de Dados" icon="check-circle" color="#7c3aed">
-    Valide todos os dados antes do envio
+  <Card title="SQL Server" icon="database" color="#cc2927">
+    Via JDBC driver
   </Card>
-  <Card title="Monitoramento" icon="eye" color="#ea580c">
-    Monitore o status das campanhas
+  <Card title="Oracle" icon="database" color="#f80000">
+    Empresas enterprise
+  </Card>
+</CardGroup>
+
+### Query Builder
+
+Sistema visual para construir queries sem escrever SQL:
+
+1. **Seleção de Tabelas**: Interface intuitiva
+2. **Filtros Visuais**: Arraste e solte condições
+3. **Preview**: Visualize contatos antes de enviar
+4. **Variáveis**: Mapeie colunas para personalização
+
+## Monitoramento e Métricas
+
+### Dashboard em Tempo Real
+
+<Info>
+O dashboard é atualizado manualmente sob demanda para economizar recursos.
+</Info>
+
+#### Métricas Principais
+
+- **Campanhas Ativas**: Em execução no momento
+- **Campanhas Agendadas**: Programadas para futuro
+- **Total de Mensagens**: Contador acumulativo
+- **Taxa de Sucesso**: Percentual de entrega
+
+### Health Checks
+
+Endpoints do Spring Actuator:
+
+```bash
+GET /actuator/health
+GET /actuator/info
+```
+
+Monitora:
+- Status da aplicação
+- Conexão com banco de dados
+- Disponibilidade do Redis
+- Memória e CPU
+
+## Rate Limiting
+
+### Proteção contra Sobrecarga
+
+<Warning>
+Limites são aplicados por empresa para garantir fair use.
+</Warning>
+
+#### Limites Padrão
+
+- **Requisições API**: 100/minuto por empresa
+- **Criação de Campanhas**: 10/hora
+- **Mensagens WhatsApp**: Baseado na Evolution API
+- **Importação de Contatos**: 10.000 por vez
+
+## Webhooks e Notificações
+
+### Sistema de Callbacks
+
+Configure webhooks para receber eventos:
+
+```json
+{
+  "event": "campaign.completed",
+  "campaignId": 123,
+  "companyId": 456,
+  "stats": {
+    "sent": 1000,
+    "failed": 5,
+    "duration": "00:15:32"
+  }
+}
+```
+
+### Notificações WhatsApp
+
+Receba avisos no WhatsApp:
+- Campanha concluída
+- Erros críticos
+- Instância desconectada
+
+## Boas Práticas
+
+<CardGroup cols={2}>
+  <Card title="Intervalos" icon="clock" color="#16a34a">
+    Use 10-30 segundos entre mensagens para evitar bloqueios
+  </Card>
+  <Card title="Horários" icon="calendar" color="#3b82f6">
+    Respeite horário comercial (8h-20h)
+  </Card>
+  <Card title="Conteúdo" icon="file-text" color="#8b5cf6">
+    Evite spam e mensagens repetitivas
+  </Card>
+  <Card title="Testes" icon="flask" color="#eab308">
+    Sempre teste com poucos contatos primeiro
   </Card>
 </CardGroup>
 
@@ -427,12 +409,12 @@ A API fornece logs detalhados para:
 
 <CardGroup cols={3}>
   <Card title="Quickstart" icon="rocket" href="/quickstart">
-    Comece a usar em 5 minutos
+    Comece em 5 minutos
   </Card>
-  <Card title="Autenticação" icon="key" href="/authentication">
-    Configure sua autenticação
+  <Card title="API Reference" icon="code" href="/api-reference">
+    Documentação completa
   </Card>
-  <Card title="API Reference" icon="book-open" href="/api-reference">
-    Explore todos os endpoints
+  <Card title="Troubleshooting" icon="wrench" href="/troubleshooting">
+    Resolva problemas comuns
   </Card>
 </CardGroup> 

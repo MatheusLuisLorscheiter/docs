@@ -1,0 +1,149 @@
+---
+title: 'Estatísticas de Bloqueios'
+api: 'GET /api/companies/{companyId}/blocked-contacts/stats'
+description: 'Retorna estatísticas sobre contatos bloqueados da empresa'
+---
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="companyId" type="number" required>
+  ID da empresa (deve corresponder ao token)
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X GET https://api.disparador.com/api/companies/1/blocked-contacts/stats \
+  -H "X-Access-Token: seu-access-token"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.disparador.com/api/companies/1/blocked-contacts/stats', {
+  headers: {
+    'X-Access-Token': 'seu-access-token'
+  }
+});
+
+const stats = await response.json();
+console.log(`Total de contatos bloqueados: ${stats.totalBlocked}`);
+```
+
+```python Python
+import requests
+
+url = "https://api.disparador.com/api/companies/1/blocked-contacts/stats"
+headers = {
+    'X-Access-Token': 'seu-access-token'
+}
+
+response = requests.get(url, headers=headers)
+stats = response.json()
+
+print(f"Total bloqueados: {stats['totalBlocked']}")
+print(f"Última atualização: {stats['lastUpdated']}")
+```
+
+```php PHP
+<?php
+$url = 'https://api.disparador.com/api/companies/1/blocked-contacts/stats';
+
+$options = [
+    'http' => [
+        'header' => "X-Access-Token: seu-access-token\r\n",
+        'method' => 'GET'
+    ]
+];
+
+$context = stream_context_create($options);
+$result = file_get_contents($url, false, $context);
+$stats = json_decode($result, true);
+
+echo "Total bloqueados: " . $stats['totalBlocked'] . "\n";
+echo "Atualizado em: " . $stats['lastUpdated'] . "\n";
+?>
+```
+
+</RequestExample>
+
+## Response
+
+<ResponseField name="totalBlocked" type="number">
+  Total de contatos atualmente bloqueados
+</ResponseField>
+
+<ResponseField name="lastUpdated" type="string">
+  Data e hora da última atualização (ISO 8601)
+</ResponseField>
+
+<ResponseExample>
+
+```json 200 - Sucesso
+{
+  "totalBlocked": 1247,
+  "lastUpdated": "2024-01-20T15:30:00"
+}
+```
+
+```json 401 - Token Inválido
+{
+  "error": "Token inválido ou sem permissão"
+}
+```
+
+```json 500 - Erro Interno
+{
+  "error": "Erro ao obter estatísticas"
+}
+```
+
+</ResponseExample>
+
+## Uso das Estatísticas
+
+<Note>
+Este endpoint é útil para:
+- Monitorar o crescimento da lista de bloqueios
+- Verificar a saúde da base de contatos
+- Relatórios de conformidade (LGPD)
+- Dashboard de métricas
+</Note>
+
+## Exemplo de Monitoramento
+
+```javascript
+// Função para monitorar crescimento de bloqueios
+async function monitorBlockedGrowth(companyId, token) {
+  const getStats = async () => {
+    const response = await fetch(
+      `https://api.disparador.com/api/companies/${companyId}/blocked-contacts/stats`,
+      {
+        headers: { 'X-Access-Token': token }
+      }
+    );
+    return response.json();
+  };
+  
+  // Obter estatísticas inicial
+  const initialStats = await getStats();
+  console.log(`Bloqueios iniciais: ${initialStats.totalBlocked}`);
+  
+  // Verificar a cada hora
+  setInterval(async () => {
+    const currentStats = await getStats();
+    const growth = currentStats.totalBlocked - initialStats.totalBlocked;
+    
+    console.log(`Bloqueios atuais: ${currentStats.totalBlocked}`);
+    console.log(`Crescimento: +${growth}`);
+    
+    if (growth > 100) {
+      console.warn('Crescimento anormal de bloqueios detectado!');
+    }
+  }, 3600000); // 1 hora
+}
+```

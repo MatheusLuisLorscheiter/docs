@@ -1,256 +1,216 @@
 ---
 title: "Dashboard"
-description: "Visão geral e métricas do sistema"
+description: "Visão geral e métricas do sistema de disparos"
 ---
 
-## Painel Principal
+## Visão Geral
 
-O Dashboard é a primeira tela que você vê após fazer login, oferecendo uma visão completa do seu sistema de disparos.
+O Dashboard é a página principal após o login, oferecendo uma visão completa das campanhas e atividades do sistema.
 
 <Note>
-  O Dashboard atualiza automaticamente a cada 30 segundos para mostrar informações em tempo real.
+  O Dashboard mostra dados específicos da empresa do usuário logado e pode ser atualizado manualmente a qualquer momento.
 </Note>
 
-## Visão Geral das Métricas
+## Métricas Principais
 
-<CardGroup cols={4}>
-  <Card title="Total de Campanhas" icon="bullhorn" color="#16a34a">
-    Campanhas criadas no período
+O Dashboard exibe 4 métricas principais em cards destacados:
+
+<CardGroup cols={2}>
+  <Card title="Campanhas em Andamento" icon="play" color="#3b82f6">
+    Campanhas atualmente ativas enviando mensagens
   </Card>
-  <Card title="Mensagens Enviadas" icon="message" color="#2563eb">
-    Total de mensagens disparadas
+  <Card title="Campanhas Agendadas" icon="clock" color="#eab308">
+    Campanhas programadas para execução futura
   </Card>
-  <Card title="Taxa de Sucesso" icon="chart-line" color="#7c3aed">
-    Percentual de entrega
+  <Card title="Campanhas Concluídas" icon="check-circle" color="#10b981">
+    Total de campanhas finalizadas
   </Card>
-  <Card title="Instâncias Ativas" icon="whatsapp" color="#ea580c">
-    WhatsApp conectados
+  <Card title="Mensagens Enviadas" icon="message-square" color="#8b5cf6">
+    Total acumulado de mensagens disparadas
   </Card>
 </CardGroup>
 
 ## Seções do Dashboard
 
-### 📊 Gráficos e Estatísticas
+### 📊 Cards de Estatísticas
 
-#### Gráfico de Campanhas
-- **Período**: Últimos 7 dias
-- **Métricas**: Campanhas criadas, concluídas, em andamento
-- **Visualização**: Gráfico de linhas interativo
+Cada card mostra:
+- **Título**: Descrição da métrica
+- **Valor**: Número atualizado em tempo real
+- **Ícone**: Representação visual da métrica
+- **Cor**: Indicação visual do tipo de métrica
 
-#### Taxa de Entrega
-- **Visualização**: Gráfico de pizza
-- **Categorias**: Enviadas, Falhas, Pendentes
-- **Atualização**: Tempo real
+### 📋 Atividade Recente
 
-### 📱 Status das Instâncias
+A seção de atividades mostra os últimos eventos do sistema:
 
-<Tip>
-  Mantenha sempre pelo menos uma instância ativa para garantir o funcionamento das campanhas.
-</Tip>
+#### Tipos de Atividade
 
-#### Informações Exibidas
-- **Nome da instância**
-- **Status**: 🟢 Conectada | 🔴 Desconectada | 🟡 Conectando
-- **Última atividade**
-- **Ações rápidas**: Reconectar, Ver QR Code
+<Tabs>
+  <Tab title="Campanhas">
+    - **Campanha Iniciada** - Nova campanha começou a enviar
+    - **Campanha Pausada** - Campanha foi pausada
+    - **Campanha Concluída** - Campanha finalizada
+  </Tab>
+  <Tab title="Mensagens">
+    - **Mensagens Enviadas** - Lote de mensagens disparado
+    - **Falhas de Envio** - Mensagens que falharam
+  </Tab>
+  <Tab title="Contatos">
+    - **Contatos Importados** - Nova lista adicionada
+    - **Contatos Bloqueados** - Números adicionados à lista de bloqueio
+  </Tab>
+</Tabs>
 
-### 📅 Campanhas Recentes
+#### Informações da Atividade
 
-Lista das últimas 5 campanhas com:
-- Nome da campanha
-- Status atual
-- Progresso (barra visual)
-- Ações rápidas
+Cada item de atividade mostra:
+- **Ícone e Cor** - Identificação visual do tipo
+- **Descrição** - O que aconteceu
+- **Tempo** - Há quanto tempo ocorreu (ex: "há 5 minutos")
+- **Detalhes** - Informações adicionais quando relevante
 
-## Filtros e Personalização
+### 🔄 Atualização de Dados
 
-### Período de Análise
+<Info>
+O botão "Atualizar" no canto superior direito recarrega todos os dados do dashboard instantaneamente.
+</Info>
 
-<CardGroup cols={4}>
-  <Card title="Hoje" icon="calendar-day">
-    Dados do dia atual
-  </Card>
-  <Card title="7 Dias" icon="calendar-week">
-    Última semana
-  </Card>
-  <Card title="30 Dias" icon="calendar">
-    Último mês
-  </Card>
-  <Card title="Personalizado" icon="calendar-plus">
-    Escolha o período
-  </Card>
-</CardGroup>
+## Estados do Dashboard
 
-### Métricas Customizáveis
+### Carregando
 
-Você pode escolher quais métricas aparecem no seu dashboard:
+Ao acessar o dashboard ou atualizar dados:
+- Mensagem "Carregando dados do dashboard..."
+- Spinner de carregamento
+- Desabilita interações temporariamente
 
-- ✅ Total de campanhas
-- ✅ Mensagens enviadas
-- ✅ Taxa de sucesso
-- ✅ Tempo médio de envio
-- ✅ Contatos únicos
-- ✅ Falhas por tipo
+### Erro
 
-## Interpretando as Métricas
+Se houver problemas ao carregar dados:
+- Mensagem de erro clara
+- Botão "Tentar novamente"
+- Mantém dados anteriores em cache quando possível
 
-### Taxa de Sucesso
+### Sem Atividades
 
-<Warning>
-  Taxa de sucesso abaixo de 80% pode indicar:
-  - Números inválidos na lista
-  - Instância com problemas
-  - Intervalos muito curtos
-</Warning>
+Para empresas novas ou sem atividade recente:
+- Ícone ilustrativo
+- Mensagem explicativa
+- Orientação sobre próximos passos
 
-#### Como melhorar:
-1. Valide os números antes do envio
-2. Aumente o intervalo entre mensagens
-3. Use múltiplas instâncias
-4. Evite horários de pico
+## Funcionalidades
 
-### Velocidade de Envio
+### Paginação de Atividades
 
-**Cálculo**: Total de mensagens ÷ Tempo decorrido
+- Carrega inicialmente 20 atividades
+- Botão "Carregar mais" quando há mais itens
+- Carregamento incremental para melhor performance
 
-#### Referências:
-- **Lento**: < 10 msgs/minuto
-- **Normal**: 10-30 msgs/minuto
-- **Rápido**: > 30 msgs/minuto
+### Responsividade
 
-## Widgets Especiais
+O dashboard se adapta a diferentes tamanhos de tela:
 
-### 🎯 Campanha em Destaque
+<Tabs>
+  <Tab title="Desktop">
+    - Grid de 4 colunas para métricas
+    - Layout amplo para atividades
+    - Todos os detalhes visíveis
+  </Tab>
+  <Tab title="Tablet">
+    - Grid de 2 colunas para métricas
+    - Layout adaptado para atividades
+    - Informações essenciais mantidas
+  </Tab>
+  <Tab title="Mobile">
+    - Grid de 1 coluna para métricas
+    - Lista simplificada de atividades
+    - Foco em informações críticas
+  </Tab>
+</Tabs>
 
-Mostra a campanha com melhor desempenho:
-- Nome e detalhes
-- Taxa de sucesso
-- Tempo de conclusão
-- Link para relatório completo
+## Dark Mode
 
-### ⚡ Ações Rápidas
+O dashboard suporta tema escuro automático:
 
-<CardGroup cols={3}>
-  <Card title="Nova Campanha" icon="plus">
-    Criar campanha rapidamente
-  </Card>
-  <Card title="Conectar WhatsApp" icon="whatsapp">
-    Adicionar nova instância
-  </Card>
-  <Card title="Ver Relatórios" icon="chart-bar">
-    Acessar relatórios detalhados
-  </Card>
-</CardGroup>
+- **Cards**: Fundo cinza escuro com bordas sutis
+- **Texto**: Cores ajustadas para melhor contraste
+- **Ícones**: Cores vibrantes mantidas para destaque
+- **Transições**: Suaves ao alternar entre temas
 
-### 🔔 Notificações Recentes
+## Integração com API
 
-Lista as últimas notificações:
-- Campanhas concluídas
-- Instâncias desconectadas
-- Alertas do sistema
-- Atualizações importantes
+### Endpoint Principal
 
-## Exportação de Dados
+```typescript
+GET /api/dashboard/company/{companyId}
+```
 
-### Formatos Disponíveis
+### Estrutura de Dados
 
-<CardGroup cols={3}>
-  <Card title="PDF" icon="file-pdf">
-    Relatório formatado
-  </Card>
-  <Card title="Excel" icon="file-excel">
-    Dados tabulados
-  </Card>
-  <Card title="CSV" icon="file-csv">
-    Dados brutos
-  </Card>
-</CardGroup>
+```typescript
+interface DashboardData {
+  stats: {
+    activeCampaigns: number;
+    scheduledCampaigns: number;
+    completedCampaigns: number;
+    totalMessagesSent: number;
+  };
+  recentActivities: Array<{
+    id: number;
+    type: string;
+    description: string;
+    timestamp: string;
+    metadata?: any;
+  }>;
+}
+```
 
-### Como Exportar
+## Personalização Futura
 
-1. Clique no ícone de download 📥
-2. Selecione o período desejado
-3. Escolha o formato
-4. Clique em "Exportar"
-
-## Personalização da Interface
-
-### Modo de Visualização
-
-- **Compacto**: Mais informações em menos espaço
-- **Detalhado**: Visualização expandida com gráficos maiores
-- **Minimalista**: Apenas métricas essenciais
-
-### Tema
-
-<CardGroup cols={2}>
-  <Card title="Modo Claro ☀️" icon="sun">
-    Interface clara para ambientes iluminados
-  </Card>
-  <Card title="Modo Escuro 🌙" icon="moon">
-    Reduz cansaço visual em ambientes escuros
-  </Card>
-</CardGroup>
+<Note>
+Funcionalidades planejadas para próximas versões:
+- Filtros por período
+- Exportação de dados
+- Gráficos interativos
+- Widgets customizáveis
+- Alertas e notificações
+</Note>
 
 ## Dicas de Uso
 
-<Tip>
-  **Produtividade:**
-  - Use atalhos de teclado (? para ver lista)
-  - Favorite campanhas importantes
-  - Configure alertas personalizados
-  - Crie dashboards para diferentes períodos
-</Tip>
+<CardGroup cols={2}>
+  <Card title="Monitoramento" icon="eye" color="#3b82f6">
+    Verifique o dashboard regularmente para acompanhar suas campanhas
+  </Card>
+  <Card title="Performance" icon="gauge" color="#16a34a">
+    Use o botão atualizar apenas quando necessário para economizar recursos
+  </Card>
+  <Card title="Atividades" icon="list" color="#8b5cf6">
+    Revise as atividades recentes para identificar padrões ou problemas
+  </Card>
+  <Card title="Métricas" icon="chart-bar" color="#f59e0b">
+    Compare métricas ao longo do tempo para avaliar performance
+  </Card>
+</CardGroup>
 
 ## Solução de Problemas
 
-<Expandable title="Dashboard não carrega">
-  - Recarregue a página (F5)
-  - Limpe o cache do navegador
-  - Verifique sua conexão
-  - Tente outro navegador
-</Expandable>
+### Dashboard não carrega
 
-<Expandable title="Métricas incorretas">
-  - Aguarde a atualização automática
-  - Clique em "Atualizar" manualmente
-  - Verifique o período selecionado
-  - Contate o suporte se persistir
-</Expandable>
+1. Verifique sua conexão com a internet
+2. Confirme se está logado corretamente
+3. Tente limpar o cache do navegador
+4. Use o botão "Tentar novamente"
 
-<Expandable title="Gráficos não aparecem">
-  - Verifique se JavaScript está ativado
-  - Desative bloqueadores de anúncios
-  - Atualize seu navegador
-  - Teste em modo incógnito
-</Expandable>
+### Dados desatualizados
 
-## Métricas Avançadas
+1. Clique no botão "Atualizar"
+2. Verifique se há campanhas em execução
+3. Confirme que a API está respondendo
 
-### KPIs Importantes
+### Atividades não aparecem
 
-1. **CPM (Custo por Mil)**
-   - Custo médio por 1000 mensagens
-   - Ajuda a calcular ROI
-
-2. **Tempo Médio de Resposta**
-   - Quando os contatos respondem
-   - Útil para campanhas interativas
-
-3. **Taxa de Engajamento**
-   - Percentual de respostas
-   - Indica efetividade da mensagem
-
-## Próximos Passos
-
-<CardGroup cols={3}>
-  <Card title="Campanhas" icon="bullhorn" href="/frontend/campaigns">
-    Gerencie suas campanhas
-  </Card>
-  <Card title="Automações" icon="robot" href="/frontend/automations">
-    Configure automações
-  </Card>
-  <Card title="Configurações" icon="cog" href="/frontend/settings">
-    Personalize o sistema
-  </Card>
-</CardGroup>
+1. Verifique se há atividade recente na empresa
+2. Crie uma campanha de teste
+3. Aguarde alguns minutos para sincronização

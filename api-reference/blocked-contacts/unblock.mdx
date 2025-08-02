@@ -1,0 +1,152 @@
+---
+title: 'Desbloquear Contato'
+api: 'DELETE /api/companies/{companyId}/blocked-contacts/{phoneNumber}'
+description: 'Remove um número da lista de contatos bloqueados'
+---
+
+<Note>
+  Após desbloquear, o contato poderá receber mensagens em campanhas futuras.
+</Note>
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="companyId" type="number" required>
+  ID da empresa (deve corresponder ao token)
+</ParamField>
+
+<ParamField path="phoneNumber" type="string" required>
+  Número de telefone a ser desbloqueado
+  
+  <Note>
+    Use apenas dígitos (ex: 5511999887766)
+  </Note>
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X DELETE https://api.disparador.com/api/companies/1/blocked-contacts/5511999887766 \
+  -H "X-Access-Token: seu-access-token"
+```
+
+```javascript JavaScript
+const phoneNumber = '5511999887766';
+const response = await fetch(`https://api.disparador.com/api/companies/1/blocked-contacts/${phoneNumber}`, {
+  method: 'DELETE',
+  headers: {
+    'X-Access-Token': 'seu-access-token'
+  }
+});
+
+const data = await response.json();
+if (data.success) {
+  console.log('Contato desbloqueado com sucesso!');
+} else {
+  console.error('Erro:', data.message);
+}
+```
+
+```python Python
+import requests
+
+phone_number = '5511999887766'
+url = f"https://api.disparador.com/api/companies/1/blocked-contacts/{phone_number}"
+headers = {
+    'X-Access-Token': 'seu-access-token'
+}
+
+response = requests.delete(url, headers=headers)
+data = response.json()
+
+if data['success']:
+    print('Contato desbloqueado com sucesso!')
+else:
+    print(f'Erro: {data["message"]}')
+```
+
+```php PHP
+<?php
+$phoneNumber = '5511999887766';
+$url = "https://api.disparador.com/api/companies/1/blocked-contacts/{$phoneNumber}";
+
+$options = [
+    'http' => [
+        'header' => "X-Access-Token: seu-access-token\r\n",
+        'method' => 'DELETE'
+    ]
+];
+
+$context = stream_context_create($options);
+$result = file_get_contents($url, false, $context);
+$response = json_decode($result, true);
+
+if ($response['success']) {
+    echo 'Contato desbloqueado com sucesso!';
+} else {
+    echo 'Erro: ' . $response['message'];
+}
+?>
+```
+
+</RequestExample>
+
+## Response
+
+<ResponseField name="success" type="boolean">
+  Indica se a operação foi bem-sucedida
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Mensagem de sucesso ou erro
+</ResponseField>
+
+<ResponseExample>
+
+```json 200 - Sucesso
+{
+  "success": true,
+  "message": "Contato desbloqueado com sucesso"
+}
+```
+
+```json 400 - Contato Não Encontrado
+{
+  "success": false,
+  "message": "Contato não está bloqueado"
+}
+```
+
+```json 401 - Token Inválido
+{
+  "error": "Token inválido ou sem permissão"
+}
+```
+
+```json 500 - Erro Interno
+{
+  "error": "Erro ao desbloquear contato"
+}
+```
+
+</ResponseExample>
+
+## Observações
+
+<Warning>
+- O número deve estar normalizado (apenas dígitos)
+- Só é possível desbloquear contatos que estão bloqueados
+- A ação é registrada para auditoria
+- O desbloqueio tem efeito imediato
+</Warning>
+
+## Histórico
+
+<Note>
+O histórico de bloqueios e desbloqueios é mantido no sistema. Mesmo após desbloquear um contato, o registro histórico permanece para fins de auditoria e conformidade.
+</Note>

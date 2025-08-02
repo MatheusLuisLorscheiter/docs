@@ -1,128 +1,108 @@
 ---
 title: "Retomar Campanha"
 api: "PUT /api/campaigns/{id}/resume"
-description: "Retoma uma campanha pausada"
+description: "Retoma uma campanha pausada, continuando o envio de onde parou"
 ---
 
 <Tip>
-Retoma uma campanha que foi pausada anteriormente, reiniciando o envio de mensagens.
+Retoma o envio de mensagens de uma campanha que foi pausada anteriormente.
 </Tip>
-
-<Note>
-  Importante! As campanhas só podem ser retomadas em um periodo de 24h após ter sido pausada.
-</Note>
-
-<Warning>
-Você precisa de um access token válido no header X-Access-Token para usar este endpoint.
-</Warning>
-
-## Path Parameters
-
-<ParamField path="id" type="number" required>
-  ID único da campanha que deseja retomar
-</ParamField>
 
 ## Headers
 
 <ParamField header="X-Access-Token" type="string" required>
-  Token de acesso obtido no registro
+  Token de acesso da empresa
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="id" type="number" required>
+  ID da campanha a ser retomada
 </ParamField>
 
 <RequestExample>
 
 ```bash cURL
-curl -X PUT https://{url-key}/api/campaigns/{campaign_id}/resume \
-  -H "X-Access-Token: {access_token}"
+curl -X PUT https://api.disparador.com/api/campaigns/123/resume \
+  -H "X-Access-Token: seu-access-token"
 ```
 
 ```javascript JavaScript
-const campaignId = {campaign_id};
-const response = await fetch(`https://{url-key}/api/campaigns/${campaignId}/resume`, {
+const campaignId = 123;
+const response = await fetch(`https://api.disparador.com/api/campaigns/${campaignId}/resume`, {
   method: 'PUT',
   headers: {
-    'X-Access-Token': '{access_token}'
+    'X-Access-Token': 'seu-access-token'
   }
 });
 
 const result = await response.json();
-console.log('Resultado:', result);
+
+if (result.id) {
+  console.log(`Campanha ${result.name} retomada com sucesso!`);
+  console.log(`Status atual: ${result.status}`);
+  console.log(`Mensagens restantes: ${result.totalContacts - result.sentCount}`);
+} else {
+  console.error('Erro:', result.message);
+}
 ```
 
 ```python Python
 import requests
 
-campaign_id = {campaign_id}
+campaign_id = 123
+url = f"https://api.disparador.com/api/campaigns/{campaign_id}/resume"
 headers = {
-    'X-Access-Token': '{access_token}'
+    'X-Access-Token': 'seu-access-token'
 }
 
-response = requests.put(
-    f'https://{url-key}/api/campaigns/{campaign_id}/resume',
-    headers=headers
-)
-
+response = requests.put(url, headers=headers)
 result = response.json()
-print('Resultado:', result)
+
+if 'id' in result:
+    print(f"Campanha '{result['name']}' retomada com sucesso!")
+    print(f"Status: {result['status']}")
+    remaining = result['totalContacts'] - result['sentCount']
+    print(f"Mensagens restantes: {remaining}")
+else:
+    print(f"Erro: {result.get('message')}")
 ```
 
 ```php PHP
 <?php
-$campaign_id = {campaign_id};
-$headers = [
-    'X-Access-Token: {access_token}'
+$campaignId = 123;
+$url = "https://api.disparador.com/api/campaigns/{$campaignId}/resume";
+
+$options = [
+    'http' => [
+        'header' => "X-Access-Token: seu-access-token\r\n",
+        'method' => 'PUT'
+    ]
 ];
 
-$curl = curl_init();
-curl_setopt_array($curl, [
-    CURLOPT_URL => "https://{url-key}/api/campaigns/{$campaign_id}/resume",
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_CUSTOMREQUEST => 'PUT',
-    CURLOPT_HTTPHEADER => $headers
-]);
+$context = stream_context_create($options);
+$result = file_get_contents($url, false, $context);
+$response = json_decode($result, true);
 
-$response = curl_exec($curl);
-curl_close($curl);
-
-$result = json_decode($response, true);
-print_r($result);
+if (isset($response['id'])) {
+    echo "Campanha '{$response['name']}' retomada com sucesso!\n";
+    echo "Status: {$response['status']}\n";
+    $remaining = $response['totalContacts'] - $response['sentCount'];
+    echo "Mensagens restantes: {$remaining}\n";
+} else {
+    echo "Erro: " . $response['message'] . "\n";
+}
 ?>
 ```
 
 </RequestExample>
 
-<ResponseExample>
-
-```json Sucesso (200 OK)
-{
-  "id": 1,
-  "name": "{campaign_name}",
-  "status": "ACTIVE",
-  "totalContacts": 2,
-  "sentMessages": 1,
-  "failedMessages": 0,
-  "createdAt": "{creation_datetime}",
-  "message": null
-}
-```
-
-```json Erro (400 Bad Request)
-{
-  "id": null,
-  "name": null,
-  "status": null,
-  "totalContacts": 0,
-  "sentMessages": 0,
-  "failedMessages": 0,
-  "message": "{error_message}"
-}
-```
-
-</ResponseExample>
-
 ## Response
 
+Retorna os dados atualizados da campanha após retomar.
+
 <ResponseField name="id" type="number">
-  ID único da campanha
+  ID da campanha
 </ResponseField>
 
 <ResponseField name="name" type="string">
@@ -130,67 +110,145 @@ print_r($result);
 </ResponseField>
 
 <ResponseField name="status" type="string">
-  Status atualizado: ACTIVE
+  Novo status (será "ACTIVE")
 </ResponseField>
 
 <ResponseField name="totalContacts" type="number">
   Total de contatos na campanha
 </ResponseField>
 
-<ResponseField name="sentMessages" type="number">
-  Mensagens enviadas com sucesso
+<ResponseField name="sentCount" type="number">
+  Mensagens já enviadas
 </ResponseField>
 
-<ResponseField name="failedMessages" type="number">
+<ResponseField name="failedCount" type="number">
   Mensagens que falharam
 </ResponseField>
 
-<ResponseField name="createdAt" type="datetime">
-  Data e hora de criação
+<ResponseField name="resumedAt" type="string">
+  Data/hora em que foi retomada
 </ResponseField>
 
 <ResponseField name="message" type="string">
-  Mensagem de erro (null em caso de sucesso)
+  Mensagem de erro (apenas em caso de falha)
 </ResponseField>
 
-## Códigos de Erro
+<ResponseExample>
 
-| Código | Descrição |
-|--------|-----------|
-| 400 | Access token inválido, campanha não encontrada ou não pode ser retomada |
-| 500 | Erro interno do servidor |
+```json 200 - Sucesso
+{
+  "id": 123,
+  "name": "Campanha de Vendas",
+  "status": "ACTIVE",
+  "companyId": 1,
+  "totalContacts": 500,
+  "sentCount": 234,
+  "failedCount": 5,
+  "resumedAt": "2024-01-20T16:00:00",
+  "message": null
+}
+```
 
-## Quando uma campanha pode ser retomada
+```json 400 - Campanha Não Pode Ser Retomada
+{
+  "message": "Apenas campanhas pausadas podem ser retomadas"
+}
+```
 
-Uma campanha pode ser retomada apenas se estiver no status PAUSED:
+```json 400 - Campanha Não Encontrada
+{
+  "message": "Campanha não encontrada ou não pertence à sua empresa"
+}
+```
+
+```json 400 - Token Inválido
+{
+  "message": "Access token inválido"
+}
+```
+
+</ResponseExample>
+
+## Regras de Negócio
+
+<Warning>
+- Apenas campanhas com status `PAUSED` podem ser retomadas
+- A campanha continua exatamente de onde parou
+- Mensagens já enviadas não são reenviadas
+- O intervalo entre mensagens é mantido
+</Warning>
+
+## Continuação do Envio
+
+Ao retomar uma campanha:
+
+1. **Fila preservada** - Contatos não enviados permanecem na ordem original
+2. **Estatísticas mantidas** - Contadores de sucesso/falha continuam
+3. **Configurações iguais** - Intervalos e parâmetros são preservados
+4. **Sem duplicação** - Sistema garante que não há reenvios
+
+## Exemplo de Gerenciamento
+
+```javascript
+// Sistema de pausa/retomada automática por horário
+async function manageBusinessHours(campaignId, accessToken) {
+  const now = new Date();
+  const hour = now.getHours();
+  
+  // Horário comercial: 9h às 18h
+  const isBusinessHour = hour >= 9 && hour < 18;
+  
+  // Verificar status atual
+  const statusResponse = await fetch(
+    `https://api.disparador.com/api/campaigns/${campaignId}`,
+    {
+      headers: { 'X-Access-Token': accessToken }
+    }
+  );
+  
+  const campaign = await statusResponse.json();
+  
+  if (!isBusinessHour && campaign.status === 'ACTIVE') {
+    // Pausar fora do horário comercial
+    await fetch(
+      `https://api.disparador.com/api/campaigns/${campaignId}/pause`,
+      {
+        method: 'PUT',
+        headers: { 'X-Access-Token': accessToken }
+      }
+    );
+    console.log('Campanha pausada - fora do horário comercial');
+    
+  } else if (isBusinessHour && campaign.status === 'PAUSED') {
+    // Retomar no horário comercial
+    await fetch(
+      `https://api.disparador.com/api/campaigns/${campaignId}/resume`,
+      {
+        method: 'PUT',
+        headers: { 'X-Access-Token': accessToken }
+      }
+    );
+    console.log('Campanha retomada - horário comercial');
+  }
+}
+
+// Executar a cada 30 minutos
+setInterval(() => manageBusinessHours(123, 'seu-token'), 1800000);
+```
+
+## Boas Práticas
 
 <CardGroup cols={2}>
-  <Card title="PAUSED" icon="pause" color="#eab308">
-    Pode ser retomada
+  <Card title="Verificar Status" icon="search" color="#3b82f6">
+    Sempre verifique o status antes de tentar retomar
   </Card>
-  <Card title="ACTIVE" icon="play" color="#16a34a">
-    Já está ativa
+  <Card title="Logs e Notificações" icon="bell" color="#8b5cf6">
+    Registre quando e por que campanhas foram pausadas/retomadas
   </Card>
-  <Card title="CANCELLED" icon="stop" color="#dc2626">
-    Já foi cancelada
+  <Card title="Horários Adequados" icon="clock" color="#16a34a">
+    Retome campanhas em horários apropriados para melhor engajamento
   </Card>
-  <Card title="COMPLETED" icon="check" color="#6366f1">
-    Já foi finalizada
-  </Card>
-</CardGroup>
-
-## Próximos Passos
-
-Após retomar a campanha:
-
-<CardGroup cols={3}>
-  <Card title="Consultar Status" icon="magnifying-glass" href="/api-reference/campaigns/get">
-    Verifique o status atual
-  </Card>
-  <Card title="Pausar Campanha" icon="pause" href="/api-reference/campaigns/pause">
-    Pause novamente se necessário
-  </Card>
-  <Card title="Cancelar Campanha" icon="stop" href="/api-reference/campaigns/cancel">
-    Cancele a campanha se necessário
+  <Card title="Monitorar Após Retomar" icon="chart-line" color="#f59e0b">
+    Acompanhe métricas para garantir que tudo está funcionando
   </Card>
 </CardGroup>

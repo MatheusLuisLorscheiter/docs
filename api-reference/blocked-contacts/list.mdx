@@ -1,0 +1,233 @@
+---
+title: 'Listar Contatos Bloqueados'
+api: 'GET /api/companies/{companyId}/blocked-contacts'
+description: 'Lista todos os contatos bloqueados de uma empresa com paginação e busca'
+---
+
+<Note>
+  Este endpoint retorna uma lista paginada de todos os contatos que foram bloqueados e não receberão mensagens em campanhas futuras.
+</Note>
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="companyId" type="number" required>
+  ID da empresa (deve corresponder ao token)
+</ParamField>
+
+## Query Parameters
+
+<ParamField query="page" type="number" default="0">
+  Número da página (começa em 0)
+</ParamField>
+
+<ParamField query="size" type="number" default="20">
+  Quantidade de itens por página (máximo recomendado: 100)
+</ParamField>
+
+<ParamField query="search" type="string">
+  Filtro para buscar por número de telefone (busca parcial)
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X GET "https://api.disparador.com/api/companies/1/blocked-contacts?page=0&size=20&search=5511" \
+  -H "X-Access-Token: seu-access-token"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.disparador.com/api/companies/1/blocked-contacts?page=0&size=20', {
+  headers: {
+    'X-Access-Token': 'seu-access-token'
+  }
+});
+
+const data = await response.json();
+console.log(`Total bloqueados: ${data.totalElements}`);
+console.log(`Contatos nesta página: ${data.content.length}`);
+```
+
+```python Python
+import requests
+
+url = "https://api.disparador.com/api/companies/1/blocked-contacts"
+headers = {
+    'X-Access-Token': 'seu-access-token'
+}
+params = {
+    'page': 0,
+    'size': 20,
+    'search': '5511'  # opcional
+}
+
+response = requests.get(url, headers=headers, params=params)
+data = response.json()
+
+print(f"Total bloqueados: {data['totalElements']}")
+for contact in data['content']:
+    print(f"- {contact['phoneNumber']} ({contact['reason']})")
+```
+
+```php PHP
+<?php
+$companyId = 1;
+$url = "https://api.disparador.com/api/companies/{$companyId}/blocked-contacts";
+$params = http_build_query([
+    'page' => 0,
+    'size' => 20,
+    'search' => '5511'
+]);
+
+$options = [
+    'http' => [
+        'header' => "X-Access-Token: seu-access-token\r\n",
+        'method' => 'GET'
+    ]
+];
+
+$context = stream_context_create($options);
+$result = file_get_contents($url . '?' . $params, false, $context);
+$data = json_decode($result, true);
+
+echo "Total bloqueados: " . $data['totalElements'] . "\n";
+foreach ($data['content'] as $contact) {
+    echo "- {$contact['phoneNumber']} ({$contact['reason']})\n";
+}
+?>
+```
+
+</RequestExample>
+
+## Response
+
+<ResponseField name="content" type="array">
+  Lista de contatos bloqueados
+
+  <Expandable title="Campos do Contato Bloqueado">
+    <ResponseField name="id" type="number">
+      ID único do registro de bloqueio
+    </ResponseField>
+
+    <ResponseField name="phoneNumber" type="string">
+      Número de telefone normalizado (apenas dígitos)
+    </ResponseField>
+
+    <ResponseField name="blockedAt" type="string">
+      Data e hora do bloqueio (ISO 8601)
+    </ResponseField>
+
+    <ResponseField name="reason" type="string">
+      Motivo do bloqueio
+    </ResponseField>
+
+    <ResponseField name="blockedBy" type="string">
+      Email do usuário que realizou o bloqueio
+    </ResponseField>
+
+    <ResponseField name="isActive" type="boolean">
+      Se o bloqueio está ativo
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="totalElements" type="number">
+  Total de contatos bloqueados
+</ResponseField>
+
+<ResponseField name="totalPages" type="number">
+  Total de páginas disponíveis
+</ResponseField>
+
+<ResponseField name="currentPage" type="number">
+  Página atual (começa em 0)
+</ResponseField>
+
+<ResponseField name="pageSize" type="number">
+  Tamanho da página atual
+</ResponseField>
+
+<ResponseExample>
+
+```json 200 - Sucesso
+{
+  "content": [
+    {
+      "id": 123,
+      "phoneNumber": "5511999887766",
+      "blockedAt": "2024-01-15T10:30:00",
+      "reason": "Solicitou não receber mensagens",
+      "blockedBy": "admin@empresa.com",
+      "isActive": true
+    },
+    {
+      "id": 124,
+      "phoneNumber": "5511888776655",
+      "blockedAt": "2024-01-14T15:45:00",
+      "reason": "Número inválido",
+      "blockedBy": "operador@empresa.com",
+      "isActive": true
+    }
+  ],
+  "totalElements": 47,
+  "totalPages": 3,
+  "currentPage": 0,
+  "pageSize": 20
+}
+```
+
+```json 401 - Token Inválido
+{
+  "error": "Token inválido ou sem permissão"
+}
+```
+
+```json 500 - Erro Interno
+{
+  "error": "Erro ao listar contatos bloqueados"
+}
+```
+
+</ResponseExample>
+
+## Exemplo de Paginação
+
+```javascript
+// Função para buscar todos os contatos bloqueados
+async function getAllBlockedContacts(companyId, accessToken) {
+  const blockedContacts = [];
+  let currentPage = 0;
+  let hasMore = true;
+  
+  while (hasMore) {
+    const response = await fetch(
+      `https://api.disparador.com/api/companies/${companyId}/blocked-contacts?page=${currentPage}&size=100`,
+      {
+        headers: { 'X-Access-Token': accessToken }
+      }
+    );
+    
+    const data = await response.json();
+    blockedContacts.push(...data.content);
+    
+    currentPage++;
+    hasMore = currentPage < data.totalPages;
+  }
+  
+  return blockedContacts;
+}
+```
+
+## Observações
+
+<Note>
+- A busca por número é parcial, permitindo filtrar por prefixo (ex: "5511" para São Paulo)
+- Apenas contatos com `isActive: true` são considerados bloqueados
+- O campo `blockedBy` mostra quem realizou o bloqueio para auditoria
+- Recomenda-se paginar com no máximo 100 itens por página
+</Note>

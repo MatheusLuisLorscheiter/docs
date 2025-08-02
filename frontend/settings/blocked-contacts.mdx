@@ -1,0 +1,198 @@
+---
+title: 'Gerenciamento de Contatos Bloqueados'
+description: 'Aprenda a gerenciar contatos bloqueados através da interface web'
+---
+
+## Visão Geral
+
+O gerenciamento de contatos bloqueados está disponível na página de **Configurações** através de um modal dedicado. Esta funcionalidade permite bloquear números de telefone que não devem receber mensagens em suas campanhas.
+
+<Frame>
+  <img src="/images/blocked-contacts-modal.png" alt="Modal de Contatos Bloqueados" />
+</Frame>
+
+## Acessando o Modal
+
+1. Navegue até **Configurações** no menu lateral
+2. Clique no botão **"Bloqueio Inteligente"** ou **"Contatos Bloqueados"**
+3. O modal será aberto com a lista atual de contatos bloqueados
+
+## Funcionalidades
+
+### 1. Visualizar Contatos Bloqueados
+
+A lista principal exibe:
+
+- **Número formatado**: Ex: +55 (11) 99999-9999
+- **Motivo do bloqueio**: Razão fornecida ao bloquear
+- **Bloqueado por**: Email de quem realizou o bloqueio
+- **Data do bloqueio**: Quando foi bloqueado
+- **Ações**: Botão para desbloquear
+
+<Tip>
+  Use a barra de busca para filtrar por número de telefone
+</Tip>
+
+### 2. Bloquear Contato Individual
+
+Para bloquear um único número:
+
+1. Clique em **"Adicionar Contato"**
+2. Digite o número de telefone
+3. Adicione um motivo (opcional mas recomendado)
+4. Clique em **"Bloquear"**
+
+<Info>
+  O número pode ser digitado em qualquer formato - será normalizado automaticamente
+</Info>
+
+### 3. Importar Lista de Contatos
+
+Para bloquear múltiplos contatos:
+
+1. Clique em **"Importar Lista"**
+2. Escolha uma das opções:
+   - **Upload de arquivo CSV**: Arquivo com uma coluna de números
+   - **Colar lista**: Cole números separados por linha
+   - **Banco de dados**: Selecione de bases conectadas
+3. Adicione um motivo para todos
+4. Clique em **"Importar"**
+
+<Warning>
+  Limite de 1000 números por importação
+</Warning>
+
+### 4. Buscar de Bancos de Dados
+
+Se você tem bancos de dados configurados:
+
+1. Clique em **"Buscar do Banco"**
+2. Selecione o banco de dados
+3. Configure filtros (opcional):
+   - Por data de cadastro
+   - Por status
+   - Por campanha anterior
+4. Visualize preview dos contatos
+5. Selecione quais importar
+6. Clique em **"Adicionar Selecionados"**
+
+### 5. Desbloquear Contatos
+
+Para desbloquear um número:
+
+1. Localize o contato na lista
+2. Clique no ícone de **lixeira** ou **"Desbloquear"**
+3. Confirme a ação
+
+<Note>
+  Contatos desbloqueados voltarão a receber mensagens em campanhas futuras
+</Note>
+
+## Estatísticas
+
+O modal exibe estatísticas em tempo real:
+
+- **Total de bloqueados**: Quantidade atual
+- **Bloqueados hoje**: Adições nas últimas 24h
+- **Última atualização**: Horário da última modificação
+
+## Integração com Campanhas
+
+### Durante a Criação
+
+Ao criar uma campanha:
+
+1. Contatos bloqueados são **automaticamente filtrados**
+2. Um aviso mostra quantos foram removidos
+3. A lista final contém apenas contatos válidos
+
+### Indicadores Visuais
+
+- **Badge vermelho**: Indica contatos que serão filtrados
+- **Tooltip informativo**: Mostra motivo do bloqueio
+- **Contador atualizado**: Total real que receberá mensagens
+
+## Formato de Arquivo CSV
+
+Para importação via arquivo:
+
+```csv
+telefone,motivo
+11999999999,Solicitação do cliente
+11888888888,Número inválido
+21777777777,Opt-out LGPD
+```
+
+Ou apenas números:
+
+```csv
+11999999999
+11888888888
+21777777777
+```
+
+## Exemplos de Motivos
+
+Recomendamos usar motivos padronizados:
+
+<CardGroup cols={2}>
+  <Card title="Solicitações" icon="user-xmark">
+    - Solicitação do cliente
+    - Pedido via SAC
+    - Opt-out pelo link
+    - Solicitação LGPD
+  </Card>
+  <Card title="Problemas Técnicos" icon="circle-exclamation">
+    - Número inexistente
+    - WhatsApp não cadastrado
+    - Número bloqueou empresa
+    - Falhas constantes
+  </Card>
+</CardGroup>
+
+## Boas Práticas
+
+### 1. Revise Periodicamente
+
+- Verifique lista mensalmente
+- Remova bloqueios antigos desnecessários
+- Mantenha documentação atualizada
+
+### 2. Use Filtros Eficientemente
+
+- Busque por período para auditorias
+- Filtre por motivo para análises
+- Export para relatórios
+
+### 3. Integre com Processos
+
+- Configure rotina de importação
+- Treine equipe de atendimento
+- Documente procedimentos
+
+## Perguntas Frequentes
+
+<AccordionGroup>
+  <Accordion title="Os contatos bloqueados aparecem na criação de campanhas?">
+    Sim, mas com indicador visual de que serão filtrados automaticamente.
+  </Accordion>
+  
+  <Accordion title="Posso exportar a lista de bloqueados?">
+    Sim, use o botão "Exportar CSV" no modal para baixar a lista completa.
+  </Accordion>
+  
+  <Accordion title="O bloqueio é imediato?">
+    Sim, assim que bloqueado, o contato não receberá mensagens em novas campanhas.
+  </Accordion>
+  
+  <Accordion title="Há histórico de bloqueios?">
+    Sim, o sistema mantém histórico completo incluindo desbloqueios.
+  </Accordion>
+</AccordionGroup>
+
+## Atalhos de Teclado
+
+- **Ctrl/Cmd + F**: Focar na busca
+- **Ctrl/Cmd + N**: Adicionar novo contato
+- **Ctrl/Cmd + I**: Abrir importação
+- **Esc**: Fechar modal

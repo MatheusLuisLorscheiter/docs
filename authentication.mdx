@@ -4,21 +4,23 @@ description: "Como autenticar na API Disparador"
 ---
 
 <Warning>
-A API Disparador utiliza um sistema de autenticação simples baseado em tokens de acesso. Tokens não expiram automaticamente e devem ser mantidos seguros.
+A API Disparador utiliza um sistema de autenticação baseado em tokens de acesso por empresa. Tokens não expiram automaticamente e devem ser mantidos seguros.
 </Warning>
 
 ## Visão Geral
 
-Para usar a API, você precisa:
+O sistema utiliza autenticação baseada em tokens:
 
-1. **Registre sua empresa** para obter um access token
-2. **Use o token** no header `X-Access-Token` em todas as requisições  
-3. **Tokens não expiram** - você pode regenerar quando necessário
+1. **Registre uma empresa** (requer token de administrador)
+2. **Faça login** com email e senha da empresa  
+3. **Receba o token** de acesso na resposta
+4. **Use o token** no header `X-Access-Token` em todas as requisições
+5. **Tokens não expiram** - permanecem válidos indefinidamente
 
 ## Registro de Empresa
 
 <Note>
-Endpoint para registrar sua empresa e obter o access token inicial.
+Endpoint para registrar uma nova empresa. Requer token de administrador.
 </Note>
 
 ### Endpoint
@@ -26,18 +28,24 @@ Endpoint para registrar sua empresa e obter o access token inicial.
 POST /api/auth/register
 ```
 
+### Headers
+
+<ParamField header="ACCESS_TOKEN" type="string" required>
+  Token de administrador no formato: Bearer {admin_password}
+</ParamField>
+
 ### Body Parameters
 
 <ParamField body="name" type="string" optional>
-  Nome da empresa (máximo 100 caracteres). Se não fornecido, será usado o nome do email
+  Nome da empresa. Se não fornecido, será usado a parte antes do @ do email
 </ParamField>
 
 <ParamField body="email" type="string" required>
-  Email válido e único no sistema (formato: usuario@dominio.com)
+  Email da empresa (deve ser único)
 </ParamField>
 
 <ParamField body="password" type="string" required>
-  Senha com mínimo de 6 caracteres. Recomendado incluir letras, números e símbolos
+  Senha da empresa (mínimo 6 caracteres)
 </ParamField>
 
 <CodeGroup>
@@ -45,6 +53,7 @@ POST /api/auth/register
 ```bash cURL
 curl -X POST https://api.disparador.com/api/auth/register \
   -H "Content-Type: application/json" \
+  -H "ACCESS_TOKEN: Bearer sua_senha_admin" \
   -d '{
     "name": "Minha Empresa LTDA",
     "email": "contato@minhaempresa.com",
@@ -56,10 +65,109 @@ curl -X POST https://api.disparador.com/api/auth/register \
 const response = await fetch('https://api.disparador.com/api/auth/register', {
   method: 'POST',
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'ACCESS_TOKEN': 'Bearer sua_senha_admin'
   },
   body: JSON.stringify({
     name: 'Minha Empresa LTDA',
+    email: 'contato@minhaempresa.com',
+    password: 'senha123'
+  })
+});
+
+const result = await response.json();
+console.log('Token:', result.accessToken);
+```
+
+</CodeGroup>
+
+### Response
+
+<ResponseExample>
+
+```json Sucesso (200 OK)
+{
+  "accessToken": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "tokenType": "Access",
+  "companyId": 1,
+  "companyName": "Minha Empresa LTDA",
+  "companyEmail": "contato@minhaempresa.com",
+  "blockedContactsEnabled": true,
+  "pollCampaignsEnabled": true,
+  "expiresAt": null,
+  "message": null
+}
+```
+
+```json Erro - Token Admin Inválido (401)
+{
+  "accessToken": null,
+  "tokenType": "Access",
+  "companyId": null,
+  "companyName": null,
+  "companyEmail": null,
+  "blockedContactsEnabled": null,
+  "pollCampaignsEnabled": null,
+  "expiresAt": null,
+  "message": "Token de administrador inválido"
+}
+```
+
+```json Erro - Email já existe (400)
+{
+  "accessToken": null,
+  "tokenType": "Access",
+  "companyId": null,
+  "companyName": null,
+  "companyEmail": null,
+  "blockedContactsEnabled": null,
+  "pollCampaignsEnabled": null,
+  "expiresAt": null,
+  "message": "Email já cadastrado"
+}
+```
+
+</ResponseExample>
+
+## Login
+
+<Note>
+Endpoint para autenticar e obter o access token da empresa.
+</Note>
+
+### Endpoint
+```http
+POST /api/auth/login
+```
+
+### Body Parameters
+
+<ParamField body="email" type="string" required>
+  Email cadastrado da empresa
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  Senha da empresa (mínimo 6 caracteres)
+</ParamField>
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.disparador.com/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "contato@minhaempresa.com",
+    "password": "senha123"
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.disparador.com/api/auth/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
     email: 'contato@minhaempresa.com',
     password: 'senha123'
   })
@@ -73,13 +181,12 @@ console.log('Token:', result.accessToken);
 import requests
 
 data = {
-    'name': 'Minha Empresa LTDA',
     'email': 'contato@minhaempresa.com',
     'password': 'senha123'
 }
 
 response = requests.post(
-    'https://api.disparador.com/api/auth/register',
+    'https://api.disparador.com/api/auth/login',
     json=data,
     headers={'Content-Type': 'application/json'}
 )
@@ -91,14 +198,13 @@ print('Token:', result.get('accessToken'))
 ```php PHP
 <?php
 $data = [
-    'name' => 'Minha Empresa LTDA',
     'email' => 'contato@minhaempresa.com',
     'password' => 'senha123'
 ];
 
 $curl = curl_init();
 curl_setopt_array($curl, [
-    CURLOPT_URL => 'https://api.disparador.com/api/auth/register',
+    CURLOPT_URL => 'https://api.disparador.com/api/auth/login',
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_POST => true,
     CURLOPT_POSTFIELDS => json_encode($data),
@@ -115,6 +221,8 @@ echo 'Token: ' . $result['accessToken'];
 
 </CodeGroup>
 
+### Response
+
 <ResponseExample>
 
 ```json Sucesso (200 OK)
@@ -124,60 +232,157 @@ echo 'Token: ' . $result['accessToken'];
   "companyId": 1,
   "companyName": "Minha Empresa LTDA",
   "companyEmail": "contato@minhaempresa.com",
+  "blockedContactsEnabled": true,
+  "pollCampaignsEnabled": true,
   "expiresAt": null,
   "message": null
 }
 ```
 
-```json Erro - Email já em uso (400)
+```json Erro - Credenciais inválidas (400)
 {
   "accessToken": null,
+  "tokenType": "Access",
   "companyId": null,
-  "message": "Email já está em uso"
+  "companyName": null,
+  "companyEmail": null,
+  "blockedContactsEnabled": null,
+  "pollCampaignsEnabled": null,
+  "expiresAt": null,
+  "message": "Email ou senha incorretos"
 }
 ```
 
-```json Erro - Email inválido (400)
+```json Erro - Conta desativada (400)
 {
   "accessToken": null,
+  "tokenType": "Access",
   "companyId": null,
-  "message": "Email deve ter formato válido"
-}
-```
-
-```json Erro - Senha curta (400)
-{
-  "accessToken": null,
-  "companyId": null,
-  "message": "Senha deve ter pelo menos 6 caracteres"
+  "companyName": null,
+  "companyEmail": null,
+  "blockedContactsEnabled": null,
+  "pollCampaignsEnabled": null,
+  "expiresAt": null,
+  "message": "Conta desativada. Entre em contato com o suporte"
 }
 ```
 
 </ResponseExample>
 
-### Response
-
 <ResponseField name="accessToken" type="string">
-  Token de acesso para autenticação nas requisições (null em caso de erro)
+  Token de acesso para autenticação nas requisições
+</ResponseField>
+
+<ResponseField name="tokenType" type="string">
+  Tipo do token (sempre "Access")
 </ResponseField>
 
 <ResponseField name="companyId" type="number">
-  ID único da empresa registrada (null em caso de erro)
+  ID único da empresa
+</ResponseField>
+
+<ResponseField name="companyName" type="string">
+  Nome da empresa
+</ResponseField>
+
+<ResponseField name="companyEmail" type="string">
+  Email da empresa
+</ResponseField>
+
+<ResponseField name="blockedContactsEnabled" type="boolean">
+  Se a funcionalidade de bloqueio inteligente está habilitada
+</ResponseField>
+
+<ResponseField name="pollCampaignsEnabled" type="boolean">
+  Se a funcionalidade de enquetes está habilitada
+</ResponseField>
+
+<ResponseField name="expiresAt" type="string">
+  Data de expiração do token (null = não expira)
 </ResponseField>
 
 <ResponseField name="message" type="string">
   Mensagem de erro (null em caso de sucesso)
 </ResponseField>
 
+## Verificar Autenticação
+
+<Note>
+Endpoint para verificar se o token está válido e obter dados da empresa.
+</Note>
+
+### Endpoint
+```http
+GET /api/auth/me
+```
+
+### Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+<CodeGroup>
+
+```bash cURL
+curl -X GET https://api.disparador.com/api/auth/me \
+  -H "X-Access-Token: seu-access-token"
+```
+
+```javascript JavaScript
+const response = await fetch('https://api.disparador.com/api/auth/me', {
+  headers: {
+    'X-Access-Token': 'seu-access-token'
+  }
+});
+
+const result = await response.json();
+console.log('Empresa:', result.companyName);
+```
+
+</CodeGroup>
+
+<ResponseExample>
+
+```json Sucesso (200 OK)
+{
+  "accessToken": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "tokenType": "Access",
+  "companyId": 1,
+  "companyName": "Minha Empresa LTDA",
+  "companyEmail": "contato@minhaempresa.com",
+  "blockedContactsEnabled": true,
+  "pollCampaignsEnabled": true,
+  "expiresAt": null,
+  "message": null
+}
+```
+
+```json Erro - Token inválido (400)
+{
+  "accessToken": null,
+  "tokenType": "Access",
+  "companyId": null,
+  "companyName": null,
+  "companyEmail": null,
+  "blockedContactsEnabled": null,
+  "pollCampaignsEnabled": null,
+  "expiresAt": null,
+  "message": "Access token inválido"
+}
+```
+
+</ResponseExample>
+
 ## Usando o Access Token
 
-Após obter o access token no registro, use-o no header `X-Access-Token` em todas as requisições:
+Após obter o access token no login, use-o no header `X-Access-Token` em todas as requisições:
 
 <CodeGroup>
 
 ```bash cURL
 curl -X GET https://api.disparador.com/api/campaigns \
-  -H "X-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  -H "X-Access-Token: a1b2c3d4-e5f6-7890-abcd-ef1234567890"
 ```
 
 ```javascript JavaScript
@@ -227,25 +432,10 @@ $response = file_get_contents('https://api.disparador.com/api/campaigns', false,
 
 | Código | Descrição |
 |--------|-----------|
-| 400 | Dados inválidos ou email já em uso |
+| 400 | Dados inválidos, credenciais incorretas ou conta desativada |
 | 401 | Access token inválido ou ausente |
+| 403 | Sem permissão para acessar o recurso |
 | 500 | Erro interno do servidor |
-
-## Erro de Token Inválido
-
-Quando um token inválido é usado, a API retorna:
-
-```json
-{
-  "id": null,
-  "name": null,
-  "status": null,
-  "totalContacts": 0,
-  "sentMessages": 0,
-  "failedMessages": 0,
-  "message": "Access token inválido"
-}
-```
 
 ## Segurança e Boas Práticas
 
@@ -268,47 +458,67 @@ Quando um token inválido é usado, a API retorna:
 
 <CodeGroup>
 
-```javascript JavaScript Correto
+```javascript JavaScript
 // ✅ Correto - Variável de ambiente
 const token = process.env.API_TOKEN;
 
 // ❌ Incorreto - Hardcoded
-// const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+// const token = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 ```
 
-```python Python Correto
+```python Python
 # ✅ Correto - Variável de ambiente
 import os
 token = os.environ.get('API_TOKEN')
 
 # ❌ Incorreto - Hardcoded
-# token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+# token = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'
 ```
 
-```php PHP Correto
+```php PHP
 <?php
 // ✅ Correto - Variável de ambiente
 $token = getenv('API_TOKEN');
 
 // ❌ Incorreto - Hardcoded
-// $token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+// $token = 'a1b2c3d4-e5f6-7890-abcd-ef1234567890';
 ?>
 ```
 
 </CodeGroup>
+
+## Rate Limiting
+
+O sistema implementa rate limiting por empresa:
+
+<Note>
+- **60 requisições por minuto** (padrão)
+- **1000 requisições por hora** (padrão)
+- Limites podem ser customizados por empresa
+</Note>
+
+### Headers de Rate Limit
+
+Toda resposta inclui headers informativos:
+
+| Header | Descrição |
+|--------|-----------|
+| `X-RateLimit-Limit` | Limite de requisições |
+| `X-RateLimit-Remaining` | Requisições restantes |
+| `X-RateLimit-Reset` | Timestamp de reset |
 
 ## Próximos Passos
 
 Após configurar a autenticação:
 
 <CardGroup cols={3}>
-  <Card title="Criar Campanha" icon="plus" href="/api-reference/campaigns/create">
-    Crie sua primeira campanha
+  <Card title="Interface Web" icon="browser" href="/frontend/login">
+    Acesse a interface web
   </Card>
-  <Card title="Listar Campanhas" icon="list" href="/api-reference/campaigns/list">
-    Veja todas suas campanhas
+  <Card title="Criar Campanha" icon="plus" href="/api-reference/campaigns/create">
+    Crie sua primeira campanha via API
   </Card>
   <Card title="Documentação API" icon="book-open" href="/api-reference">
-    Explore a documentação completa
+    Explore todos os endpoints
   </Card>
 </CardGroup>
