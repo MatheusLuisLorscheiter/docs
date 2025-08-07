@@ -1,0 +1,364 @@
+---
+title: "Upload de Mídia"
+api: "POST /api/media/upload"
+description: "Faz upload de arquivos de mídia para uso em campanhas"
+---
+
+## Visão Geral
+
+Este endpoint permite fazer upload de arquivos de mídia (imagens, vídeos, áudios e documentos) para serem usados em campanhas. Os arquivos são armazenados no servidor e retornam uma URL que pode ser utilizada nas campanhas.
+
+## Tipos de Mídia Suportados
+
+### Imagens
+- JPEG/JPG (`.jpg`, `.jpeg`)
+- PNG (`.png`)
+- GIF (`.gif`)
+- WebP (`.webp`)
+- Tamanho máximo: 50MB
+
+### Vídeos
+- MP4 (`.mp4`)
+- AVI (`.avi`)
+- MOV (`.mov`)
+- MKV (`.mkv`)
+- Tamanho máximo: 100MB
+
+### Áudios
+- MP3 (`.mp3`)
+- WAV (`.wav`)
+- OGG (`.ogg`)
+- M4A (`.m4a`)
+- AAC (`.aac`)
+- Tamanho máximo: 50MB
+
+### Documentos
+- PDF (`.pdf`)
+- DOC/DOCX (`.doc`, `.docx`)
+- XLS/XLSX (`.xls`, `.xlsx`)
+- PPT/PPTX (`.ppt`, `.pptx`)
+- TXT (`.txt`)
+- CSV (`.csv`)
+- Tamanho máximo: 100MB
+
+## Requisitos
+
+- Token de acesso válido
+- Arquivo no formato multipart/form-data
+- Arquivo dentro dos limites de tamanho
+
+## Parâmetros
+
+<ParamField body="file" type="file" required>
+  Arquivo a ser enviado (campo do formulário)
+</ParamField>
+
+## Cabeçalhos
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  Deve ser `multipart/form-data`
+</ParamField>
+
+## Exemplos de Uso
+
+### JavaScript (com FormData)
+```javascript
+async function uploadMedia(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  const response = await fetch('https://api.disparador.com/api/media/upload', {
+    method: 'POST',
+    headers: {
+      'X-Access-Token': 'seu_token_aqui'
+    },
+    body: formData
+  });
+  
+  const result = await response.json();
+  console.log('URL da mídia:', result.url);
+  return result;
+}
+
+// Exemplo com input de arquivo
+const fileInput = document.getElementById('file-input');
+fileInput.addEventListener('change', async (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const uploaded = await uploadMedia(file);
+    console.log('Arquivo enviado:', uploaded);
+  }
+});
+```
+
+### Python
+```python
+import requests
+
+def upload_media(file_path, access_token):
+    url = "https://api.disparador.com/api/media/upload"
+    headers = {
+        "X-Access-Token": access_token
+    }
+    
+    with open(file_path, 'rb') as file:
+        files = {'file': file}
+        response = requests.post(url, headers=headers, files=files)
+    
+    return response.json()
+
+# Exemplo de uso
+result = upload_media('/path/to/image.jpg', 'seu_token_aqui')
+print(f"URL da mídia: {result['url']}")
+```
+
+### PHP
+```php
+function uploadMedia($filePath, $accessToken) {
+    $ch = curl_init();
+    
+    $cfile = new CURLFile($filePath);
+    $data = array('file' => $cfile);
+    
+    curl_setopt($ch, CURLOPT_URL, "https://api.disparador.com/api/media/upload");
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'X-Access-Token: ' . $accessToken
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    curl_close($ch);
+    
+    return json_decode($response, true);
+}
+
+// Exemplo
+$result = uploadMedia('/path/to/video.mp4', 'seu_token_aqui');
+echo "URL: " . $result['url'];
+```
+
+### cURL
+```bash
+curl -X POST https://api.disparador.com/api/media/upload \
+  -H "X-Access-Token: seu_token_aqui" \
+  -F "file=@/path/to/document.pdf"
+```
+
+## Resposta
+
+### Sucesso (200 OK)
+
+```json
+{
+  "success": true,
+  "url": "https://api.disparador.com/api/media/files/abc123def456.jpg",
+  "fileName": "imagem-produto.jpg",
+  "fileSize": 2458624,
+  "mimeType": "image/jpeg",
+  "mediaType": "image",
+  "uploadedAt": "2024-01-20T16:45:00Z"
+}
+```
+
+### Campos da Resposta
+
+<ResponseField name="success" type="boolean">
+  Indica se o upload foi bem-sucedido
+</ResponseField>
+
+<ResponseField name="url" type="string">
+  URL pública do arquivo para uso em campanhas
+</ResponseField>
+
+<ResponseField name="fileName" type="string">
+  Nome original do arquivo
+</ResponseField>
+
+<ResponseField name="fileSize" type="number">
+  Tamanho do arquivo em bytes
+</ResponseField>
+
+<ResponseField name="mimeType" type="string">
+  Tipo MIME do arquivo
+</ResponseField>
+
+<ResponseField name="mediaType" type="string">
+  Categoria da mídia: image, video, audio, document
+</ResponseField>
+
+<ResponseField name="uploadedAt" type="string">
+  Data/hora do upload
+</ResponseField>
+
+## Erros Comuns
+
+### 400 Bad Request - Arquivo não fornecido
+```json
+{
+  "success": false,
+  "error": "Nenhum arquivo fornecido"
+}
+```
+
+### 413 Payload Too Large - Arquivo muito grande
+```json
+{
+  "success": false,
+  "error": "Arquivo excede o tamanho máximo permitido (100MB)"
+}
+```
+
+### 415 Unsupported Media Type - Tipo não suportado
+```json
+{
+  "success": false,
+  "error": "Tipo de arquivo não suportado"
+}
+```
+
+### 500 Internal Server Error
+```json
+{
+  "success": false,
+  "error": "Erro ao processar upload"
+}
+```
+
+## Casos de Uso
+
+### 1. Upload com Progresso
+```javascript
+function uploadWithProgress(file, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable) {
+        const percentComplete = (e.loaded / e.total) * 100;
+        onProgress(percentComplete);
+      }
+    });
+    
+    xhr.addEventListener('load', () => {
+      if (xhr.status === 200) {
+        resolve(JSON.parse(xhr.responseText));
+      } else {
+        reject(new Error('Upload failed'));
+      }
+    });
+    
+    xhr.open('POST', 'https://api.disparador.com/api/media/upload');
+    xhr.setRequestHeader('X-Access-Token', 'seu_token_aqui');
+    xhr.send(formData);
+  });
+}
+
+// Uso
+uploadWithProgress(file, (progress) => {
+  console.log(`Upload: ${progress.toFixed(0)}%`);
+  updateProgressBar(progress);
+});
+```
+
+### 2. Validação Antes do Upload
+```javascript
+function validateAndUpload(file) {
+  const maxSize = 100 * 1024 * 1024; // 100MB
+  const allowedTypes = [
+    'image/jpeg', 'image/png', 'image/gif',
+    'video/mp4', 'audio/mp3', 'application/pdf'
+  ];
+  
+  // Validar tamanho
+  if (file.size > maxSize) {
+    throw new Error('Arquivo muito grande (máx. 100MB)');
+  }
+  
+  // Validar tipo
+  if (!allowedTypes.includes(file.type)) {
+    throw new Error('Tipo de arquivo não suportado');
+  }
+  
+  return uploadMedia(file);
+}
+```
+
+### 3. Upload Múltiplo
+```javascript
+async function uploadMultipleFiles(files) {
+  const uploads = [];
+  
+  for (const file of files) {
+    try {
+      const result = await uploadMedia(file);
+      uploads.push({
+        file: file.name,
+        success: true,
+        url: result.url
+      });
+    } catch (error) {
+      uploads.push({
+        file: file.name,
+        success: false,
+        error: error.message
+      });
+    }
+  }
+  
+  return uploads;
+}
+```
+
+### 4. Integração com Galeria de Mídia
+```javascript
+async function uploadToGallery(file, metadata = {}) {
+  // Fazer upload
+  const uploadResult = await uploadMedia(file);
+  
+  // Salvar na galeria (opcional)
+  if (uploadResult.success) {
+    await saveToGallery({
+      url: uploadResult.url,
+      fileName: uploadResult.fileName,
+      mediaType: uploadResult.mediaType,
+      tags: metadata.tags || [],
+      description: metadata.description || ''
+    });
+  }
+  
+  return uploadResult;
+}
+```
+
+## Observações Importantes
+
+<Note>
+  **Armazenamento:**
+  - Os arquivos são armazenados permanentemente no servidor
+  - URLs geradas são permanentes e públicas
+  - Recomenda-se usar a Galeria de Mídia para gerenciar arquivos
+</Note>
+
+<Warning>
+  **Segurança:**
+  - Arquivos são verificados contra malware
+  - Apenas extensões permitidas são aceitas
+  - Nomes de arquivo são sanitizados
+  - Considere implementar rate limiting para uploads
+</Warning>
+
+## Dicas de Performance
+
+1. **Comprimir imagens** antes do upload para economizar banda
+2. **Validar no cliente** antes de enviar ao servidor
+3. **Usar upload assíncrono** para não bloquear a UI
+4. **Implementar retry** para falhas de rede
+5. **Cachear URLs** retornadas para evitar re-uploads

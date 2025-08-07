@@ -1,0 +1,352 @@
+---
+title: "Obter Contatos da Campanha"
+api: "GET /api/campaigns/{id}/contacts"
+description: "Obtém a lista de contatos de uma campanha com status de envio"
+---
+
+## Visão Geral
+
+Este endpoint retorna a lista paginada de contatos de uma campanha específica, incluindo:
+- Informações do contato (número, nome)
+- Status de envio (pendente, enviado, falha)
+- Timestamps de envio ou falha
+- Motivo da falha (se aplicável)
+- Contador de tentativas
+
+## Requisitos
+
+- Token de acesso válido
+- ID da campanha
+- A campanha deve pertencer à empresa do usuário
+
+## Parâmetros
+
+<ParamField path="id" type="number" required>
+  ID da campanha
+</ParamField>
+
+<ParamField query="page" type="number" default="0">
+  Número da página (começando em 0)
+</ParamField>
+
+<ParamField query="size" type="number" default="100">
+  Quantidade de contatos por página (máximo 100)
+</ParamField>
+
+## Cabeçalhos
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+## Exemplos de Uso
+
+### cURL
+```bash
+# Primeira página com 50 contatos
+curl -X GET "https://api.disparador.com/api/campaigns/123/contacts?page=0&size=50" \
+  -H "X-Access-Token: seu_token_aqui"
+```
+
+### JavaScript
+```javascript
+async function getCampaignContacts(campaignId, page = 0, size = 100) {
+  const response = await fetch(
+    `https://api.disparador.com/api/campaigns/${campaignId}/contacts?page=${page}&size=${size}`,
+    {
+      headers: {
+        'X-Access-Token': 'seu_token_aqui'
+      }
+    }
+  );
+  
+  return response.json();
+}
+
+// Obter todos os contatos paginados
+async function getAllContacts(campaignId) {
+  const contacts = [];
+  let page = 0;
+  let hasMore = true;
+  
+  while (hasMore) {
+    const batch = await getCampaignContacts(campaignId, page, 100);
+    contacts.push(...batch);
+    hasMore = batch.length === 100;
+    page++;
+  }
+  
+  return contacts;
+}
+```
+
+### Python
+```python
+import requests
+
+def get_campaign_contacts(campaign_id, page=0, size=100):
+    url = f"https://api.disparador.com/api/campaigns/{campaign_id}/contacts"
+    headers = {"X-Access-Token": "seu_token_aqui"}
+    params = {"page": page, "size": size}
+    
+    response = requests.get(url, headers=headers, params=params)
+    return response.json()
+
+# Obter contatos com falha
+def get_failed_contacts(campaign_id):
+    all_contacts = []
+    page = 0
+    
+    while True:
+        contacts = get_campaign_contacts(campaign_id, page)
+        if not contacts:
+            break
+        
+        failed = [c for c in contacts if c['status'] == 'FAILED']
+        all_contacts.extend(failed)
+        
+        if len(contacts) < 100:
+            break
+        page += 1
+    
+    return all_contacts
+```
+
+### PHP
+```php
+function getCampaignContacts($campaignId, $page = 0, $size = 100) {
+    $ch = curl_init();
+    
+    $url = "https://api.disparador.com/api/campaigns/{$campaignId}/contacts";
+    $url .= "?page={$page}&size={$size}";
+    
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'X-Access-Token: seu_token_aqui'
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    curl_close($ch);
+    
+    return json_decode($response, true);
+}
+```
+
+## Resposta
+
+### Sucesso (200 OK)
+
+Retorna um array de contatos com suas informações de status:
+
+```json
+[
+  {
+    "id": 1001,
+    "phoneNumber": "5511999887766",
+    "name": "João Silva",
+    "status": "SENT",
+    "sentAt": "2024-01-20T10:15:30",
+    "retryCount": 0
+  },
+  {
+    "id": 1002,
+    "phoneNumber": "5511999887777",
+    "name": "Maria Santos",
+    "status": "FAILED",
+    "failedAt": "2024-01-20T10:16:45",
+    "failureReason": "Número não registrado no WhatsApp",
+    "retryCount": 3
+  },
+  {
+    "id": 1003,
+    "phoneNumber": "5511999887788",
+    "name": "Pedro Costa",
+    "status": "PENDING",
+    "retryCount": 0
+  }
+]
+```
+
+## Campos da Resposta
+
+<ResponseField name="id" type="number">
+  ID único do contato na campanha
+</ResponseField>
+
+<ResponseField name="phoneNumber" type="string">
+  Número de telefone do contato
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Nome do contato
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Status do envio: PENDING, SENT, FAILED
+</ResponseField>
+
+<ResponseField name="sentAt" type="string">
+  Data/hora do envio bem-sucedido
+</ResponseField>
+
+<ResponseField name="failedAt" type="string">
+  Data/hora da falha no envio
+</ResponseField>
+
+<ResponseField name="failureReason" type="string">
+  Motivo da falha (quando aplicável)
+</ResponseField>
+
+<ResponseField name="retryCount" type="number">
+  Número de tentativas de envio
+</ResponseField>
+
+## Status dos Contatos
+
+| Status | Descrição | Campos Relevantes |
+|--------|-----------|-------------------|
+| PENDING | Aguardando envio | - |
+| SENT | Enviado com sucesso | sentAt |
+| FAILED | Falha no envio | failedAt, failureReason |
+
+## Motivos de Falha Comuns
+
+- **Número não registrado no WhatsApp**: O número não possui conta WhatsApp
+- **Erro de conexão**: Falha na comunicação com Evolution API
+- **Rate limit excedido**: Limite de envios ultrapassado
+- **Número inválido**: Formato de número incorreto
+- **Conta desconectada**: Instance Evolution desconectada
+- **Mídia não encontrada**: URL de mídia inacessível
+
+## Casos de Uso
+
+### 1. Relatório de Falhas
+```javascript
+async function generateFailureReport(campaignId) {
+  const contacts = await getAllCampaignContacts(campaignId);
+  
+  const failures = contacts.filter(c => c.status === 'FAILED');
+  const failuresByReason = {};
+  
+  failures.forEach(contact => {
+    const reason = contact.failureReason || 'Erro desconhecido';
+    failuresByReason[reason] = (failuresByReason[reason] || 0) + 1;
+  });
+  
+  return {
+    totalFailed: failures.length,
+    byReason: failuresByReason,
+    failedNumbers: failures.map(c => ({
+      number: c.phoneNumber,
+      name: c.name,
+      reason: c.failureReason
+    }))
+  };
+}
+```
+
+### 2. Reenvio para Falhas
+```javascript
+async function retryFailedContacts(campaignId) {
+  const contacts = await getCampaignContacts(campaignId);
+  const failed = contacts.filter(c => c.status === 'FAILED');
+  
+  // Criar nova campanha apenas com contatos que falharam
+  const retryContacts = failed.map(c => ({
+    phoneNumber: c.phoneNumber,
+    name: c.name
+  }));
+  
+  if (retryContacts.length > 0) {
+    await createCampaign({
+      name: `Reenvio - Campanha ${campaignId}`,
+      contacts: retryContacts,
+      message: originalMessage
+    });
+  }
+}
+```
+
+### 3. Exportar Contatos
+```javascript
+async function exportCampaignContacts(campaignId, format = 'csv') {
+  const allContacts = await getAllCampaignContacts(campaignId);
+  
+  if (format === 'csv') {
+    const csv = [
+      'Nome,Telefone,Status,Data Envio,Motivo Falha',
+      ...allContacts.map(c => 
+        `"${c.name}","${c.phoneNumber}","${c.status}","${c.sentAt || ''}","${c.failureReason || ''}"`
+      )
+    ].join('\n');
+    
+    downloadFile('contatos-campanha.csv', csv);
+  }
+}
+```
+
+### 4. Monitoramento em Tempo Real
+```javascript
+async function monitorCampaignProgress(campaignId) {
+  const updateInterval = 5000; // 5 segundos
+  
+  const updateProgress = async () => {
+    const contacts = await getCampaignContacts(campaignId, 0, 1000);
+    
+    const stats = {
+      total: contacts.length,
+      sent: contacts.filter(c => c.status === 'SENT').length,
+      failed: contacts.filter(c => c.status === 'FAILED').length,
+      pending: contacts.filter(c => c.status === 'PENDING').length
+    };
+    
+    updateProgressBar(stats);
+    
+    if (stats.pending > 0) {
+      setTimeout(updateProgress, updateInterval);
+    }
+  };
+  
+  updateProgress();
+}
+```
+
+## Observações
+
+<Note>
+  **Paginação:**
+  - Use paginação para campanhas com muitos contatos
+  - O tamanho máximo por página é 100 contatos
+  - A página inicial é 0 (zero)
+</Note>
+
+<Warning>
+  **Performance:**
+  - Para campanhas muito grandes, evite carregar todos os contatos de uma vez
+  - Use filtros no frontend ao invés de carregar tudo e filtrar localmente
+  - Considere implementar cache para consultas frequentes
+</Warning>
+
+## Erros Comuns
+
+### 400 Bad Request
+```json
+{
+  "message": "Campanha não encontrada"
+}
+```
+
+### 403 Forbidden
+```json
+{
+  "message": "Campanha não pertence à sua empresa"
+}
+```
+
+### 401 Unauthorized
+```json
+{
+  "message": "Access token inválido"
+}
+```

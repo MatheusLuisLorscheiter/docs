@@ -1,0 +1,369 @@
+---
+title: "Atualizar Campanha"
+api: "PUT /api/campaigns/{id}"
+description: "Atualiza uma campanha em rascunho com novos dados"
+---
+
+## Visão Geral
+
+Este endpoint permite atualizar uma campanha que esteja com status **DRAFT** (rascunho). Você pode modificar:
+- Nome e descrição
+- Lista de contatos
+- Mensagem e mídia
+- Intervalos de envio
+- Agendamento
+- Telefone de notificação
+
+## Requisitos
+
+- Token de acesso válido
+- ID da campanha a ser atualizada
+- A campanha deve estar em status DRAFT
+- A campanha deve pertencer à empresa do usuário
+
+## Parâmetros
+
+<ParamField path="id" type="number" required>
+  ID da campanha a ser atualizada
+</ParamField>
+
+<ParamField body="name" type="string" required>
+  Nome da campanha
+</ParamField>
+
+<ParamField body="message" type="string">
+  Conteúdo da mensagem (obrigatório se não for enquete)
+</ParamField>
+
+<ParamField body="contacts" type="array" required>
+  Lista de contatos para a campanha
+  ```json
+  [
+    {
+      "phoneNumber": "5511999887766",
+      "name": "João Silva"
+    }
+  ]
+  ```
+</ParamField>
+
+<ParamField body="scheduledFor" type="string">
+  Data/hora para agendamento (ISO 8601)
+</ParamField>
+
+<ParamField body="intervalMinSeconds" type="number">
+  Intervalo mínimo entre mensagens (padrão: 10)
+</ParamField>
+
+<ParamField body="intervalMaxSeconds" type="number">
+  Intervalo máximo entre mensagens (padrão: 30)
+</ParamField>
+
+<ParamField body="notificationPhone" type="string">
+  Telefone para notificação de conclusão
+</ParamField>
+
+<ParamField body="mediaUrl" type="string">
+  URL da mídia a ser enviada
+</ParamField>
+
+<ParamField body="mediaType" type="string">
+  Tipo de mídia: image, video, audio, document, poll
+</ParamField>
+
+<ParamField body="caption" type="string">
+  Legenda para mídia (imagens e vídeos)
+</ParamField>
+
+<ParamField body="fileName" type="string">
+  Nome do arquivo para documentos
+</ParamField>
+
+<ParamField body="pollData" type="object">
+  Dados da enquete (quando mediaType = "poll")
+  ```json
+  {
+    "name": "Pergunta da enquete",
+    "options": ["Opção 1", "Opção 2"],
+    "selectableCount": 1
+  }
+  ```
+</ParamField>
+
+<ParamField body="isDraft" type="boolean">
+  Se true, mantém como rascunho. Se false, inicia/agenda a campanha
+</ParamField>
+
+<ParamField body="databaseConfigId" type="number">
+  ID da configuração de banco para variáveis personalizadas
+</ParamField>
+
+## Cabeçalhos
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+## Exemplos de Uso
+
+### Atualizar e Manter como Rascunho
+```javascript
+const response = await fetch('https://api.disparador.com/api/campaigns/123', {
+  method: 'PUT',
+  headers: {
+    'X-Access-Token': 'seu_token_aqui',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Campanha Atualizada',
+    message: 'Nova mensagem da campanha',
+    contacts: [
+      { phoneNumber: '5511999887766', name: 'João' },
+      { phoneNumber: '5511999887777', name: 'Maria' }
+    ],
+    intervalMinSeconds: 5,
+    intervalMaxSeconds: 20,
+    isDraft: true
+  })
+});
+```
+
+### Atualizar e Iniciar Campanha
+```javascript
+const response = await fetch('https://api.disparador.com/api/campaigns/123', {
+  method: 'PUT',
+  headers: {
+    'X-Access-Token': 'seu_token_aqui',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Promoção Relâmpago',
+    message: '⚡ Oferta válida apenas hoje!',
+    contacts: contactList,
+    isDraft: false // Inicia imediatamente
+  })
+});
+```
+
+### Atualizar e Agendar
+```javascript
+const response = await fetch('https://api.disparador.com/api/campaigns/123', {
+  method: 'PUT',
+  headers: {
+    'X-Access-Token': 'seu_token_aqui',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Lembrete Agendado',
+    message: 'Não esqueça do nosso evento amanhã!',
+    contacts: eventParticipants,
+    scheduledFor: '2024-01-21T09:00:00',
+    isDraft: false
+  })
+});
+```
+
+### Atualizar para Campanha com Mídia
+```javascript
+const response = await fetch('https://api.disparador.com/api/campaigns/123', {
+  method: 'PUT',
+  headers: {
+    'X-Access-Token': 'seu_token_aqui',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Lançamento com Vídeo',
+    message: 'Confira nosso novo produto em ação!',
+    mediaUrl: 'https://example.com/video.mp4',
+    mediaType: 'video',
+    caption: 'Novo produto revolucionário',
+    contacts: customerList,
+    isDraft: true
+  })
+});
+```
+
+### Atualizar para Enquete
+```javascript
+const response = await fetch('https://api.disparador.com/api/campaigns/123', {
+  method: 'PUT',
+  headers: {
+    'X-Access-Token': 'seu_token_aqui',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Pesquisa de Satisfação',
+    mediaType: 'poll',
+    pollData: {
+      name: 'Como você avalia nosso atendimento?',
+      options: ['Excelente', 'Bom', 'Regular', 'Ruim'],
+      selectableCount: 1
+    },
+    contacts: clientList,
+    isDraft: false
+  })
+});
+```
+
+## Resposta
+
+### Sucesso (200 OK)
+
+A resposta varia dependendo se a campanha foi mantida como rascunho ou iniciada:
+
+#### Mantida como Rascunho
+```json
+{
+  "id": 123,
+  "name": "Campanha Atualizada",
+  "status": "DRAFT",
+  "type": "IMMEDIATE",
+  "totalContacts": 50,
+  "message": "Campanha atualizada com sucesso",
+  "messageContent": "Nova mensagem da campanha",
+  "mediaType": "text"
+}
+```
+
+#### Iniciada Imediatamente
+```json
+{
+  "id": 123,
+  "name": "Promoção Relâmpago",
+  "status": "RUNNING",
+  "type": "IMMEDIATE",
+  "totalContacts": 100,
+  "startedAt": "2024-01-20T16:30:00",
+  "messageContent": "⚡ Oferta válida apenas hoje!"
+}
+```
+
+#### Agendada
+```json
+{
+  "id": 123,
+  "name": "Lembrete Agendado",
+  "status": "SCHEDULED",
+  "type": "SCHEDULED",
+  "scheduledFor": "2024-01-21T09:00:00",
+  "totalContacts": 75
+}
+```
+
+## Erros Comuns
+
+### 400 Bad Request - Campanha não encontrada
+```json
+{
+  "message": "Campanha não encontrada"
+}
+```
+
+### 403 Forbidden - Acesso negado
+```json
+{
+  "message": "Acesso negado"
+}
+```
+
+### 400 Bad Request - Status inválido
+```json
+{
+  "message": "Apenas campanhas em rascunho podem ser editadas"
+}
+```
+
+### 400 Bad Request - Validação
+```json
+{
+  "message": "Mensagem é obrigatória quando não for enquete ou rascunho"
+}
+```
+
+## Validações
+
+<Note>
+  **Regras de Validação:**
+  - Nome é sempre obrigatório
+  - Mensagem é obrigatória exceto para enquetes ou quando `isDraft = true`
+  - Intervalos devem respeitar: 1 ≤ min ≤ 300 e min ≤ max ≤ 600
+  - Para enquetes, `pollData` deve ter no mínimo 2 opções
+  - Contatos bloqueados são automaticamente filtrados
+</Note>
+
+<Warning>
+  **Limitações:**
+  - Apenas campanhas em status DRAFT podem ser atualizadas
+  - Após iniciar, a campanha não pode mais ser editada
+  - Máximo de 600 segundos (10 minutos) para intervalo entre mensagens
+</Warning>
+
+## Fluxo de Trabalho
+
+### 1. Criar e Refinar Rascunho
+```javascript
+// Criar rascunho inicial
+const draft = await createCampaign({
+  name: 'Campanha Inicial',
+  message: 'Texto básico',
+  contacts: [],
+  isDraft: true
+});
+
+// Refinar mensagem
+await updateCampaign(draft.id, {
+  message: 'Mensagem melhorada com emojis 🎉',
+  isDraft: true
+});
+
+// Adicionar contatos
+await updateCampaign(draft.id, {
+  contacts: await loadContacts(),
+  isDraft: true
+});
+
+// Finalmente, iniciar
+await updateCampaign(draft.id, {
+  isDraft: false
+});
+```
+
+### 2. Converter Tipos de Campanha
+```javascript
+// Converter de texto para mídia
+await updateCampaign(campaignId, {
+  mediaUrl: 'https://example.com/promo.jpg',
+  mediaType: 'image',
+  caption: 'Super promoção!',
+  isDraft: true
+});
+
+// Converter para enquete
+await updateCampaign(campaignId, {
+  mediaType: 'poll',
+  pollData: {
+    name: 'Qual seu sabor favorito?',
+    options: ['Chocolate', 'Morango', 'Baunilha'],
+    selectableCount: 1
+  },
+  isDraft: true
+});
+```
+
+### 3. Preparar Campanha Complexa
+```javascript
+// Atualizar com variáveis personalizadas
+await updateCampaign(campaignId, {
+  message: 'Olá {{nome}}, sua fatura de {{valor}} vence em {{data}}',
+  databaseConfigId: 123,
+  contacts: clientsWithCustomData,
+  isDraft: true
+});
+
+// Revisar e agendar
+await updateCampaign(campaignId, {
+  scheduledFor: '2024-02-01T08:00:00',
+  notificationPhone: '5511999887766',
+  isDraft: false
+});
+```

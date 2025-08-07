@@ -57,8 +57,12 @@
             "group": "Campanhas",
             "pages": [
               "api-reference/campaigns/create",
+              "api-reference/campaigns/update",
               "api-reference/campaigns/list",
+              "api-reference/campaigns/list-active",
               "api-reference/campaigns/get",
+              "api-reference/campaigns/get-contacts",
+              "api-reference/campaigns/duplicate",
               "api-reference/campaigns/pause",
               "api-reference/campaigns/resume",
               "api-reference/campaigns/cancel"
@@ -73,6 +77,12 @@
               "api-reference/blocked-contacts/import",
               "api-reference/blocked-contacts/check",
               "api-reference/blocked-contacts/stats"
+            ]
+          },
+          {
+            "group": "Mídia",
+            "pages": [
+              "api-reference/media/upload"
             ]
           },
           {
