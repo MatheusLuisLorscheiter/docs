@@ -8,47 +8,39 @@
     "dark": "#15803D"
   },
   "favicon": "/favicon.svg",
-  "navigation": {
-    "languages": [],
-    "versions": [],
-    "tabs": [],
-    "dropdowns": [],
-    "anchors": [],
-    "groups": [
-      {
-        "group": "Início",
-        "pages": [
-          { "title": "Introdução", "href": "/" },
-          { "title": "Quickstart", "href": "/quickstart" },
-          { "title": "Conceitos", "href": "/concepts" }
-        ]
-      },
-      {
-        "group": "Referência de API",
-        "pages": [
-          { "title": "Auth", "href": "/api-reference/auth" },
-          { "title": "Campanhas", "href": "/api-reference/campaigns" },
-          { "title": "Mídia", "href": "/api-reference/media" },
-          { "title": "Bloqueios", "href": "/api-reference/blocked-contacts" },
-          { "title": "Sistema", "href": "/api-reference/system" },
-          { "title": "Automações", "href": "/api-reference/automations" }
-        ]
-      },
-      {
-        "group": "Guias",
-        "pages": [
-          { "title": "Configuração", "href": "/configuration" },
-          { "title": "Implantação", "href": "/deployment" },
-          { "title": "Monitoramento", "href": "/monitoring" },
-          { "title": "Tratamento de Erros", "href": "/error-handling" },
-          { "title": "Contatos Bloqueados", "href": "/blocked-contacts-concept" },
-          { "title": "Recursos de Mídia", "href": "/media-features" },
-          { "title": "Solução de Problemas", "href": "/troubleshooting" }
-        ]
-      }
-    ],
-    "pages": []
-  },
+  "navigation": [
+    {
+      "group": "Início",
+      "pages": [
+        { "title": "Introdução", "href": "/" },
+        { "title": "Quickstart", "href": "/quickstart" },
+        { "title": "Conceitos", "href": "/concepts" }
+      ]
+    },
+    {
+      "group": "Referência de API",
+      "pages": [
+        { "title": "Auth", "href": "/api-reference/auth" },
+        { "title": "Campanhas", "href": "/api-reference/campaigns" },
+        { "title": "Mídia", "href": "/api-reference/media" },
+        { "title": "Bloqueios", "href": "/api-reference/blocked-contacts" },
+        { "title": "Sistema", "href": "/api-reference/system" },
+        { "title": "Automações", "href": "/api-reference/automations" }
+      ]
+    },
+    {
+      "group": "Guias",
+      "pages": [
+        { "title": "Configuração", "href": "/configuration" },
+        { "title": "Implantação", "href": "/deployment" },
+        { "title": "Monitoramento", "href": "/monitoring" },
+        { "title": "Tratamento de Erros", "href": "/error-handling" },
+        { "title": "Contatos Bloqueados", "href": "/blocked-contacts-concept" },
+        { "title": "Recursos de Mídia", "href": "/media-features" },
+        { "title": "Solução de Problemas", "href": "/troubleshooting" }
+      ]
+    }
+  ],
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
@@ -82,4 +74,4 @@
   },
   "customCSS": ["custom.css"],
   "components": ["components.js"]
-}
+} 
