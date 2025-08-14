@@ -8,31 +8,34 @@
     "dark": "#15803D"
   },
   "favicon": "/favicon.svg",
-  "navigation": {
-    "tabs": [
-      { "name": "Início", "url": "/" },
-      { "name": "API", "url": "/api-reference/auth" },
-      { "name": "Guias", "url": "/configuration" },
-      { "name": "Frontend", "url": "/frontend/introduction" }
-    ],
-    "groups": [
-      {
-        "group": "Início",
-        "pages": [
-          "index",
-          "quickstart",
-          "concepts"
-        ]
-      },
-      {
-        "group": "Referência de API",
-        "pages": [
-          { "group": "Auth", "pages": [
+  "tabs": [
+    { "name": "Início", "url": "/" },
+    { "name": "API", "url": "/api-reference" },
+    { "name": "Guias", "url": "/configuration" }
+  ],
+  "navigation": [
+    {
+      "group": "Início",
+      "pages": [
+        "index",
+        "quickstart",
+        "concepts"
+      ]
+    },
+    {
+      "group": "Referência de API", 
+      "pages": [
+        {
+          "group": "Auth",
+          "pages": [
             "api-reference/auth/login",
-            "api-reference/auth/register",
+            "api-reference/auth/register", 
             "api-reference/auth/me"
-          ]},
-          { "group": "Campanhas", "pages": [
+          ]
+        },
+        {
+          "group": "Campanhas",
+          "pages": [
             "api-reference/campaigns/create",
             "api-reference/campaigns/get",
             "api-reference/campaigns/get-contacts",
@@ -42,38 +45,47 @@
             "api-reference/campaigns/pause",
             "api-reference/campaigns/resume",
             "api-reference/campaigns/cancel"
-          ]},
-          { "group": "Mídia", "pages": [
+          ]
+        },
+        {
+          "group": "Mídia",
+          "pages": [
             "api-reference/media/upload"
-          ]},
-          { "group": "Bloqueios", "pages": [
+          ]
+        },
+        {
+          "group": "Bloqueios",
+          "pages": [
             "api-reference/blocked-contacts/list",
             "api-reference/blocked-contacts/block",
             "api-reference/blocked-contacts/unblock",
             "api-reference/blocked-contacts/stats",
             "api-reference/blocked-contacts/import"
-          ]},
-          { "group": "Sistema", "pages": [
+          ]
+        },
+        {
+          "group": "Sistema",
+          "pages": [
             "api-reference/system/health",
             "api-reference/system/info"
-          ]},
-          "api-reference/automations"
-        ]
-      },
-      {
-        "group": "Guias",
-        "pages": [
-          "configuration",
-          "deployment",
-          "monitoring",
-          "error-handling",
-          "blocked-contacts-concept",
-          "media-features",
-          "troubleshooting"
-        ]
-      }
-    ]
-  },
+          ]
+        },
+        "api-reference/automations"
+      ]
+    },
+    {
+      "group": "Guias",
+      "pages": [
+        "configuration",
+        "deployment", 
+        "monitoring",
+        "error-handling",
+        "blocked-contacts-concept",
+        "media-features",
+        "troubleshooting"
+      ]
+    }
+  ],
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
