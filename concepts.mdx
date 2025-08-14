@@ -418,3 +418,19 @@ Receba avisos no WhatsApp:
     Resolva problemas comuns
   </Card>
 </CardGroup> 
+
+## Automações por Segmentação
+
+As Automações permitem disparos recorrentes baseados em filtros de banco (QueryTemplate) e mensagens personalizadas. Foram projetadas para isolamento total dos fluxos de campanhas.
+
+- Isolamento: filas Redis e workers dedicados (`automation_message_queue`, `automation_scheduled_queue`, `automation_retry_queue`).
+- Entidades: `Automation`, `AutomationRun`, `AutomationSentLog` (deduplicação).
+- Deduplicação:
+  - NEVER: sem filtro de históricos.
+  - ONCE: envia uma única vez por contato enquanto a automação existir.
+  - COOLDOWN_DAYS: evita reenvios a um contato dentro de uma janela de X dias.
+- Limite por execução: `sendLimitPerRun` para restringir o volume por run.
+- Agendamento: `DAILY`, `WEEKLY`, `MONTHLY`, `CRON` com `timeOfDay` e `timezone`.
+- Mensagens: suporte a `TEXT`, `MEDIA`, `AUDIO` e `POLL` (enquetes).
+- Personalização: variáveis padrão e customizadas provenientes do resultado da query, através do mesmo mecanismo das campanhas.
+- Teste unitário: endpoint específico para envio isolado, sem criação de run, útil para validação rápida da mensagem. 

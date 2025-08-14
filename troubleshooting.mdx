@@ -632,6 +632,22 @@ echo "✅ Limpeza concluída"
 
 </CodeGroup>
 
+## Automações
+
+### Run não envia para todos os contatos
+- Verifique a deduplicação: `ONCE` e `COOLDOWN_DAYS` excluem números já atendidos.
+- Confirme `sendLimitPerRun`: o limite pode reduzir a quantidade.
+- Veja `matchedContacts` vs `sentCount` e `failedCount` em `/api/automations/{automationId}/runs`.
+
+### Números inválidos
+- O `AutomationMessageProcessor` normaliza e valida números; inválidos não são enviados. Confirme o formato (inclua DDI).
+
+### Test-send não aparece nos runs
+- O `test-send` é unitário e não cria `AutomationRun`. Consulte logs do worker para confirmar o envio.
+
+### Retries
+- Falhas são re-enfileiradas até `AUTOMATION_QUEUE_MAX_RETRIES`. Ajuste `AUTOMATION_QUEUE_RETRY_DELAY` para o backoff.
+
 ## Próximos Passos
 
 <CardGroup cols={3}>

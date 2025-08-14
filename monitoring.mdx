@@ -476,6 +476,12 @@ netstat -tulpn | grep :80
 
 </CodeGroup>
 
+## Automações
+
+- Métricas de envio: o `AutomationMessageProcessor` registra latência e sucesso/erro por tipo (TEXT/MEDIA/AUDIO/POLL) via Micrometer.
+- Acompanhamento de execuções: use `GET /api/automations/{automationId}/runs` para observar `sentCount`, `failedCount`, `matchedContacts`, `startedAt`/`finishedAt` e `status`.
+- Workers: verifique logs do `AutomationQueueWorker` para consumo das filas `automation_message_queue`, `automation_scheduled_queue`, `automation_retry_queue`.
+
 ## Dashboards Recomendados
 
 ### Dashboard de Operações

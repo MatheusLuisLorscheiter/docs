@@ -1,161 +1,46 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "API Disparador",
+  "name": "API Disparador Evolution",
   "colors": {
-    "primary": "#16A34A",
+    "primary": "#4F46E5",
     "light": "#07C983",
     "dark": "#15803D"
   },
   "favicon": "/favicon.svg",
-  "navigation": {
-    "tabs": [
-      {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Getting started",
-            "pages": [
-              "index",
-              "quickstart",
-              "authentication",
-              "error-handling"
-            ]
-          },
-          {
-            "group": "Development",
-            "pages": [
-              "concepts",
-              "media-features",
-              "campaign-status-reference",
-              "blocked-contacts-concept",
-              "deployment",
-              "configuration",
-              "monitoring"
-            ]
-          },
-          {
-            "group": "Troubleshooting",
-            "pages": [
-              "troubleshooting"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API reference",
-        "groups": [
-          {
-            "group": "Autenticação",
-            "pages": [
-              "api-reference/auth/login",
-              "api-reference/auth/me",
-              "api-reference/auth/register"
-            ]
-          },
-          {
-            "group": "Campanhas",
-            "pages": [
-              "api-reference/campaigns/create",
-              "api-reference/campaigns/update",
-              "api-reference/campaigns/list",
-              "api-reference/campaigns/list-active",
-              "api-reference/campaigns/get",
-              "api-reference/campaigns/get-contacts",
-              "api-reference/campaigns/duplicate",
-              "api-reference/campaigns/pause",
-              "api-reference/campaigns/resume",
-              "api-reference/campaigns/cancel"
-            ]
-          },
-          {
-            "group": "Contatos Bloqueados",
-            "pages": [
-              "api-reference/blocked-contacts/list",
-              "api-reference/blocked-contacts/block",
-              "api-reference/blocked-contacts/unblock",
-              "api-reference/blocked-contacts/import",
-              "api-reference/blocked-contacts/check",
-              "api-reference/blocked-contacts/stats"
-            ]
-          },
-          {
-            "group": "Mídia",
-            "pages": [
-              "api-reference/media/upload"
-            ]
-          },
-          {
-            "group": "Sistema",
-            "pages": [
-              "api-reference/system/health",
-              "api-reference/system/info"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Interface Web",
-        "groups": [
-          {
-            "group": "Primeiros Passos",
-            "pages": [
-              "frontend/introduction",
-              "frontend/login",
-              "frontend/first-campaign"
-            ]
-          },
-          {
-            "group": "Funcionalidades",
-            "pages": [
-              "frontend/dashboard",
-              "frontend/campaigns",
-              "frontend/automations",
-              "frontend/settings",
-              "frontend/settings/blocked-contacts"
-            ]
-          },
-          {
-            "group": "Campanhas",
-            "pages": [
-              "frontend/campaigns/creating",
-              "frontend/campaigns/scheduling",
-              "frontend/campaigns/media",
-              "frontend/campaigns/polls",
-              "frontend/campaigns/managing"
-            ]
-          },
-          {
-            "group": "Automações",
-            "pages": [
-              "frontend/automations/whatsapp-setup",
-              "frontend/automations/instance-management",
-              "frontend/automations/qr-code"
-            ]
-          }
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "GitHub",
-          "href": "https://github.com/MatheusLuisLorscheiter/Api-Evolution",
-          "icon": "github"
-        },
-        {
-          "anchor": "Suporte por Email",
-          "href": "mailto:suporte@chavemestragestao.com.br",
-          "icon": "envelope-open"
-        },
-        {
-          "anchor": "Suporte WhatsApp",
-          "href": "https://wa.me/5548988420158",
-          "icon": "whatsapp"
-        }
+  "navigation": [
+    {
+      "group": "Início",
+      "pages": [
+        { "title": "Introdução", "href": "/" },
+        { "title": "Quickstart", "href": "/quickstart" },
+        { "title": "Conceitos", "href": "/concepts" }
+      ]
+    },
+    {
+      "group": "Referência de API",
+      "pages": [
+        { "title": "Auth", "href": "/api-reference/auth" },
+        { "title": "Campanhas", "href": "/api-reference/campaigns" },
+        { "title": "Mídia", "href": "/api-reference/media" },
+        { "title": "Bloqueios", "href": "/api-reference/blocked-contacts" },
+        { "title": "Sistema", "href": "/api-reference/system" },
+        { "title": "Automações", "href": "/api-reference/automations" }
+      ]
+    },
+    {
+      "group": "Guias",
+      "pages": [
+        { "title": "Configuração", "href": "/configuration" },
+        { "title": "Implantação", "href": "/deployment" },
+        { "title": "Monitoramento", "href": "/monitoring" },
+        { "title": "Tratamento de Erros", "href": "/error-handling" },
+        { "title": "Contatos Bloqueados", "href": "/blocked-contacts-concept" },
+        { "title": "Recursos de Mídia", "href": "/media-features" },
+        { "title": "Solução de Problemas", "href": "/troubleshooting" }
       ]
     }
-  },
+  ],
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"

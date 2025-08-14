@@ -194,6 +194,37 @@ export QUEUE_WORKER_ENABLED=true
 
 </CodeGroup>
 
+## Filas e Workers de Automações
+
+As automações possuem sua própria configuração em `application.yml` para isolamento das filas e workers.
+
+```yaml
+app:
+  automation:
+    queue:
+      message-queue: ${AUTOMATION_QUEUE_MESSAGE_NAME:automation_message_queue}
+      scheduled-queue: ${AUTOMATION_QUEUE_SCHEDULED_NAME:automation_scheduled_queue}
+      retry-queue: ${AUTOMATION_QUEUE_RETRY_NAME:automation_retry_queue}
+      concurrency: ${AUTOMATION_QUEUE_CONCURRENCY:3}
+      retry:
+        attempts: ${AUTOMATION_QUEUE_MAX_RETRIES:3}
+        delay: ${AUTOMATION_QUEUE_RETRY_DELAY:60}
+      worker:
+        enabled: ${AUTOMATION_QUEUE_WORKER_ENABLED:true}
+        pool-size: ${AUTOMATION_QUEUE_WORKER_POOL_SIZE:2}
+```
+
+- `message-queue`, `scheduled-queue`, `retry-queue`: nomes das filas Redis.
+- `concurrency`: concorrência desejada por execução do worker.
+- `retry.attempts` e `retry.delay`: controle de tentativas e atraso no reprocessamento.
+- `worker.enabled` e `worker.pool-size`: habilita e dimensiona o worker dedicado de automações.
+
+## Flags por Empresa
+
+A visibilidade do recurso pode ser controlada por empresa com a flag:
+
+- `companies.automations_enabled` (padrão TRUE). No frontend, a flag é refletida em `user.automationsEnabled` e controla a exibição do card em `/automations`.
+
 ## Configuração do Servidor
 
 ### Variáveis do Tomcat

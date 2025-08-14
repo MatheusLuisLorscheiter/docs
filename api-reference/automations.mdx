@@ -1,0 +1,191 @@
+---
+title: Automações por Segmentação
+sidebarTitle: Automações
+---
+
+Introdução
+
+A API de Automações por Segmentação permite criar rotinas recorrentes de disparo de mensagens utilizando filtros dinâmicos (QueryTemplate) e configurações de mensagem (texto, mídia, áudio e enquetes). A arquitetura isola filas e workers das campanhas para garantir robustez e não impactar os disparos existentes.
+
+Endpoints
+
+Criar automação
+
+POST /api/automations
+
+Headers
+- X-Access-Token: string
+
+Body (CreateAutomationRequest)
+```json
+{
+  "name": "Aniversariantes Diário",
+  "description": "Parabéns diário",
+  "isActive": true,
+  "scheduleType": "DAILY",
+  "schedule": { "timeOfDay": "09:00", "timezone": "America/Sao_Paulo", "weekdays": [2,3,4,5,6] },
+  "databaseConfigId": 1,
+  "filters": [{ "filterId": "birthday", "value": "2025-08-13", "ignoreYear": true }],
+  "messageConfig": { "message": "Parabéns {PrimeiroNome}!" },
+  "evolutionConfigId": 2,
+  "intervalMinSeconds": 5,
+  "intervalMaxSeconds": 12,
+  "dedupStrategy": "ONCE",
+  "dedupCooldownDays": 7,
+  "sendLimitPerRun": 100
+}
+```
+
+Resposta (AutomationResponse)
+```json
+{
+  "id": 10,
+  "name": "Aniversariantes Diário",
+  "isActive": true,
+  "scheduleType": "DAILY",
+  "databaseConfigId": 1,
+  "evolutionConfigId": 2,
+  "intervalMinSeconds": 5,
+  "intervalMaxSeconds": 12,
+  "dedupStrategy": "ONCE",
+  "dedupCooldownDays": 7,
+  "sendLimitPerRun": 100,
+  "lastRunAt": null,
+  "nextRunAt": "2025-08-14T09:00:00",
+  "createdAt": "2025-08-13T13:00:00",
+  "updatedAt": "2025-08-13T13:00:00"
+}
+```
+
+Listar automações
+
+GET /api/automations
+
+Obter automação
+
+GET /api/automations/{id}
+
+Atualizar automação
+
+PUT /api/automations/{id}
+
+Ativar/Desativar automação
+
+PATCH /api/automations/{id}/toggle?active=true|false
+
+Excluir automação
+
+DELETE /api/automations/{id}
+
+Executar agora
+
+POST /api/automations/{id}/run-now
+
+- Dispara imediatamente uma execução de acordo com os filtros salvos e a configuração de deduplicação/limite.
+
+Enviar teste (unitário)
+
+POST /api/automations/{id}/test-send?phone=5511999999999
+
+- Enfileira um envio unitário (sem criar run) com base no message_config atual da automação. Não respeita dedup/limite, pois é um teste pontual.
+
+Listar execuções (runs)
+
+GET /api/automations/{automationId}/runs
+
+Resposta (lista de AutomationRun)
+```json
+[
+  {
+    "id": 101,
+    "status": "COMPLETED",
+    "matchedContacts": 32,
+    "sentCount": 31,
+    "failedCount": 1,
+    "scheduledFor": "2025-08-13T09:00:00",
+    "startedAt": "2025-08-13T09:00:02",
+    "finishedAt": "2025-08-13T09:10:35",
+    "errorMessage": null
+  }
+]
+```
+
+Payloads
+
+CreateAutomationRequest
+```ts
+interface CreateAutomationRequest {
+  name: string;
+  description?: string;
+  isActive?: boolean;
+  scheduleType?: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'CRON';
+  schedule?: {
+    timeOfDay?: string; // HH:mm
+    timezone?: string;
+    weekdays?: number[]; // 1..7 (Dom..Sáb)
+    dayOfMonth?: number; // 1..31
+    cronExpression?: string;
+  };
+  databaseConfigId?: number;
+  filters?: Array<{ filterId: string; value: any; operator?: string; ignoreYear?: boolean }>;
+  messageConfig?: {
+    message?: string;
+    mediaUrl?: string;
+    mediaType?: string; // 'audio' para áudios, outros para media
+    fileName?: string;
+    caption?: string;
+    pollData?: { name: string; selectableCount: number; options: string[] };
+  };
+  evolutionConfigId?: number;
+  intervalMinSeconds?: number;
+  intervalMaxSeconds?: number;
+  notificationPhone?: string;
+  dedupStrategy?: 'NEVER' | 'ONCE' | 'COOLDOWN_DAYS';
+  dedupCooldownDays?: number;
+  sendLimitPerRun?: number;
+}
+```
+
+AutomationResponse
+```ts
+interface AutomationResponse {
+  id: number;
+  name: string;
+  description?: string;
+  isActive: boolean;
+  scheduleType: string;
+  databaseConfigId?: number;
+  evolutionConfigId?: number;
+  intervalMinSeconds: number;
+  intervalMaxSeconds: number;
+  notificationPhone?: string;
+  dedupStrategy: string;
+  dedupCooldownDays?: number;
+  sendLimitPerRun?: number;
+  lastRunAt?: string;
+  nextRunAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+```
+
+AutomationRun
+```ts
+interface AutomationRun {
+  id: number;
+  status: 'SCHEDULED' | 'RUNNING' | 'COMPLETED' | 'FAILED';
+  matchedContacts?: number;
+  sentCount?: number;
+  failedCount?: number;
+  scheduledFor?: string;
+  startedAt?: string;
+  finishedAt?: string;
+  errorMessage?: string;
+}
+```
+
+Boas práticas
+- Use deduplicação ONCE ou COOLDOWN_DAYS para evitar spams.
+- Defina intervalos (min/max) para humanizar os envios e evitar bloqueios.
+- Utilize a flag de empresa `automationsEnabled` para controlar o acesso ao recurso por empresa.
+- Para testes, use o endpoint `test-send`.
