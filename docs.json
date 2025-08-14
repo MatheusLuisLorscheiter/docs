@@ -9,6 +9,12 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
+    "tabs": [
+      { "name": "Início", "url": "/" },
+      { "name": "API", "url": "/api-reference/auth" },
+      { "name": "Guias", "url": "/configuration" },
+      { "name": "Frontend", "url": "/frontend/introduction" }
+    ],
     "groups": [
       {
         "group": "Início",
@@ -74,10 +80,11 @@
   },
   "navbar": {
     "links": [
-      {
-        "label": "Suporte",
-        "href": "mailto:suporte@chavemestragestao.com.br"
-      }
+      { "label": "Início", "href": "/" },
+      { "label": "API", "href": "/api-reference/auth" },
+      { "label": "Guias", "href": "/configuration" },
+      { "label": "Frontend", "href": "/frontend/introduction" },
+      { "label": "Suporte", "href": "mailto:suporte@chavemestragestao.com.br" }
     ],
     "primary": {
       "type": "button",
