@@ -78,19 +78,6 @@
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
-  "navbar": {
-    "links": [
-      { "label": "Início", "href": "/" },
-      { "label": "API", "href": "/api-reference/auth" },
-      { "label": "Guias", "href": "/configuration" },
-      { "label": "Frontend", "href": "/frontend/introduction" }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "GitHub",
-      "href": "https://github.com/MatheusLuisLorscheiter/Api-Evolution"
-    }
-  },
   "footer": {
     "socials": {
       "github": "https://github.com/MatheusLuisLorscheiter/Api-Evolution",
@@ -107,4 +94,4 @@
   },
   "customCSS": ["custom.css"],
   "components": ["components.js"]
-} 
+}
