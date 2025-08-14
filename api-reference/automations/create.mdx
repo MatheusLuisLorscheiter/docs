@@ -1,0 +1,114 @@
+---
+title: "Criar Automação"
+api: "POST /api/automations"
+description: "Cria uma automação por segmentação com filtros e configuração de mensagem"
+---
+
+<Tip>
+Use automações para disparos recorrentes baseados em filtros dinâmicos. São independentes de campanhas.
+</Tip>
+
+## Headers
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+## Body
+
+<Expandable title="Campos principais">
+  <ParamField body="name" type="string" required>
+    Nome da automação
+  </ParamField>
+  <ParamField body="description" type="string">
+    Descrição opcional
+  </ParamField>
+  <ParamField body="isActive" type="boolean" default="true">
+    Define se a automação inicia ativa
+  </ParamField>
+  <ParamField body="scheduleType" type="string" enum={["DAILY", "WEEKLY", "MONTHLY", "CRON"]} required>
+    Tipo de agendamento
+  </ParamField>
+  <ParamField body="schedule" type="object">
+    Configuração do agendamento (ex.: timeOfDay, timezone, weekdays)
+  </ParamField>
+  <ParamField body="databaseConfigId" type="number" required>
+    ID da configuração de banco de dados externo
+  </ParamField>
+  <ParamField body="filters" type="array">
+    Filtros dinâmicos (ex.: birthday, segment, etc.)
+  </ParamField>
+  <ParamField body="messageConfig" type="object">
+    Configuração da mensagem (message, mediaUrl, caption, pollData)
+  </ParamField>
+  <ParamField body="evolutionConfigId" type="number" required>
+    ID da configuração da Evolution API
+  </ParamField>
+  <ParamField body="intervalMinSeconds" type="number" default="5">
+    Intervalo mínimo entre mensagens
+  </ParamField>
+  <ParamField body="intervalMaxSeconds" type="number" default="12">
+    Intervalo máximo entre mensagens
+  </ParamField>
+  <ParamField body="dedupStrategy" type="string" enum={["NEVER", "ONCE", "COOLDOWN_DAYS"]} default="ONCE">
+    Estratégia de deduplicação
+  </ParamField>
+  <ParamField body="dedupCooldownDays" type="number">
+    Dias de cooldown para deduplicação
+  </ParamField>
+  <ParamField body="sendLimitPerRun" type="number">
+    Limite de envios por execução (run)
+  </ParamField>
+</Expandable>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST https://api.disparador.com/api/automations \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: seu-access-token" \
+  -d '{
+    "name": "Aniversariantes Diário",
+    "isActive": true,
+    "scheduleType": "DAILY",
+    "schedule": { "timeOfDay": "09:00", "timezone": "America/Sao_Paulo", "weekdays": [2,3,4,5,6] },
+    "databaseConfigId": 1,
+    "filters": [{ "filterId": "birthday", "value": "2025-08-13", "ignoreYear": true }],
+    "messageConfig": { "message": "Parabéns {PrimeiroNome}!" },
+    "evolutionConfigId": 2,
+    "intervalMinSeconds": 5,
+    "intervalMaxSeconds": 12,
+    "dedupStrategy": "ONCE",
+    "sendLimitPerRun": 100
+  }'
+```
+
+</RequestExample>
+
+## Response
+
+<ResponseField name="id" type="number">ID da automação criada</ResponseField>
+<ResponseField name="name" type="string">Nome</ResponseField>
+<ResponseField name="isActive" type="boolean">Se está ativa</ResponseField>
+<ResponseField name="scheduleType" type="string">Tipo de agendamento</ResponseField>
+<ResponseField name="nextRunAt" type="string">Próxima execução prevista</ResponseField>
+
+<ResponseExample>
+
+```json 201 - Criada
+{
+  "id": 10,
+  "name": "Aniversariantes Diário",
+  "isActive": true,
+  "scheduleType": "DAILY",
+  "nextRunAt": "2025-08-14T09:00:00"
+}
+```
+
+</ResponseExample>
+
+

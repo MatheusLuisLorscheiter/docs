@@ -1,0 +1,36 @@
+---
+title: "Obter Automação"
+api: "GET /api/automations/{id}"
+description: "Busca os detalhes de uma automação específica"
+---
+
+## Path Parameters
+
+<ParamField path="id" type="number" required>
+  ID da automação
+</ParamField>
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X GET https://api.disparador.com/api/automations/10 \
+  -H "X-Access-Token: seu-access-token"
+```
+
+</RequestExample>
+
+## Response
+
+<ResponseField name="id" type="number"/>
+<ResponseField name="name" type="string"/>
+<ResponseField name="isActive" type="boolean"/>
+<ResponseField name="scheduleType" type="string"/>
+<ResponseField name="nextRunAt" type="string" nullable/>
+
+
