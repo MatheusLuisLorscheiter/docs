@@ -9,6 +9,11 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
+    "languages": [],
+    "versions": [],
+    "tabs": [],
+    "dropdowns": [],
+    "anchors": [],
     "groups": [
       {
         "group": "Início",
@@ -41,7 +46,8 @@
           { "title": "Solução de Problemas", "href": "/troubleshooting" }
         ]
       }
-    ]
+    ],
+    "pages": []
   },
   "logo": {
     "light": "/logo/light.svg",
