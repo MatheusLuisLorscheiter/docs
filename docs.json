@@ -9,11 +9,6 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "languages": [],
-    "versions": [],
-    "tabs": [],
-    "dropdowns": [],
-    "anchors": [],
     "groups": [
       {
         "group": "Início",
@@ -71,8 +66,7 @@
           "troubleshooting"
         ]
       }
-    ],
-    "pages": []
+    ]
   },
   "logo": {
     "light": "/logo/light.svg",
