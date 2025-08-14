@@ -1,0 +1,27 @@
+---
+title: "Atualizar Automação"
+api: "PUT /api/automations/{id}"
+description: "Atualiza os campos de uma automação existente"
+---
+
+## Path Parameters
+
+<ParamField path="id" type="number" required>
+  ID da automação
+</ParamField>
+
+## Headers
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+## Body
+
+Mesma estrutura de criação, apenas os campos desejados.
+
+

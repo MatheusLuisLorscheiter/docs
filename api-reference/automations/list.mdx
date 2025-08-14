@@ -1,0 +1,32 @@
+---
+title: "Listar Automações"
+api: "GET /api/automations"
+description: "Lista todas as automações cadastradas"
+---
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X GET https://api.disparador.com/api/automations \
+  -H "X-Access-Token: seu-access-token"
+```
+
+</RequestExample>
+
+## Response
+
+Array de automações.
+
+<ResponseField name="id" type="number"/>
+<ResponseField name="name" type="string"/>
+<ResponseField name="isActive" type="boolean"/>
+<ResponseField name="scheduleType" type="string"/>
+<ResponseField name="nextRunAt" type="string" nullable/>
+
+

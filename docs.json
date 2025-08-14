@@ -78,13 +78,7 @@
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
-"navbar": {
-  "links": [
-    { "label": "Início", "href": "/" },
-    { "label": "API", "href": "/api-reference/auth" },
-    { "label": "Guias", "href": "/configuration" },
-    { "label": "Frontend", "href": "/frontend/introduction" }
-  ],
+  "navbar": {
     "primary": {
       "type": "button",
       "label": "GitHub",
