@@ -80,6 +80,16 @@
             ]
           },
           {
+            "group": "Automações",
+            "pages": [
+              "api-reference/automations/create",
+              "api-reference/automations/update",
+              "api-reference/automations/list",
+              "api-reference/automations/get",
+              "api-reference/automations/delete"
+            ]
+          },
+          {
             "group": "Mídia",
             "pages": [
               "api-reference/media/upload"
