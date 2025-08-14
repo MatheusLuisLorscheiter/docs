@@ -18,32 +18,57 @@
       {
         "group": "Início",
         "pages": [
-          { "title": "Introdução", "href": "/" },
-          { "title": "Quickstart", "href": "/quickstart" },
-          { "title": "Conceitos", "href": "/concepts" }
+          "index",
+          "quickstart",
+          "concepts"
         ]
       },
       {
         "group": "Referência de API",
         "pages": [
-          { "title": "Auth", "href": "/api-reference/auth" },
-          { "title": "Campanhas", "href": "/api-reference/campaigns" },
-          { "title": "Mídia", "href": "/api-reference/media" },
-          { "title": "Bloqueios", "href": "/api-reference/blocked-contacts" },
-          { "title": "Sistema", "href": "/api-reference/system" },
-          { "title": "Automações", "href": "/api-reference/automations" }
+          { "group": "Auth", "pages": [
+            "api-reference/auth/login",
+            "api-reference/auth/register",
+            "api-reference/auth/me"
+          ]},
+          { "group": "Campanhas", "pages": [
+            "api-reference/campaigns/create",
+            "api-reference/campaigns/get",
+            "api-reference/campaigns/get-contacts",
+            "api-reference/campaigns/list",
+            "api-reference/campaigns/list-active",
+            "api-reference/campaigns/update",
+            "api-reference/campaigns/pause",
+            "api-reference/campaigns/resume",
+            "api-reference/campaigns/cancel"
+          ]},
+          { "group": "Mídia", "pages": [
+            "api-reference/media/upload"
+          ]},
+          { "group": "Bloqueios", "pages": [
+            "api-reference/blocked-contacts/list",
+            "api-reference/blocked-contacts/block",
+            "api-reference/blocked-contacts/unblock",
+            "api-reference/blocked-contacts/stats",
+            "api-reference/blocked-contacts/import"
+          ]},
+          { "group": "Sistema", "pages": [
+            "api-reference/system/health",
+            "api-reference/system/info"
+          ]},
+          "api-reference/automations"
         ]
       },
       {
         "group": "Guias",
         "pages": [
-          { "title": "Configuração", "href": "/configuration" },
-          { "title": "Implantação", "href": "/deployment" },
-          { "title": "Monitoramento", "href": "/monitoring" },
-          { "title": "Tratamento de Erros", "href": "/error-handling" },
-          { "title": "Contatos Bloqueados", "href": "/blocked-contacts-concept" },
-          { "title": "Recursos de Mídia", "href": "/media-features" },
-          { "title": "Solução de Problemas", "href": "/troubleshooting" }
+          "configuration",
+          "deployment",
+          "monitoring",
+          "error-handling",
+          "blocked-contacts-concept",
+          "media-features",
+          "troubleshooting"
         ]
       }
     ],
