@@ -41,6 +41,7 @@ const result = await response.json();
 if (result.id) {
   console.log(`Campanha ${result.name} pausada com sucesso!`);
   console.log(`Status atual: ${result.status}`);
+  console.log(`Pausada em: ${result.pausedAt}`);
 } else {
   console.error('Erro:', result.message);
 }
@@ -61,6 +62,7 @@ result = response.json()
 if 'id' in result:
     print(f"Campanha '{result['name']}' pausada com sucesso!")
     print(f"Status: {result['status']}")
+    print(f"Pausada em: {result['pausedAt']}")
 else:
     print(f"Erro: {result.get('message')}")
 ```
@@ -84,6 +86,7 @@ $response = json_decode($result, true);
 if (isset($response['id'])) {
     echo "Campanha '{$response['name']}' pausada com sucesso!\n";
     echo "Status: {$response['status']}\n";
+    echo "Pausada em: {$response['pausedAt']}\n";
 } else {
     echo "Erro: " . $response['message'] . "\n";
 }
@@ -94,7 +97,9 @@ if (isset($response['id'])) {
 
 ## Response
 
-Retorna os dados atualizados da campanha após pausar.
+Retorna os dados completos atualizados da campanha após pausar.
+
+### Campos Principais
 
 <ResponseField name="id" type="number">
   ID da campanha
@@ -104,25 +109,57 @@ Retorna os dados atualizados da campanha após pausar.
   Nome da campanha
 </ResponseField>
 
+<ResponseField name="description" type="string">
+  Descrição da campanha
+</ResponseField>
+
 <ResponseField name="status" type="string">
   Novo status (será "PAUSED")
 </ResponseField>
 
-<ResponseField name="totalContacts" type="number">
-  Total de contatos na campanha
-</ResponseField>
-
-<ResponseField name="sentCount" type="number">
-  Mensagens já enviadas
-</ResponseField>
-
-<ResponseField name="failedCount" type="number">
-  Mensagens que falharam
+<ResponseField name="type" type="string">
+  Tipo da campanha (TEXT, MEDIA, POLL)
 </ResponseField>
 
 <ResponseField name="pausedAt" type="string">
   Data/hora em que foi pausada
 </ResponseField>
+
+### Estatísticas
+
+<ResponseField name="totalContacts" type="number">
+  Total de contatos na campanha
+</ResponseField>
+
+<ResponseField name="sentContacts" type="number">
+  Mensagens já enviadas
+</ResponseField>
+
+<ResponseField name="failedContacts" type="number">
+  Mensagens que falharam
+</ResponseField>
+
+<ResponseField name="pendingContacts" type="number">
+  Mensagens ainda pendentes
+</ResponseField>
+
+<ResponseField name="progressPercentage" type="number">
+  Percentual de progresso
+</ResponseField>
+
+<ResponseField name="successRate" type="number">
+  Taxa de sucesso atual
+</ResponseField>
+
+### Outros Campos
+
+Todos os demais campos da estrutura CampaignResponse também são retornados, incluindo:
+- messageContent
+- mediaType
+- mediaUrl
+- evolutionInstance
+- evolutionConfig
+- etc.
 
 <ResponseField name="message" type="string">
   Mensagem de erro (apenas em caso de falha)
@@ -134,12 +171,36 @@ Retorna os dados atualizados da campanha após pausar.
 {
   "id": 123,
   "name": "Campanha de Vendas",
+  "description": null,
   "status": "PAUSED",
-  "companyId": 1,
-  "totalContacts": 500,
-  "sentCount": 234,
-  "failedCount": 5,
+  "type": "TEXT",
+  "createdAt": "2024-01-20T10:00:00",
+  "scheduledFor": null,
+  "startedAt": "2024-01-20T10:01:00",
+  "completedAt": null,
   "pausedAt": "2024-01-20T15:30:00",
+  "totalContacts": 500,
+  "sentContacts": 234,
+  "failedContacts": 5,
+  "pendingContacts": 261,
+  "progressPercentage": 46.8,
+  "successRate": 97.86,
+  "estimatedCompletion": null,
+  "messageContent": "Aproveite nossa promoção especial!",
+  "mediaType": null,
+  "mediaUrl": null,
+  "fileName": null,
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": 5,
+  "maxInterval": 10,
+  "notificationPhone": null,
+  "pollData": null,
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  },
   "message": null
 }
 ```
@@ -152,7 +213,7 @@ Retorna os dados atualizados da campanha após pausar.
 
 ```json 400 - Campanha Não Encontrada
 {
-  "message": "Campanha não encontrada ou não pertence à sua empresa"
+  "message": "Campanha não encontrada"
 }
 ```
 
@@ -202,8 +263,8 @@ async function monitorAndPauseIfNeeded(campaignId, accessToken) {
   const campaign = await response.json();
   
   // Se mais de 20% de falhas, pausar
-  if (campaign.sentCount > 0) {
-    const failureRate = (campaign.failedCount / campaign.sentCount) * 100;
+  if (campaign.sentContacts > 0) {
+    const failureRate = (campaign.failedContacts / campaign.sentContacts) * 100;
     
     if (failureRate > 20 && campaign.status === 'ACTIVE') {
       console.warn(`Alta taxa de falha detectada: ${failureRate.toFixed(2)}%`);
@@ -218,7 +279,9 @@ async function monitorAndPauseIfNeeded(campaignId, accessToken) {
       );
       
       if (pauseResponse.ok) {
+        const pausedCampaign = await pauseResponse.json();
         console.log('Campanha pausada automaticamente devido a alta taxa de falhas');
+        console.log(`Pausada em: ${pausedCampaign.pausedAt}`);
       }
     }
   }

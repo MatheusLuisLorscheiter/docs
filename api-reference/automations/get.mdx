@@ -1,8 +1,12 @@
 ---
 title: "Obter Automação"
 api: "GET /api/automations/{id}"
-description: "Busca os detalhes de uma automação específica"
+description: "Busca os detalhes completos de uma automação específica"
 ---
+
+<Tip>
+Use este endpoint para obter todos os detalhes de uma automação, incluindo configurações completas de filtros e mensagens.
+</Tip>
 
 ## Path Parameters
 
@@ -23,14 +27,234 @@ curl -X GET https://api.disparador.com/api/automations/10 \
   -H "X-Access-Token: seu-access-token"
 ```
 
+```javascript JavaScript
+const automationId = 10;
+const response = await fetch(`https://api.disparador.com/api/automations/${automationId}`, {
+  headers: {
+    'X-Access-Token': 'seu-access-token'
+  }
+});
+
+const automation = await response.json();
+console.log(`Automação: ${automation.name}`);
+console.log(`Status: ${automation.isActive ? 'Ativa' : 'Inativa'}`);
+console.log(`Próxima execução: ${automation.nextRunAt || 'Não agendada'}`);
+```
+
+```python Python
+import requests
+
+automation_id = 10
+response = requests.get(
+    f'https://api.disparador.com/api/automations/{automation_id}',
+    headers={'X-Access-Token': 'seu-access-token'}
+)
+
+automation = response.json()
+print(f"Nome: {automation['name']}")
+print(f"Tipo: {automation['scheduleType']}")
+print(f"Última execução: {automation['lastRunAt']}")
+```
+
+```php PHP
+<?php
+$automationId = 10;
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "https://api.disparador.com/api/automations/{$automationId}");
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'X-Access-Token: seu-access-token'
+]);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+$automation = json_decode($response, true);
+
+echo "Automação: " . $automation['name'] . "\n";
+echo "Agendamento: " . $automation['scheduleType'] . "\n";
+?>
+```
+
 </RequestExample>
 
 ## Response
 
-<ResponseField name="id" type="number"/>
-<ResponseField name="name" type="string"/>
-<ResponseField name="isActive" type="boolean"/>
-<ResponseField name="scheduleType" type="string"/>
-<ResponseField name="nextRunAt" type="string" nullable/>
+Objeto completo da automação com todos os detalhes:
+
+<ResponseField name="id" type="number">
+  ID único da automação
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Nome da automação
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Descrição da automação
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean">
+  Se a automação está ativa
+</ResponseField>
+
+<ResponseField name="scheduleType" type="string">
+  Tipo de agendamento (DAILY, WEEKLY, MONTHLY, CRON)
+</ResponseField>
+
+<ResponseField name="schedule" type="object">
+  Configuração detalhada do agendamento
+  
+  <Expandable title="Campos do schedule">
+    - `timeOfDay` - Horário de execução
+    - `timezone` - Fuso horário
+    - `weekdays` - Dias da semana (para DAILY/WEEKLY)
+    - `dayOfMonth` - Dia do mês (para MONTHLY)
+    - `cronExpression` - Expressão cron (para CRON)
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="databaseConfigId" type="number">
+  ID da configuração de banco de dados
+</ResponseField>
+
+<ResponseField name="evolutionConfigId" type="number">
+  ID da configuração Evolution API
+</ResponseField>
+
+<ResponseField name="intervalMinSeconds" type="number">
+  Intervalo mínimo entre mensagens
+</ResponseField>
+
+<ResponseField name="intervalMaxSeconds" type="number">
+  Intervalo máximo entre mensagens
+</ResponseField>
+
+<ResponseField name="notificationPhone" type="string">
+  Telefone para notificação
+</ResponseField>
+
+<ResponseField name="dedupStrategy" type="string">
+  Estratégia de deduplicação (NEVER, ONCE, COOLDOWN_DAYS)
+</ResponseField>
+
+<ResponseField name="dedupCooldownDays" type="number">
+  Dias de cooldown para deduplicação
+</ResponseField>
+
+<ResponseField name="sendLimitPerRun" type="number">
+  Limite de envios por execução
+</ResponseField>
+
+<ResponseField name="lastRunAt" type="string">
+  Data/hora da última execução
+</ResponseField>
+
+<ResponseField name="nextRunAt" type="string">
+  Próxima execução prevista
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  Data/hora de criação
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string">
+  Data/hora da última atualização
+</ResponseField>
+
+<ResponseExample>
+
+```json 200 - Sucesso
+{
+  "id": 10,
+  "name": "Aniversariantes do Dia",
+  "description": "Envia mensagem de parabéns para aniversariantes",
+  "isActive": true,
+  "scheduleType": "DAILY",
+  "schedule": {
+    "timeOfDay": "09:00",
+    "timezone": "America/Sao_Paulo",
+    "weekdays": [2, 3, 4, 5, 6]
+  },
+  "databaseConfigId": 1,
+  "evolutionConfigId": 2,
+  "intervalMinSeconds": 5,
+  "intervalMaxSeconds": 12,
+  "notificationPhone": null,
+  "dedupStrategy": "ONCE",
+  "dedupCooldownDays": null,
+  "sendLimitPerRun": 100,
+  "lastRunAt": "2024-01-21T09:00:00",
+  "nextRunAt": "2024-01-22T09:00:00",
+  "createdAt": "2024-01-01T10:00:00",
+  "updatedAt": "2024-01-15T14:30:00"
+}
+```
+
+```json 404 - Não Encontrada
+{
+  "message": "Automação não encontrada"
+}
+```
+
+```json 401 - Token Inválido
+{
+  "message": "Access token inválido"
+}
+```
+
+</ResponseExample>
+
+## Detalhes Adicionais
+
+<Note>
+O endpoint GET retorna a mesma estrutura do endpoint de criação/atualização, mas com campos adicionais:
+- `lastRunAt` - Mostra quando foi a última execução
+- `nextRunAt` - Mostra quando será a próxima execução (null se inativa)
+- `createdAt` e `updatedAt` - Timestamps de auditoria
+
+Note que os filtros e configuração de mensagem não são retornados neste endpoint por questões de performance. Use o endpoint de update se precisar visualizar/editar esses dados.
+</Note>
+
+## Verificação de Status
+
+```javascript
+// Função para verificar status detalhado
+async function checkAutomationStatus(automationId, accessToken) {
+  const response = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}`,
+    {
+      headers: { 'X-Access-Token': accessToken }
+    }
+  );
+  
+  if (!response.ok) {
+    throw new Error('Automação não encontrada');
+  }
+  
+  const automation = await response.json();
+  
+  // Análise de status
+  const status = {
+    name: automation.name,
+    active: automation.isActive,
+    schedule: automation.scheduleType,
+    lastRun: automation.lastRunAt ? new Date(automation.lastRunAt) : null,
+    nextRun: automation.nextRunAt ? new Date(automation.nextRunAt) : null,
+    runInterval: null,
+    isOverdue: false
+  };
+  
+  // Calcular intervalo entre execuções
+  if (status.lastRun && status.nextRun) {
+    status.runInterval = status.nextRun - status.lastRun;
+  }
+  
+  // Verificar se está atrasada
+  if (status.active && status.nextRun && status.nextRun < new Date()) {
+    status.isOverdue = true;
+  }
+  
+  return status;
+}
+```
 
 

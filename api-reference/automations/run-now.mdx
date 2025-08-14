@@ -4,10 +4,246 @@ api: "POST /api/automations/{id}/run-now"
 description: "Dispara imediatamente uma execução (run) da automação"
 ---
 
+<Tip>
+Use este endpoint para executar uma automação fora do seu agendamento normal. Útil para testes ou execuções pontuais.
+</Tip>
+
 ## Path Parameters
 
 <ParamField path="id" type="number" required>
   ID da automação
 </ParamField>
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST https://api.disparador.com/api/automations/10/run-now \
+  -H "X-Access-Token: seu-access-token"
+```
+
+```javascript JavaScript
+async function runAutomationNow(automationId, accessToken) {
+  const response = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}/run-now`,
+    {
+      method: 'POST',
+      headers: {
+        'X-Access-Token': accessToken
+      }
+    }
+  );
+  
+  if (response.status === 202) {
+    console.log('Automação iniciada com sucesso');
+    console.log('A execução está em andamento em segundo plano');
+  } else {
+    console.error('Erro ao executar automação');
+  }
+}
+
+// Executar agora
+await runAutomationNow(10, 'seu-access-token');
+```
+
+```python Python
+import requests
+
+def run_automation_now(automation_id, access_token):
+    url = f"https://api.disparador.com/api/automations/{automation_id}/run-now"
+    headers = {"X-Access-Token": access_token}
+    
+    response = requests.post(url, headers=headers)
+    
+    if response.status_code == 202:
+        print("Automação iniciada com sucesso")
+        print("Processamento em andamento...")
+    else:
+        print(f"Erro: {response.status_code}")
+
+# Executar
+run_automation_now(10, "seu-access-token")
+```
+
+```php PHP
+<?php
+function runAutomationNow($automationId, $accessToken) {
+    $url = "https://api.disparador.com/api/automations/{$automationId}/run-now";
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'X-Access-Token: ' . $accessToken
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode === 202) {
+        echo "Automação iniciada com sucesso\n";
+        echo "Processamento em segundo plano\n";
+    } else {
+        echo "Erro ao executar: {$httpCode}\n";
+    }
+}
+
+// Executar
+runAutomationNow(10, 'seu-access-token');
+?>
+```
+
+</RequestExample>
+
+## Response
+
+<ResponseExample>
+
+```json 202 - Aceito
+// Sem conteúdo - Processamento iniciado em segundo plano
+```
+
+```json 404 - Não Encontrada
+{
+  "message": "Automação não encontrada"
+}
+```
+
+```json 400 - Erro de Validação
+{
+  "message": "Automação está inativa"
+}
+```
+
+```json 401 - Token Inválido
+{
+  "message": "Access token inválido"
+}
+```
+
+```json 409 - Conflito
+{
+  "message": "Automação já está em execução"
+}
+```
+
+</ResponseExample>
+
+## Comportamento da Execução
+
+<Note>
+**Quando você executa uma automação manualmente:**
+
+1. **Filtros Aplicados**: Os filtros configurados são aplicados normalmente
+2. **Deduplicação**: A estratégia de deduplicação é respeitada
+3. **Intervalos**: Os intervalos configurados entre mensagens são mantidos
+4. **Limites**: O sendLimitPerRun é respeitado
+5. **Assincrono**: A execução acontece em segundo plano
+
+**Importante**: A execução manual não afeta o agendamento regular da automação.
+</Note>
+
+## Casos de Uso
+
+### 1. Teste após Configuração
+```javascript
+// Criar automação e testar imediatamente
+async function createAndTestAutomation(automationData, accessToken) {
+  // Criar
+  const createResponse = await fetch('/api/automations', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Access-Token': accessToken
+    },
+    body: JSON.stringify(automationData)
+  });
+  
+  const automation = await createResponse.json();
+  
+  // Executar teste
+  await runAutomationNow(automation.id, accessToken);
+  
+  console.log(`Automação ${automation.name} criada e executada para teste`);
+}
+```
+
+### 2. Execução Extra Pontual
+```javascript
+// Executar automação de aniversariantes em data especial
+async function runBirthdayAutomationForHoliday(automationId, accessToken) {
+  console.log('Executando automação extra para feriado...');
+  
+  const response = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}/run-now`,
+    {
+      method: 'POST',
+      headers: { 'X-Access-Token': accessToken }
+    }
+  );
+  
+  if (response.ok) {
+    console.log('Mensagens de feriado sendo enviadas!');
+  }
+}
+```
+
+### 3. Monitorar Execução
+```javascript
+// Executar e monitorar progresso
+async function runAndMonitor(automationId, accessToken) {
+  // Iniciar execução
+  await runAutomationNow(automationId, accessToken);
+  
+  // Aguardar um pouco para iniciar
+  await new Promise(resolve => setTimeout(resolve, 5000));
+  
+  // Verificar runs (precisa do endpoint de list runs)
+  const runsResponse = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}/runs`,
+    {
+      headers: { 'X-Access-Token': accessToken }
+    }
+  );
+  
+  const runs = await runsResponse.json();
+  const latestRun = runs[0]; // Mais recente
+  
+  console.log(`Status: ${latestRun.status}`);
+  console.log(`Mensagens enviadas: ${latestRun.sentCount}`);
+}
+```
+
+## Limitações
+
+<Warning>
+- Automações inativas não podem ser executadas
+- Se já houver uma execução em andamento, pode retornar erro 409
+- A execução respeita todos os limites configurados
+- Não é possível sobrescrever filtros ou configurações para a execução manual
+</Warning>
+
+## Diferença do Test Send
+
+<Note>
+O endpoint `run-now` executa a automação completa com todos os filtros e limites, enquanto o `test-send` envia apenas para um número específico sem criar um run completo.
+
+Use `run-now` quando quiser:
+- Testar a automação completa
+- Fazer uma execução extra
+- Verificar filtros e segmentação
+
+Use `test-send` quando quiser:
+- Testar apenas a mensagem
+- Enviar para um número específico
+- Validação rápida
+</Note>
 
 

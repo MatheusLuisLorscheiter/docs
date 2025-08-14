@@ -13,6 +13,7 @@ Este endpoint permite atualizar uma campanha que esteja com status **DRAFT** (ra
 - Intervalos de envio
 - Agendamento
 - Telefone de notificação
+- Configurações da Evolution API
 
 ## Requisitos
 
@@ -47,6 +48,26 @@ Este endpoint permite atualizar uma campanha que esteja com status **DRAFT** (ra
   ```
 </ParamField>
 
+### Configuração Evolution API
+
+<ParamField body="evolutionUrl" type="string" required>
+  URL completa da sua Evolution API (ex: https://evolution-api.exemplo.com)
+</ParamField>
+
+<ParamField body="evolutionApiKey" type="string" required>
+  API Key da sua Evolution API
+</ParamField>
+
+<ParamField body="evolutionInstance" type="string" required>
+  Nome da instância do WhatsApp conectada
+</ParamField>
+
+<ParamField body="evolutionConfigId" type="number">
+  ID de uma configuração Evolution salva (alternativa aos campos acima)
+</ParamField>
+
+### Agendamento e Intervalos
+
 <ParamField body="scheduledFor" type="string">
   Data/hora para agendamento (ISO 8601)
 </ParamField>
@@ -63,12 +84,14 @@ Este endpoint permite atualizar uma campanha que esteja com status **DRAFT** (ra
   Telefone para notificação de conclusão
 </ParamField>
 
+### Mídia e Enquetes
+
 <ParamField body="mediaUrl" type="string">
   URL da mídia a ser enviada
 </ParamField>
 
 <ParamField body="mediaType" type="string">
-  Tipo de mídia: image, video, audio, document, poll
+  Tipo de mídia: image, video, audio, document
 </ParamField>
 
 <ParamField body="caption" type="string">
@@ -80,7 +103,7 @@ Este endpoint permite atualizar uma campanha que esteja com status **DRAFT** (ra
 </ParamField>
 
 <ParamField body="pollData" type="object">
-  Dados da enquete (quando mediaType = "poll")
+  Dados da enquete
   ```json
   {
     "name": "Pergunta da enquete",
@@ -90,8 +113,14 @@ Este endpoint permite atualizar uma campanha que esteja com status **DRAFT** (ra
   ```
 </ParamField>
 
+### Configurações Adicionais
+
 <ParamField body="isDraft" type="boolean">
   Se true, mantém como rascunho. Se false, inicia/agenda a campanha
+</ParamField>
+
+<ParamField body="isTest" type="boolean">
+  Se true, marca a campanha como teste
 </ParamField>
 
 <ParamField body="databaseConfigId" type="number">
@@ -117,6 +146,9 @@ const response = await fetch('https://api.disparador.com/api/campaigns/123', {
   body: JSON.stringify({
     name: 'Campanha Atualizada',
     message: 'Nova mensagem da campanha',
+    evolutionUrl: 'https://evolution-api.exemplo.com',
+    evolutionApiKey: 'sua-api-key',
+    evolutionInstance: 'whatsapp-01',
     contacts: [
       { phoneNumber: '5511999887766', name: 'João' },
       { phoneNumber: '5511999887777', name: 'Maria' }
@@ -139,8 +171,29 @@ const response = await fetch('https://api.disparador.com/api/campaigns/123', {
   body: JSON.stringify({
     name: 'Promoção Relâmpago',
     message: '⚡ Oferta válida apenas hoje!',
+    evolutionUrl: 'https://evolution-api.exemplo.com',
+    evolutionApiKey: 'sua-api-key',
+    evolutionInstance: 'whatsapp-01',
     contacts: contactList,
     isDraft: false // Inicia imediatamente
+  })
+});
+```
+
+### Atualizar usando Configuração Salva
+```javascript
+const response = await fetch('https://api.disparador.com/api/campaigns/123', {
+  method: 'PUT',
+  headers: {
+    'X-Access-Token': 'seu_token_aqui',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    name: 'Campanha com Config Salva',
+    message: 'Usando configuração Evolution predefinida',
+    evolutionConfigId: 5, // Usa configuração salva ao invés de especificar URL/Key/Instance
+    contacts: customerList,
+    isDraft: false
   })
 });
 ```
@@ -156,6 +209,9 @@ const response = await fetch('https://api.disparador.com/api/campaigns/123', {
   body: JSON.stringify({
     name: 'Lembrete Agendado',
     message: 'Não esqueça do nosso evento amanhã!',
+    evolutionUrl: 'https://evolution-api.exemplo.com',
+    evolutionApiKey: 'sua-api-key',
+    evolutionInstance: 'whatsapp-01',
     contacts: eventParticipants,
     scheduledFor: '2024-01-21T09:00:00',
     isDraft: false
@@ -177,6 +233,9 @@ const response = await fetch('https://api.disparador.com/api/campaigns/123', {
     mediaUrl: 'https://example.com/video.mp4',
     mediaType: 'video',
     caption: 'Novo produto revolucionário',
+    evolutionUrl: 'https://evolution-api.exemplo.com',
+    evolutionApiKey: 'sua-api-key',
+    evolutionInstance: 'whatsapp-01',
     contacts: customerList,
     isDraft: true
   })
@@ -193,12 +252,14 @@ const response = await fetch('https://api.disparador.com/api/campaigns/123', {
   },
   body: JSON.stringify({
     name: 'Pesquisa de Satisfação',
-    mediaType: 'poll',
     pollData: {
       name: 'Como você avalia nosso atendimento?',
       options: ['Excelente', 'Bom', 'Regular', 'Ruim'],
       selectableCount: 1
     },
+    evolutionUrl: 'https://evolution-api.exemplo.com',
+    evolutionApiKey: 'sua-api-key',
+    evolutionInstance: 'whatsapp-01',
     contacts: clientList,
     isDraft: false
   })
@@ -207,21 +268,42 @@ const response = await fetch('https://api.disparador.com/api/campaigns/123', {
 
 ## Resposta
 
-### Sucesso (200 OK)
+A estrutura de resposta segue o mesmo padrão do endpoint de criação de campanhas.
 
-A resposta varia dependendo se a campanha foi mantida como rascunho ou iniciada:
+### Sucesso (200 OK)
 
 #### Mantida como Rascunho
 ```json
 {
   "id": 123,
   "name": "Campanha Atualizada",
+  "description": null,
   "status": "DRAFT",
-  "type": "IMMEDIATE",
+  "type": "TEXT",
+  "createdAt": "2024-01-20T10:30:00",
+  "scheduledFor": null,
   "totalContacts": 50,
-  "message": "Campanha atualizada com sucesso",
+  "sentContacts": 0,
+  "failedContacts": 0,
+  "pendingContacts": 50,
+  "progressPercentage": 0,
+  "successRate": 0,
   "messageContent": "Nova mensagem da campanha",
-  "mediaType": "text"
+  "mediaType": null,
+  "mediaUrl": null,
+  "fileName": null,
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": 5,
+  "maxInterval": 20,
+  "notificationPhone": null,
+  "pollData": null,
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  },
+  "message": "Campanha atualizada com sucesso"
 }
 ```
 
@@ -230,11 +312,33 @@ A resposta varia dependendo se a campanha foi mantida como rascunho ou iniciada:
 {
   "id": 123,
   "name": "Promoção Relâmpago",
-  "status": "RUNNING",
-  "type": "IMMEDIATE",
-  "totalContacts": 100,
+  "description": null,
+  "status": "ACTIVE",
+  "type": "TEXT",
+  "createdAt": "2024-01-20T10:30:00",
   "startedAt": "2024-01-20T16:30:00",
-  "messageContent": "⚡ Oferta válida apenas hoje!"
+  "scheduledFor": null,
+  "totalContacts": 100,
+  "sentContacts": 0,
+  "failedContacts": 0,
+  "pendingContacts": 100,
+  "progressPercentage": 0,
+  "successRate": 0,
+  "messageContent": "⚡ Oferta válida apenas hoje!",
+  "mediaType": null,
+  "mediaUrl": null,
+  "fileName": null,
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": 10,
+  "maxInterval": 30,
+  "notificationPhone": null,
+  "pollData": null,
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  }
 }
 ```
 
@@ -243,10 +347,32 @@ A resposta varia dependendo se a campanha foi mantida como rascunho ou iniciada:
 {
   "id": 123,
   "name": "Lembrete Agendado",
+  "description": null,
   "status": "SCHEDULED",
-  "type": "SCHEDULED",
+  "type": "TEXT",
+  "createdAt": "2024-01-20T10:30:00",
   "scheduledFor": "2024-01-21T09:00:00",
-  "totalContacts": 75
+  "totalContacts": 75,
+  "sentContacts": 0,
+  "failedContacts": 0,
+  "pendingContacts": 75,
+  "progressPercentage": 0,
+  "successRate": 0,
+  "messageContent": "Não esqueça do nosso evento amanhã!",
+  "mediaType": null,
+  "mediaUrl": null,
+  "fileName": null,
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": 10,
+  "maxInterval": 30,
+  "notificationPhone": null,
+  "pollData": null,
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  }
 }
 ```
 
@@ -287,8 +413,9 @@ A resposta varia dependendo se a campanha foi mantida como rascunho ou iniciada:
   - Nome é sempre obrigatório
   - Mensagem é obrigatória exceto para enquetes ou quando `isDraft = true`
   - Intervalos devem respeitar: 1 ≤ min ≤ 300 e min ≤ max ≤ 600
-  - Para enquetes, `pollData` deve ter no mínimo 2 opções
+  - Para enquetes, `pollData` deve ter no mínimo 2 opções e no máximo 10
   - Contatos bloqueados são automaticamente filtrados
+  - Evolution API deve ter credenciais válidas ou evolutionConfigId válido
 </Note>
 
 <Warning>
@@ -306,6 +433,9 @@ A resposta varia dependendo se a campanha foi mantida como rascunho ou iniciada:
 const draft = await createCampaign({
   name: 'Campanha Inicial',
   message: 'Texto básico',
+  evolutionUrl: 'https://evolution-api.exemplo.com',
+  evolutionApiKey: 'sua-api-key',
+  evolutionInstance: 'whatsapp-01',
   contacts: [],
   isDraft: true
 });
@@ -340,7 +470,6 @@ await updateCampaign(campaignId, {
 
 // Converter para enquete
 await updateCampaign(campaignId, {
-  mediaType: 'poll',
   pollData: {
     name: 'Qual seu sabor favorito?',
     options: ['Chocolate', 'Morango', 'Baunilha'],
@@ -354,7 +483,7 @@ await updateCampaign(campaignId, {
 ```javascript
 // Atualizar com variáveis personalizadas
 await updateCampaign(campaignId, {
-  message: 'Olá {{nome}}, sua fatura de {{valor}} vence em {{data}}',
+  message: 'Olá {PrimeiroNome}, sua fatura de {{valor}} vence em {{data}}',
   databaseConfigId: 123,
   contacts: clientsWithCustomData,
   isDraft: true

@@ -56,6 +56,10 @@ Você precisa de um access token válido no header X-Access-Token para usar este
   Nome da instância do WhatsApp conectada
 </ParamField>
 
+<ParamField body="evolutionConfigId" type="number">
+  ID de uma configuração Evolution salva (alternativa aos campos acima)
+</ParamField>
+
 ### Contatos
 
 <ParamField body="contacts" type="array" required>
@@ -115,12 +119,12 @@ Você precisa de um access token válido no header X-Access-Token para usar este
   
   <Expandable title="Estrutura da enquete">
     <ParamField body="name" type="string" required>
-      Pergunta da enquete
+      Pergunta da enquete (máximo 280 caracteres)
     </ParamField>
     <ParamField body="options" type="array" required>
       Opções de resposta (mínimo 2, máximo 10)
       
-      Cada opção deve ser uma string única
+      Cada opção deve ser uma string única com máximo 100 caracteres
     </ParamField>
     <ParamField body="selectableCount" type="number" default="1">
       Quantas opções podem ser selecionadas (1-10)
@@ -152,6 +156,12 @@ Você precisa de um access token válido no header X-Access-Token para usar este
 
 <ParamField body="notificationPhone" type="string">
   Número para receber notificação quando a campanha for concluída
+</ParamField>
+
+### Configurações Avançadas
+
+<ParamField body="databaseConfigId" type="number">
+  ID da configuração de banco de dados para variáveis personalizadas
 </ParamField>
 
 <RequestExample>
@@ -298,31 +308,33 @@ headers = {
 
 # Campanha com mídia
 data = {
-    "name": "Promoção Black Friday",
+    "name": "Campanha com Vídeo",
     "evolutionUrl": "https://evolution-api.exemplo.com",
     "evolutionApiKey": "sua-api-key",
     "evolutionInstance": "whatsapp-01",
     "contacts": [
         {
             "phoneNumber": "11999999999",
-            "name": "Cliente VIP"
+            "name": "Cliente"
         }
     ],
-    "message": "Olá {PrimeiroNome}! Aproveite nossa Black Friday!",
-    "mediaUrl": "https://exemplo.com/black-friday.jpg",
-    "mediaType": "image",
-    "caption": "Até 70% de desconto!"
+    "message": "Assista ao vídeo sobre nossos produtos!",
+    "mediaUrl": "https://exemplo.com/video.mp4",
+    "mediaType": "video",
+    "caption": "Conheça nossa nova linha de produtos",
+    "intervalMinSeconds": 5,
+    "intervalMaxSeconds": 10
 }
 
-response = requests.post(url, json=data, headers=headers)
+response = requests.post(url, headers=headers, json=data)
 result = response.json()
 
-if result.get('id'):
-    print(f"Campanha criada com sucesso!")
-    print(f"ID: {result['id']}")
+if response.status_code == 200:
+    print(f"Campanha criada: ID {result['id']}")
     print(f"Status: {result['status']}")
+    print(f"Total de contatos: {result['totalContacts']}")
 else:
-    print(f"Erro: {result.get('message')}")
+    print(f"Erro: {result['message']}")
 ```
 
 ```php PHP
@@ -346,7 +358,7 @@ $data = [
         ]
     ],
     'pollData' => [
-        'name' => 'Como você avalia nosso produto?',
+        'name' => 'Como você avalia nosso atendimento?',
         'options' => ['Excelente', 'Bom', 'Regular', 'Ruim'],
         'selectableCount' => 1
     ]
@@ -375,12 +387,18 @@ if (isset($response['id'])) {
 
 ## Response
 
+### Campos Principais
+
 <ResponseField name="id" type="number">
   ID único da campanha criada
 </ResponseField>
 
 <ResponseField name="name" type="string">
   Nome da campanha
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Descrição da campanha
 </ResponseField>
 
 <ResponseField name="status" type="string">
@@ -394,36 +412,84 @@ if (isset($response['id'])) {
   - `FAILED` - Falhou
 </ResponseField>
 
-<ResponseField name="companyId" type="number">
-  ID da empresa proprietária
-</ResponseField>
-
-<ResponseField name="totalContacts" type="number">
-  Total de contatos na campanha
-</ResponseField>
-
-<ResponseField name="blockedContactsRemoved" type="number">
-  Quantidade de contatos bloqueados que foram removidos
-</ResponseField>
-
-<ResponseField name="sentCount" type="number">
-  Quantidade de mensagens enviadas
-</ResponseField>
-
-<ResponseField name="failedCount" type="number">
-  Quantidade de envios que falharam
-</ResponseField>
-
-<ResponseField name="scheduledFor" type="string">
-  Data/hora de agendamento (se aplicável)
+<ResponseField name="type" type="string">
+  Tipo da campanha (TEXT, MEDIA, POLL)
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
   Data/hora de criação
 </ResponseField>
 
-<ResponseField name="updatedAt" type="string">
-  Data/hora da última atualização
+<ResponseField name="scheduledFor" type="string">
+  Data/hora de agendamento (se aplicável)
+</ResponseField>
+
+### Estatísticas
+
+<ResponseField name="totalContacts" type="number">
+  Total de contatos na campanha
+</ResponseField>
+
+<ResponseField name="sentContacts" type="number">
+  Quantidade de mensagens já enviadas
+</ResponseField>
+
+<ResponseField name="failedContacts" type="number">
+  Quantidade de envios que falharam
+</ResponseField>
+
+<ResponseField name="pendingContacts" type="number">
+  Quantidade de contatos pendentes
+</ResponseField>
+
+<ResponseField name="progressPercentage" type="number">
+  Percentual de progresso (0-100)
+</ResponseField>
+
+<ResponseField name="successRate" type="number">
+  Taxa de sucesso em percentual
+</ResponseField>
+
+### Dados da Campanha
+
+<ResponseField name="messageContent" type="string">
+  Conteúdo da mensagem da campanha
+</ResponseField>
+
+<ResponseField name="mediaType" type="string">
+  Tipo de mídia anexada (se houver)
+</ResponseField>
+
+<ResponseField name="mediaUrl" type="string">
+  URL da mídia anexada
+</ResponseField>
+
+<ResponseField name="fileName" type="string">
+  Nome do arquivo de mídia
+</ResponseField>
+
+<ResponseField name="evolutionInstance" type="string">
+  Instância Evolution usada
+</ResponseField>
+
+<ResponseField name="minInterval" type="number">
+  Intervalo mínimo entre mensagens
+</ResponseField>
+
+<ResponseField name="maxInterval" type="number">
+  Intervalo máximo entre mensagens
+</ResponseField>
+
+<ResponseField name="notificationPhone" type="string">
+  Telefone para notificação
+</ResponseField>
+
+<ResponseField name="pollData" type="object">
+  Dados da enquete (quando aplicável)
+</ResponseField>
+
+<ResponseField name="evolutionConfig" type="object">
+  Configuração Evolution completa usada
 </ResponseField>
 
 <ResponseField name="message" type="string">
@@ -436,15 +502,33 @@ if (isset($response['id'])) {
 {
   "id": 123,
   "name": "Campanha de Natal",
+  "description": null,
   "status": "ACTIVE",
-  "companyId": 1,
-  "totalContacts": 2,
-  "blockedContactsRemoved": 0,
-  "sentCount": 0,
-  "failedCount": 0,
-  "scheduledFor": null,
+  "type": "TEXT",
   "createdAt": "2024-01-20T10:30:00",
-  "updatedAt": "2024-01-20T10:30:00"
+  "scheduledFor": null,
+  "totalContacts": 2,
+  "sentContacts": 0,
+  "failedContacts": 0,
+  "pendingContacts": 2,
+  "progressPercentage": 0,
+  "successRate": 0,
+  "messageContent": "Olá {PrimeiroNome}! Feliz Natal! 🎄",
+  "mediaType": null,
+  "mediaUrl": null,
+  "fileName": null,
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": 3,
+  "maxInterval": 5,
+  "notificationPhone": null,
+  "pollData": null,
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  },
+  "message": null
 }
 ```
 
@@ -452,31 +536,71 @@ if (isset($response['id'])) {
 {
   "id": 124,
   "name": "Lembrete Agendado",
+  "description": null,
   "status": "SCHEDULED",
-  "companyId": 1,
-  "totalContacts": 1,
-  "blockedContactsRemoved": 0,
-  "sentCount": 0,
-  "failedCount": 0,
-  "scheduledFor": "2024-12-25T09:00:00",
+  "type": "TEXT",
   "createdAt": "2024-01-20T10:30:00",
-  "updatedAt": "2024-01-20T10:30:00"
+  "scheduledFor": "2024-12-25T09:00:00",
+  "totalContacts": 1,
+  "sentContacts": 0,
+  "failedContacts": 0,
+  "pendingContacts": 1,
+  "progressPercentage": 0,
+  "successRate": 0,
+  "messageContent": "Olá {PrimeiroNome}! Não esqueça da sua consulta amanhã às 10h.",
+  "mediaType": null,
+  "mediaUrl": null,
+  "fileName": null,
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": null,
+  "maxInterval": null,
+  "notificationPhone": null,
+  "pollData": null,
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  },
+  "message": null
 }
 ```
 
-```json 200 - Sucesso (Com Bloqueios)
+```json 200 - Sucesso (Enquete)
 {
   "id": 125,
-  "name": "Promoção",
+  "name": "Pesquisa de Satisfação",
+  "description": null,
   "status": "ACTIVE",
-  "companyId": 1,
-  "totalContacts": 8,
-  "blockedContactsRemoved": 2,
-  "sentCount": 0,
-  "failedCount": 0,
-  "scheduledFor": null,
+  "type": "POLL",
   "createdAt": "2024-01-20T10:30:00",
-  "updatedAt": "2024-01-20T10:30:00"
+  "scheduledFor": null,
+  "totalContacts": 1,
+  "sentContacts": 0,
+  "failedContacts": 0,
+  "pendingContacts": 1,
+  "progressPercentage": 0,
+  "successRate": 0,
+  "messageContent": null,
+  "mediaType": null,
+  "mediaUrl": null,
+  "fileName": null,
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": null,
+  "maxInterval": null,
+  "notificationPhone": null,
+  "pollData": {
+    "name": "Como você avalia nosso atendimento?",
+    "options": ["Excelente", "Bom", "Regular", "Ruim"],
+    "selectableCount": 1
+  },
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  },
+  "message": null
 }
 ```
 
@@ -506,7 +630,7 @@ if (isset($response['id'])) {
 - **Nome**: Obrigatório
 - **Mensagem**: Obrigatória (exceto para enquetes ou rascunhos)
 - **Contatos**: Pelo menos 1 contato válido
-- **Enquete**: 2-10 opções únicas
+- **Enquete**: 2-10 opções únicas, máximo 100 caracteres cada
 - **Agendamento**: Mínimo 5 minutos no futuro
 - **Evolution API**: Credenciais válidas e instância conectada
 </Warning>
@@ -517,7 +641,8 @@ if (isset($response['id'])) {
 - **Contatos por campanha**: Sem limite definido (recomendado até 10.000)
 - **Tamanho da mensagem**: 4096 caracteres
 - **Tamanho da legenda**: 1024 caracteres
-- **Opções de enquete**: 2-10 opções
+- **Nome da enquete**: 280 caracteres
+- **Opções de enquete**: 2-10 opções, máximo 100 caracteres cada
 - **Arquivo de mídia**: Depende dos limites do WhatsApp
 </Note>
 

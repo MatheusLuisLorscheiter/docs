@@ -118,6 +118,10 @@ foreach ($data['content'] as $contact) {
       Número de telefone normalizado (apenas dígitos)
     </ResponseField>
 
+    <ResponseField name="formattedPhoneNumber" type="string">
+      Número de telefone formatado para exibição
+    </ResponseField>
+
     <ResponseField name="blockedAt" type="string">
       Data e hora do bloqueio (ISO 8601)
     </ResponseField>
@@ -160,6 +164,7 @@ foreach ($data['content'] as $contact) {
     {
       "id": 123,
       "phoneNumber": "5511999887766",
+      "formattedPhoneNumber": "+55 11 99988-7766",
       "blockedAt": "2024-01-15T10:30:00",
       "reason": "Solicitou não receber mensagens",
       "blockedBy": "admin@empresa.com",
@@ -168,6 +173,7 @@ foreach ($data['content'] as $contact) {
     {
       "id": 124,
       "phoneNumber": "5511888776655",
+      "formattedPhoneNumber": "+55 11 88877-6655",
       "blockedAt": "2024-01-14T15:45:00",
       "reason": "Número inválido",
       "blockedBy": "operador@empresa.com",

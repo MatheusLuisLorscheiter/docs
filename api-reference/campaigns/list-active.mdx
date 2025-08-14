@@ -1,15 +1,12 @@
 ---
 title: "Listar Campanhas Ativas"
 api: "GET /api/campaigns/active"
-description: "Lista todas as campanhas ativas (em execução ou agendadas) da empresa"
+description: "Lista todas as campanhas ativas (em execução) da empresa"
 ---
 
 ## Visão Geral
 
-Este endpoint retorna uma lista de todas as campanhas que estão atualmente ativas, incluindo:
-- Campanhas em execução (RUNNING)
-- Campanhas agendadas (SCHEDULED)
-- Campanhas pausadas (PAUSED)
+Este endpoint retorna uma lista de todas as campanhas que estão atualmente ativas (status ACTIVE).
 
 É útil para monitorar campanhas em andamento e gerenciar operações ativas.
 
@@ -81,115 +78,115 @@ foreach ($campaigns as $campaign) {
 
 ### Sucesso (200 OK)
 
-Retorna um array de campanhas ativas com suas estatísticas:
+Retorna um array de campanhas ativas, cada uma com a mesma estrutura completa dos outros endpoints:
 
 ```json
 [
   {
     "id": 123,
     "name": "Promoção Black Friday",
-    "description": "Campanha promocional",
-    "status": "RUNNING",
-    "type": "IMMEDIATE",
+    "description": null,
+    "status": "ACTIVE",
+    "type": "TEXT",
+    "createdAt": "2024-01-20T10:00:00",
+    "scheduledFor": null,
     "startedAt": "2024-01-20T10:00:00",
+    "completedAt": null,
+    "pausedAt": null,
     "totalContacts": 500,
     "sentContacts": 245,
     "failedContacts": 5,
     "pendingContacts": 250,
     "progressPercentage": 50.0,
     "successRate": 98.0,
-    "estimatedCompletion": "2024-01-20T14:30:00"
+    "estimatedCompletion": "2024-01-20T14:30:00",
+    "messageContent": "⚡ Oferta válida apenas hoje!",
+    "mediaType": null,
+    "mediaUrl": null,
+    "fileName": null,
+    "evolutionInstance": "whatsapp-01",
+    "minInterval": 5,
+    "maxInterval": 10,
+    "notificationPhone": null,
+    "pollData": null,
+    "evolutionConfig": {
+      "id": 1,
+      "name": "WhatsApp Principal",
+      "url": "https://evolution-api.exemplo.com",
+      "instance": "whatsapp-01"
+    }
   },
   {
     "id": 124,
-    "name": "Lembrete de Evento",
-    "status": "SCHEDULED",
-    "type": "SCHEDULED",
-    "scheduledFor": "2024-01-21T09:00:00",
-    "totalContacts": 150,
-    "sentContacts": 0,
-    "failedContacts": 0,
-    "pendingContacts": 150,
-    "progressPercentage": 0.0
-  },
-  {
-    "id": 125,
-    "name": "Newsletter Semanal",
-    "status": "PAUSED",
-    "type": "IMMEDIATE",
-    "startedAt": "2024-01-20T08:00:00",
-    "pausedAt": "2024-01-20T12:00:00",
+    "name": "Campanha com Mídia",
+    "description": null,
+    "status": "ACTIVE",
+    "type": "MEDIA",
+    "createdAt": "2024-01-20T14:00:00",
+    "scheduledFor": null,
+    "startedAt": "2024-01-20T14:00:00",
+    "completedAt": null,
+    "pausedAt": null,
     "totalContacts": 1000,
     "sentContacts": 600,
     "failedContacts": 10,
     "pendingContacts": 390,
     "progressPercentage": 61.0,
-    "successRate": 98.4
+    "successRate": 98.4,
+    "estimatedCompletion": "2024-01-20T16:30:00",
+    "messageContent": "Confira nossa nova coleção!",
+    "mediaType": "image",
+    "mediaUrl": "https://exemplo.com/colecao.jpg",
+    "fileName": "nova-colecao.jpg",
+    "evolutionInstance": "whatsapp-01",
+    "minInterval": 3,
+    "maxInterval": 8,
+    "notificationPhone": "5511999999999",
+    "pollData": null,
+    "evolutionConfig": {
+      "id": 1,
+      "name": "WhatsApp Principal",
+      "url": "https://evolution-api.exemplo.com",
+      "instance": "whatsapp-01"
+    }
   }
 ]
 ```
 
 ## Campos da Resposta
 
-<ResponseField name="id" type="number">
-  ID único da campanha
-</ResponseField>
+A estrutura de resposta é idêntica ao endpoint `/api/campaigns`, incluindo:
 
-<ResponseField name="name" type="string">
-  Nome da campanha
-</ResponseField>
+### Campos Principais
+- `id` - ID único da campanha
+- `name` - Nome da campanha
+- `description` - Descrição da campanha
+- `status` - Status atual (sempre ACTIVE neste endpoint)
+- `type` - Tipo da campanha (TEXT, MEDIA, POLL)
+- `createdAt` - Data/hora de criação
+- `startedAt` - Data/hora de início
+- `pausedAt` - Data/hora da pausa (se aplicável)
 
-<ResponseField name="description" type="string">
-  Descrição da campanha
-</ResponseField>
+### Estatísticas
+- `totalContacts` - Total de contatos
+- `sentContacts` - Mensagens enviadas
+- `failedContacts` - Mensagens falhadas
+- `pendingContacts` - Mensagens pendentes
+- `progressPercentage` - Progresso em percentual
+- `successRate` - Taxa de sucesso
+- `estimatedCompletion` - Estimativa de conclusão
 
-<ResponseField name="status" type="string">
-  Status atual: RUNNING, SCHEDULED, PAUSED
-</ResponseField>
-
-<ResponseField name="type" type="string">
-  Tipo: IMMEDIATE ou SCHEDULED
-</ResponseField>
-
-<ResponseField name="startedAt" type="string">
-  Data/hora de início (para campanhas em execução)
-</ResponseField>
-
-<ResponseField name="scheduledFor" type="string">
-  Data/hora agendada (para campanhas agendadas)
-</ResponseField>
-
-<ResponseField name="pausedAt" type="string">
-  Data/hora da pausa (para campanhas pausadas)
-</ResponseField>
-
-<ResponseField name="totalContacts" type="number">
-  Total de contatos na campanha
-</ResponseField>
-
-<ResponseField name="sentContacts" type="number">
-  Quantidade de mensagens enviadas com sucesso
-</ResponseField>
-
-<ResponseField name="failedContacts" type="number">
-  Quantidade de mensagens que falharam
-</ResponseField>
-
-<ResponseField name="pendingContacts" type="number">
-  Quantidade de mensagens pendentes
-</ResponseField>
-
-<ResponseField name="progressPercentage" type="number">
-  Percentual de progresso (0-100)
-</ResponseField>
-
-<ResponseField name="successRate" type="number">
-  Taxa de sucesso em percentual
-</ResponseField>
-
-<ResponseField name="estimatedCompletion" type="string">
-  Estimativa de conclusão (para campanhas em execução)
-</ResponseField>
+### Dados da Campanha
+- `messageContent` - Conteúdo da mensagem
+- `mediaType` - Tipo de mídia
+- `mediaUrl` - URL da mídia
+- `fileName` - Nome do arquivo
+- `evolutionInstance` - Instância Evolution
+- `minInterval` - Intervalo mínimo
+- `maxInterval` - Intervalo máximo
+- `notificationPhone` - Telefone de notificação
+- `pollData` - Dados da enquete
+- `evolutionConfig` - Configuração Evolution completa
 
 ## Casos de Uso
 
@@ -200,32 +197,33 @@ async function updateDashboard() {
     headers: { 'X-Access-Token': token }
   }).then(r => r.json());
 
-  const running = campaigns.filter(c => c.status === 'RUNNING');
-  const scheduled = campaigns.filter(c => c.status === 'SCHEDULED');
-  const paused = campaigns.filter(c => c.status === 'PAUSED');
+  // Calcular estatísticas totais
+  const totalMessages = campaigns.reduce((sum, c) => sum + c.totalContacts, 0);
+  const sentMessages = campaigns.reduce((sum, c) => sum + c.sentContacts, 0);
+  const avgProgress = campaigns.reduce((sum, c) => sum + c.progressPercentage, 0) / campaigns.length;
 
-  console.log(`Em execução: ${running.length}`);
-  console.log(`Agendadas: ${scheduled.length}`);
-  console.log(`Pausadas: ${paused.length}`);
+  console.log(`Campanhas ativas: ${campaigns.length}`);
+  console.log(`Mensagens totais: ${totalMessages}`);
+  console.log(`Mensagens enviadas: ${sentMessages}`);
+  console.log(`Progresso médio: ${avgProgress.toFixed(2)}%`);
 
   // Atualizar UI
-  updateProgressBars(running);
-  showScheduledCampaigns(scheduled);
-  highlightPausedCampaigns(paused);
+  updateProgressBars(campaigns);
 }
 ```
 
-### 2. Alertas de Campanhas Pausadas
+### 2. Monitoramento de Performance
 ```javascript
-async function checkPausedCampaigns() {
+async function monitorPerformance() {
   const campaigns = await getCampaignsActive();
-  const paused = campaigns.filter(c => c.status === 'PAUSED');
   
-  for (const campaign of paused) {
-    const pausedHours = calculateHoursSince(campaign.pausedAt);
+  for (const campaign of campaigns) {
+    if (campaign.successRate < 90) {
+      sendAlert(`Campanha "${campaign.name}" com taxa de sucesso baixa: ${campaign.successRate}%`);
+    }
     
-    if (pausedHours > 24) {
-      sendAlert(`Campanha "${campaign.name}" pausada há ${pausedHours}h`);
+    if (campaign.failedContacts > 50) {
+      sendAlert(`Campanha "${campaign.name}" com muitas falhas: ${campaign.failedContacts}`);
     }
   }
 }
@@ -240,24 +238,29 @@ async function estimateSystemLoad() {
     (sum, c) => sum + c.pendingContacts, 0
   );
   
-  const avgSendRate = calculateAverageSendRate(campaigns);
-  const estimatedTime = totalPending / avgSendRate;
+  // Calcular tempo médio por mensagem baseado no progresso atual
+  const activeCampaigns = campaigns.filter(c => c.progressPercentage > 0);
+  const avgTimePerMessage = calculateAverageTime(activeCampaigns);
+  
+  const estimatedTime = (totalPending * avgTimePerMessage) / 60; // em minutos
   
   console.log(`Mensagens pendentes: ${totalPending}`);
-  console.log(`Tempo estimado: ${estimatedTime} minutos`);
+  console.log(`Tempo estimado total: ${estimatedTime.toFixed(0)} minutos`);
 }
 ```
 
-### 4. Relatório de Performance
+### 4. Relatório de Performance em Tempo Real
 ```javascript
-async function generatePerformanceReport() {
+async function generateLiveReport() {
   const campaigns = await getCampaignsActive();
   
   const report = campaigns.map(campaign => ({
-    name: campaign.name,
-    progress: `${campaign.progressPercentage}%`,
-    success: `${campaign.successRate}%`,
-    eta: campaign.estimatedCompletion || 'N/A'
+    nome: campaign.name,
+    tipo: campaign.type,
+    progresso: `${campaign.progressPercentage}%`,
+    sucesso: `${campaign.successRate}%`,
+    enviadas: `${campaign.sentContacts}/${campaign.totalContacts}`,
+    eta: campaign.estimatedCompletion || 'Calculando...'
   }));
   
   return report;
@@ -268,8 +271,8 @@ async function generatePerformanceReport() {
 
 <Note>
   **Filtragem Automática:**
-  - Apenas campanhas com status RUNNING, SCHEDULED ou PAUSED são retornadas
-  - Campanhas concluídas, canceladas ou em rascunho não aparecem
+  - Apenas campanhas com status ACTIVE são retornadas
+  - Campanhas pausadas, agendadas, concluídas ou canceladas não aparecem
   - A lista é ordenada por data de criação (mais recentes primeiro)
 </Note>
 
@@ -284,7 +287,7 @@ async function generatePerformanceReport() {
 
 | Característica | `/api/campaigns` | `/api/campaigns/active` |
 |----------------|------------------|------------------------|
-| Filtros | Aceita parâmetro `status` | Filtra automaticamente |
-| Campanhas incluídas | Todas | Apenas RUNNING, SCHEDULED, PAUSED |
-| Performance | Pode ser mais lento | Otimizado para ativos |
+| Filtros | Aceita parâmetro `status` | Filtra automaticamente por ACTIVE |
+| Campanhas incluídas | Todas | Apenas status ACTIVE |
+| Performance | Pode ser mais lento | Otimizado para campanhas ativas |
 | Uso recomendado | Listagem completa | Monitoramento em tempo real |

@@ -4,6 +4,14 @@ api: "PUT /api/automations/{id}"
 description: "Atualiza os campos de uma automação existente"
 ---
 
+<Tip>
+Você pode atualizar qualquer campo da automação. Os campos não enviados mantêm seus valores atuais.
+</Tip>
+
+<Warning>
+Alterações no agendamento ou filtros afetam apenas as próximas execuções. Execuções em andamento não são afetadas.
+</Warning>
+
 ## Path Parameters
 
 <ParamField path="id" type="number" required>
@@ -22,6 +30,318 @@ description: "Atualiza os campos de uma automação existente"
 
 ## Body
 
-Mesma estrutura de criação, apenas os campos desejados.
+Mesma estrutura da criação. Você pode enviar apenas os campos que deseja alterar:
+
+<ParamField body="name" type="string">
+  Nome da automação
+</ParamField>
+
+<ParamField body="description" type="string">
+  Descrição da automação
+</ParamField>
+
+<ParamField body="isActive" type="boolean">
+  Ativar ou desativar a automação
+</ParamField>
+
+<ParamField body="scheduleType" type="string">
+  Tipo de agendamento (DAILY, WEEKLY, MONTHLY, CRON)
+</ParamField>
+
+<ParamField body="schedule" type="object">
+  Configuração do agendamento
+</ParamField>
+
+<ParamField body="databaseConfigId" type="number">
+  ID da configuração de banco de dados
+</ParamField>
+
+<ParamField body="filters" type="array">
+  Filtros de segmentação
+</ParamField>
+
+<ParamField body="messageConfig" type="object">
+  Configuração da mensagem
+</ParamField>
+
+<ParamField body="evolutionConfigId" type="number">
+  ID da configuração Evolution
+</ParamField>
+
+<ParamField body="intervalMinSeconds" type="number">
+  Intervalo mínimo entre mensagens
+</ParamField>
+
+<ParamField body="intervalMaxSeconds" type="number">
+  Intervalo máximo entre mensagens
+</ParamField>
+
+<ParamField body="notificationPhone" type="string">
+  Telefone para notificação
+</ParamField>
+
+<ParamField body="dedupStrategy" type="string">
+  Estratégia de deduplicação
+</ParamField>
+
+<ParamField body="dedupCooldownDays" type="number">
+  Dias de cooldown
+</ParamField>
+
+<ParamField body="sendLimitPerRun" type="number">
+  Limite por execução
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+# Atualizar apenas o nome e descrição
+curl -X PUT https://api.disparador.com/api/automations/10 \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: seu-access-token" \
+  -d '{
+    "name": "Aniversariantes - Novo Nome",
+    "description": "Descrição atualizada"
+  }'
+
+# Desativar automação
+curl -X PUT https://api.disparador.com/api/automations/10 \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: seu-access-token" \
+  -d '{
+    "isActive": false
+  }'
+
+# Alterar horário de execução
+curl -X PUT https://api.disparador.com/api/automations/10 \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: seu-access-token" \
+  -d '{
+    "schedule": {
+      "timeOfDay": "10:00",
+      "timezone": "America/Sao_Paulo"
+    }
+  }'
+```
+
+```javascript JavaScript
+// Atualizar mensagem
+const updateMessage = {
+  messageConfig: {
+    message: "🎉 Feliz Aniversário {PrimeiroNome}! 🎂\n\nQue seu dia seja especial!",
+    mediaUrl: "https://exemplo.com/aniversario.jpg",
+    mediaType: "image"
+  }
+};
+
+const response = await fetch('https://api.disparador.com/api/automations/10', {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Access-Token': 'seu-access-token'
+  },
+  body: JSON.stringify(updateMessage)
+});
+
+// Alterar agendamento para semanal
+const updateSchedule = {
+  scheduleType: "WEEKLY",
+  schedule: {
+    timeOfDay: "14:00",
+    timezone: "America/Sao_Paulo",
+    weekdays: [2, 4, 6] // Segunda, Quarta, Sexta
+  }
+};
+
+await fetch('https://api.disparador.com/api/automations/10', {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Access-Token': 'seu-access-token'
+  },
+  body: JSON.stringify(updateSchedule)
+});
+```
+
+```python Python
+import requests
+
+# Atualizar filtros
+update_filters = {
+    "filters": [
+        {
+            "filterId": "birthday",
+            "ignoreYear": True
+        },
+        {
+            "filterId": "segment",
+            "value": "VIP",
+            "operator": "equals"
+        }
+    ]
+}
+
+response = requests.put(
+    'https://api.disparador.com/api/automations/10',
+    json=update_filters,
+    headers={
+        'X-Access-Token': 'seu-access-token'
+    }
+)
+
+# Alterar estratégia de deduplicação
+update_dedup = {
+    "dedupStrategy": "COOLDOWN_DAYS",
+    "dedupCooldownDays": 30
+}
+
+response = requests.put(
+    'https://api.disparador.com/api/automations/10',
+    json=update_dedup,
+    headers={
+        'X-Access-Token': 'seu-access-token'
+    }
+)
+```
+
+```php PHP
+<?php
+// Atualizar intervalos
+$updateData = [
+    'intervalMinSeconds' => 10,
+    'intervalMaxSeconds' => 30,
+    'sendLimitPerRun' => 200
+];
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, "https://api.disparador.com/api/automations/10");
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Content-Type: application/json',
+    'X-Access-Token: seu-access-token'
+]);
+curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($updateData));
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+$result = json_decode($response, true);
+echo "Automação atualizada: " . $result['name'];
+?>
+```
+
+</RequestExample>
+
+## Response
+
+Retorna o objeto completo da automação atualizada, com a mesma estrutura do endpoint GET.
+
+<ResponseExample>
+
+```json 200 - Sucesso
+{
+  "id": 10,
+  "name": "Aniversariantes - Novo Nome",
+  "description": "Descrição atualizada",
+  "isActive": true,
+  "scheduleType": "DAILY",
+  "schedule": {
+    "timeOfDay": "10:00",
+    "timezone": "America/Sao_Paulo",
+    "weekdays": [2, 3, 4, 5, 6]
+  },
+  "databaseConfigId": 1,
+  "evolutionConfigId": 2,
+  "intervalMinSeconds": 10,
+  "intervalMaxSeconds": 30,
+  "notificationPhone": null,
+  "dedupStrategy": "COOLDOWN_DAYS",
+  "dedupCooldownDays": 30,
+  "sendLimitPerRun": 200,
+  "lastRunAt": "2024-01-21T09:00:00",
+  "nextRunAt": "2024-01-22T10:00:00",
+  "createdAt": "2024-01-01T10:00:00",
+  "updatedAt": "2024-01-21T16:30:00"
+}
+```
+
+```json 404 - Não Encontrada
+{
+  "message": "Automação não encontrada"
+}
+```
+
+```json 400 - Erro de Validação
+{
+  "message": "scheduleType inválido"
+}
+```
+
+```json 401 - Token Inválido
+{
+  "message": "Access token inválido"
+}
+```
+
+</ResponseExample>
+
+## Casos de Uso Comuns
+
+### 1. Pausar Temporariamente
+```json
+{
+  "isActive": false
+}
+```
+
+### 2. Alterar Horário
+```json
+{
+  "schedule": {
+    "timeOfDay": "08:30"
+  }
+}
+```
+
+### 3. Adicionar Notificação
+```json
+{
+  "notificationPhone": "5511999999999"
+}
+```
+
+### 4. Limitar Volume
+```json
+{
+  "sendLimitPerRun": 50,
+  "intervalMinSeconds": 30,
+  "intervalMaxSeconds": 60
+}
+```
+
+### 5. Mudar para Mensal
+```json
+{
+  "scheduleType": "MONTHLY",
+  "schedule": {
+    "dayOfMonth": 15,
+    "timeOfDay": "10:00"
+  }
+}
+```
+
+## Observações
+
+<Note>
+- Alterações no `scheduleType` requerem enviar também o objeto `schedule` completo
+- Mudanças no agendamento recalculam automaticamente o `nextRunAt`
+- A automação precisa pertencer à empresa do token
+- Campos não enviados mantêm seus valores atuais
+</Note>
+
+<Warning>
+- Não é possível alterar o ID da automação
+- Alterações em `filters` ou `messageConfig` afetam apenas próximas execuções
+- Se a automação estiver executando, as mudanças só terão efeito na próxima execução
+</Warning>
 
 

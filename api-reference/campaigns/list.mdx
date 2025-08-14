@@ -125,6 +125,8 @@ echo "Campanhas agendadas: " . count($scheduledCampaigns) . "\n";
 
 Array de campanhas, cada uma contendo:
 
+### Campos Principais
+
 <ResponseField name="id" type="number">
   ID único da campanha
 </ResponseField>
@@ -133,36 +135,24 @@ Array de campanhas, cada uma contendo:
   Nome da campanha
 </ResponseField>
 
+<ResponseField name="description" type="string">
+  Descrição da campanha
+</ResponseField>
+
 <ResponseField name="status" type="string">
   Status atual da campanha
 </ResponseField>
 
-<ResponseField name="companyId" type="number">
-  ID da empresa proprietária
-</ResponseField>
-
-<ResponseField name="totalContacts" type="number">
-  Total de contatos na campanha
-</ResponseField>
-
-<ResponseField name="sentCount" type="number">
-  Quantidade de mensagens enviadas
-</ResponseField>
-
-<ResponseField name="failedCount" type="number">
-  Quantidade de envios que falharam
-</ResponseField>
-
-<ResponseField name="scheduledFor" type="string">
-  Data/hora de agendamento (se aplicável)
+<ResponseField name="type" type="string">
+  Tipo da campanha (TEXT, MEDIA, POLL)
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
   Data/hora de criação
 </ResponseField>
 
-<ResponseField name="updatedAt" type="string">
-  Data/hora da última atualização
+<ResponseField name="scheduledFor" type="string">
+  Data/hora de agendamento (se aplicável)
 </ResponseField>
 
 <ResponseField name="startedAt" type="string">
@@ -173,6 +163,82 @@ Array de campanhas, cada uma contendo:
   Data/hora que foi concluída
 </ResponseField>
 
+<ResponseField name="pausedAt" type="string">
+  Data/hora que foi pausada (se aplicável)
+</ResponseField>
+
+### Estatísticas
+
+<ResponseField name="totalContacts" type="number">
+  Total de contatos na campanha
+</ResponseField>
+
+<ResponseField name="sentContacts" type="number">
+  Quantidade de mensagens enviadas
+</ResponseField>
+
+<ResponseField name="failedContacts" type="number">
+  Quantidade de envios que falharam
+</ResponseField>
+
+<ResponseField name="pendingContacts" type="number">
+  Quantidade de contatos pendentes
+</ResponseField>
+
+<ResponseField name="progressPercentage" type="number">
+  Percentual de progresso (0-100)
+</ResponseField>
+
+<ResponseField name="successRate" type="number">
+  Taxa de sucesso em percentual
+</ResponseField>
+
+<ResponseField name="estimatedCompletion" type="string">
+  Estimativa de conclusão (se em execução)
+</ResponseField>
+
+### Dados da Campanha
+
+<ResponseField name="messageContent" type="string">
+  Conteúdo da mensagem da campanha
+</ResponseField>
+
+<ResponseField name="mediaType" type="string">
+  Tipo de mídia anexada (se houver)
+</ResponseField>
+
+<ResponseField name="mediaUrl" type="string">
+  URL da mídia anexada
+</ResponseField>
+
+<ResponseField name="fileName" type="string">
+  Nome do arquivo de mídia
+</ResponseField>
+
+<ResponseField name="evolutionInstance" type="string">
+  Instância Evolution usada
+</ResponseField>
+
+<ResponseField name="minInterval" type="number">
+  Intervalo mínimo entre mensagens (segundos)
+</ResponseField>
+
+<ResponseField name="maxInterval" type="number">
+  Intervalo máximo entre mensagens (segundos)
+</ResponseField>
+
+<ResponseField name="notificationPhone" type="string">
+  Telefone para notificação de conclusão
+</ResponseField>
+
+<ResponseField name="pollData" type="object">
+  Dados da enquete (quando aplicável)
+</ResponseField>
+
+<ResponseField name="evolutionConfig" type="object">
+  Configuração Evolution completa usada
+</ResponseField>
+
 <ResponseExample>
 
 ```json 200 - Sucesso (Lista Completa)
@@ -180,44 +246,108 @@ Array de campanhas, cada uma contendo:
   {
     "id": 123,
     "name": "Campanha de Natal",
+    "description": null,
     "status": "COMPLETED",
-    "companyId": 1,
-    "totalContacts": 150,
-    "sentCount": 148,
-    "failedCount": 2,
-    "scheduledFor": null,
+    "type": "TEXT",
     "createdAt": "2024-01-20T10:00:00",
-    "updatedAt": "2024-01-20T11:30:00",
+    "scheduledFor": null,
     "startedAt": "2024-01-20T10:01:00",
-    "completedAt": "2024-01-20T11:30:00"
+    "completedAt": "2024-01-20T11:30:00",
+    "pausedAt": null,
+    "totalContacts": 150,
+    "sentContacts": 148,
+    "failedContacts": 2,
+    "pendingContacts": 0,
+    "progressPercentage": 100,
+    "successRate": 98.67,
+    "estimatedCompletion": null,
+    "messageContent": "Feliz Natal! 🎄",
+    "mediaType": null,
+    "mediaUrl": null,
+    "fileName": null,
+    "evolutionInstance": "whatsapp-01",
+    "minInterval": 5,
+    "maxInterval": 10,
+    "notificationPhone": null,
+    "pollData": null,
+    "evolutionConfig": {
+      "id": 1,
+      "name": "WhatsApp Principal",
+      "url": "https://evolution-api.exemplo.com",
+      "instance": "whatsapp-01"
+    }
   },
   {
     "id": 124,
     "name": "Promoção Black Friday",
+    "description": null,
     "status": "ACTIVE",
-    "companyId": 1,
-    "totalContacts": 500,
-    "sentCount": 234,
-    "failedCount": 5,
-    "scheduledFor": null,
+    "type": "MEDIA",
     "createdAt": "2024-01-20T14:00:00",
-    "updatedAt": "2024-01-20T14:45:00",
+    "scheduledFor": null,
     "startedAt": "2024-01-20T14:01:00",
-    "completedAt": null
+    "completedAt": null,
+    "pausedAt": null,
+    "totalContacts": 500,
+    "sentContacts": 234,
+    "failedContacts": 5,
+    "pendingContacts": 261,
+    "progressPercentage": 46.8,
+    "successRate": 97.91,
+    "estimatedCompletion": "2024-01-20T16:30:00",
+    "messageContent": "⚡ Oferta válida apenas hoje!",
+    "mediaType": "image",
+    "mediaUrl": "https://exemplo.com/black-friday.jpg",
+    "fileName": "promo-black-friday.jpg",
+    "evolutionInstance": "whatsapp-01",
+    "minInterval": 3,
+    "maxInterval": 8,
+    "notificationPhone": "5511999999999",
+    "pollData": null,
+    "evolutionConfig": {
+      "id": 1,
+      "name": "WhatsApp Principal",
+      "url": "https://evolution-api.exemplo.com",
+      "instance": "whatsapp-01"
+    }
   },
   {
     "id": 125,
-    "name": "Lembrete de Consulta",
+    "name": "Pesquisa de Satisfação",
+    "description": null,
     "status": "SCHEDULED",
-    "companyId": 1,
-    "totalContacts": 50,
-    "sentCount": 0,
-    "failedCount": 0,
-    "scheduledFor": "2024-01-25T09:00:00",
+    "type": "POLL",
     "createdAt": "2024-01-20T15:00:00",
-    "updatedAt": "2024-01-20T15:00:00",
+    "scheduledFor": "2024-01-25T09:00:00",
     "startedAt": null,
-    "completedAt": null
+    "completedAt": null,
+    "pausedAt": null,
+    "totalContacts": 50,
+    "sentContacts": 0,
+    "failedContacts": 0,
+    "pendingContacts": 50,
+    "progressPercentage": 0,
+    "successRate": 0,
+    "estimatedCompletion": null,
+    "messageContent": null,
+    "mediaType": null,
+    "mediaUrl": null,
+    "fileName": null,
+    "evolutionInstance": "whatsapp-01",
+    "minInterval": 10,
+    "maxInterval": 20,
+    "notificationPhone": null,
+    "pollData": {
+      "name": "Como você avalia nosso atendimento?",
+      "options": ["Excelente", "Bom", "Regular", "Ruim"],
+      "selectableCount": 1
+    },
+    "evolutionConfig": {
+      "id": 2,
+      "name": "WhatsApp Pesquisas",
+      "url": "https://evolution-api.exemplo.com",
+      "instance": "whatsapp-02"
+    }
   }
 ]
 ```
@@ -227,16 +357,36 @@ Array de campanhas, cada uma contendo:
   {
     "id": 124,
     "name": "Promoção Black Friday",
+    "description": null,
     "status": "ACTIVE",
-    "companyId": 1,
-    "totalContacts": 500,
-    "sentCount": 234,
-    "failedCount": 5,
-    "scheduledFor": null,
+    "type": "MEDIA",
     "createdAt": "2024-01-20T14:00:00",
-    "updatedAt": "2024-01-20T14:45:00",
+    "scheduledFor": null,
     "startedAt": "2024-01-20T14:01:00",
-    "completedAt": null
+    "completedAt": null,
+    "pausedAt": null,
+    "totalContacts": 500,
+    "sentContacts": 234,
+    "failedContacts": 5,
+    "pendingContacts": 261,
+    "progressPercentage": 46.8,
+    "successRate": 97.91,
+    "estimatedCompletion": "2024-01-20T16:30:00",
+    "messageContent": "⚡ Oferta válida apenas hoje!",
+    "mediaType": "image",
+    "mediaUrl": "https://exemplo.com/black-friday.jpg",
+    "fileName": "promo-black-friday.jpg",
+    "evolutionInstance": "whatsapp-01",
+    "minInterval": 3,
+    "maxInterval": 8,
+    "notificationPhone": "5511999999999",
+    "pollData": null,
+    "evolutionConfig": {
+      "id": 1,
+      "name": "WhatsApp Principal",
+      "url": "https://evolution-api.exemplo.com",
+      "instance": "whatsapp-01"
+    }
   }
 ]
 ```
@@ -293,24 +443,28 @@ async function getCampaignStats(accessToken) {
     active: 0,
     scheduled: 0,
     completed: 0,
+    paused: 0,
     totalMessages: 0,
     successRate: 0
   };
   
   campaigns.forEach(campaign => {
-    if (campaign.status === 'ACTIVE') stats.active++;
-    if (campaign.status === 'SCHEDULED') stats.scheduled++;
-    if (campaign.status === 'COMPLETED') stats.completed++;
+    switch(campaign.status) {
+      case 'ACTIVE': stats.active++; break;
+      case 'SCHEDULED': stats.scheduled++; break;
+      case 'COMPLETED': stats.completed++; break;
+      case 'PAUSED': stats.paused++; break;
+    }
     
-    stats.totalMessages += campaign.sentCount;
+    stats.totalMessages += campaign.sentContacts;
     
-    if (campaign.totalContacts > 0) {
-      stats.successRate += (campaign.sentCount / campaign.totalContacts);
+    if (campaign.totalContacts > 0 && campaign.status === 'COMPLETED') {
+      stats.successRate += campaign.successRate;
     }
   });
   
   if (stats.completed > 0) {
-    stats.successRate = (stats.successRate / stats.completed * 100).toFixed(2);
+    stats.successRate = (stats.successRate / stats.completed).toFixed(2);
   }
   
   return stats;

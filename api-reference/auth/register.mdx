@@ -134,6 +134,8 @@ if (isset($response['accessToken'])) {
 
 ## Response
 
+### Campos Principais
+
 <ResponseField name="accessToken" type="string">
   Token de acesso único da empresa para autenticação
 </ResponseField>
@@ -154,6 +156,16 @@ if (isset($response['accessToken'])) {
   Email da empresa
 </ResponseField>
 
+<ResponseField name="expiresAt" type="string" nullable>
+  Data de expiração do token. Sempre null (tokens não expiram)
+</ResponseField>
+
+<ResponseField name="message" type="string" nullable>
+  Mensagem de erro. Null em caso de sucesso
+</ResponseField>
+
+### Funcionalidades Habilitadas
+
 <ResponseField name="blockedContactsEnabled" type="boolean">
   Se a funcionalidade de bloqueio inteligente está habilitada (padrão: true)
 </ResponseField>
@@ -162,12 +174,12 @@ if (isset($response['accessToken'])) {
   Se a funcionalidade de enquetes está habilitada (padrão: true)
 </ResponseField>
 
-<ResponseField name="expiresAt" type="string" nullable>
-  Data de expiração do token. Sempre null (tokens não expiram)
+<ResponseField name="automationsEnabled" type="boolean">
+  Se a funcionalidade de automações está habilitada (padrão: true)
 </ResponseField>
 
-<ResponseField name="message" type="string" nullable>
-  Mensagem de erro. Null em caso de sucesso
+<ResponseField name="automationLimit" type="number" nullable>
+  Limite de automações permitidas para a empresa (padrão: configurado no sistema)
 </ResponseField>
 
 <ResponseExample>
@@ -181,6 +193,8 @@ if (isset($response['accessToken'])) {
   "companyEmail": "contato@minhaempresa.com",
   "blockedContactsEnabled": true,
   "pollCampaignsEnabled": true,
+  "automationsEnabled": true,
+  "automationLimit": 10,
   "expiresAt": null,
   "message": null
 }
@@ -195,6 +209,8 @@ if (isset($response['accessToken'])) {
   "companyEmail": null,
   "blockedContactsEnabled": null,
   "pollCampaignsEnabled": null,
+  "automationsEnabled": null,
+  "automationLimit": null,
   "expiresAt": null,
   "message": "Token de administrador é obrigatório"
 }
@@ -209,6 +225,8 @@ if (isset($response['accessToken'])) {
   "companyEmail": null,
   "blockedContactsEnabled": null,
   "pollCampaignsEnabled": null,
+  "automationsEnabled": null,
+  "automationLimit": null,
   "expiresAt": null,
   "message": "Formato de token inválido. Use: Bearer {senha}"
 }
@@ -223,6 +241,8 @@ if (isset($response['accessToken'])) {
   "companyEmail": null,
   "blockedContactsEnabled": null,
   "pollCampaignsEnabled": null,
+  "automationsEnabled": null,
+  "automationLimit": null,
   "expiresAt": null,
   "message": "Token de administrador inválido"
 }
@@ -237,6 +257,8 @@ if (isset($response['accessToken'])) {
   "companyEmail": null,
   "blockedContactsEnabled": null,
   "pollCampaignsEnabled": null,
+  "automationsEnabled": null,
+  "automationLimit": null,
   "expiresAt": null,
   "message": "Email já cadastrado"
 }
@@ -251,6 +273,8 @@ if (isset($response['accessToken'])) {
   "companyEmail": null,
   "blockedContactsEnabled": null,
   "pollCampaignsEnabled": null,
+  "automationsEnabled": null,
+  "automationLimit": null,
   "expiresAt": null,
   "message": "Senha deve ter pelo menos 6 caracteres"
 }

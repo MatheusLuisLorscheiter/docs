@@ -12,7 +12,7 @@ Este endpoint permite duplicar uma campanha existente, criando uma nova campanha
 - Mensagens e templates configurados
 - Status inicial como **DRAFT** (rascunho)
 
-A campanha duplicada receberá o sufixo " copy" no nome.
+A campanha duplicada receberá o sufixo " (cópia)" no nome.
 
 ## Requisitos
 
@@ -51,6 +51,8 @@ const response = await fetch('https://api.disparador.com/api/campaigns/123/dupli
 
 const duplicatedCampaign = await response.json();
 console.log('Nova campanha:', duplicatedCampaign.name);
+console.log('ID:', duplicatedCampaign.id);
+console.log('Status:', duplicatedCampaign.status);
 ```
 
 ### Python
@@ -65,6 +67,7 @@ headers = {
 response = requests.post(url, headers=headers)
 campaign = response.json()
 print(f"Campanha duplicada: {campaign['name']}")
+print(f"Nova ID: {campaign['id']}")
 ```
 
 ### PHP
@@ -86,12 +89,16 @@ echo "Campanha duplicada: " . $campaign['name'];
 
 ### Sucesso (200 OK)
 
+A resposta segue a mesma estrutura completa do endpoint de criar/consultar campanhas:
+
+### Campos Principais
+
 <ResponseField name="id" type="number">
   ID da nova campanha criada
 </ResponseField>
 
 <ResponseField name="name" type="string">
-  Nome da campanha (original + " copy")
+  Nome da campanha (original + " (cópia)")
 </ResponseField>
 
 <ResponseField name="description" type="string">
@@ -103,27 +110,79 @@ echo "Campanha duplicada: " . $campaign['name'];
 </ResponseField>
 
 <ResponseField name="type" type="string">
-  Tipo da campanha (IMMEDIATE ou SCHEDULED)
+  Tipo da campanha (TEXT, MEDIA, POLL)
 </ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  Data/hora de criação da nova campanha
+</ResponseField>
+
+### Estatísticas
 
 <ResponseField name="totalContacts" type="number">
   Total de contatos duplicados
 </ResponseField>
+
+<ResponseField name="sentContacts" type="number">
+  Sempre 0 (nova campanha)
+</ResponseField>
+
+<ResponseField name="failedContacts" type="number">
+  Sempre 0 (nova campanha)
+</ResponseField>
+
+<ResponseField name="pendingContacts" type="number">
+  Igual ao totalContacts
+</ResponseField>
+
+<ResponseField name="progressPercentage" type="number">
+  Sempre 0 (nova campanha)
+</ResponseField>
+
+<ResponseField name="successRate" type="number">
+  Sempre 0 (nova campanha)
+</ResponseField>
+
+### Dados da Campanha
 
 <ResponseField name="messageContent" type="string">
   Conteúdo da mensagem principal
 </ResponseField>
 
 <ResponseField name="mediaType" type="string">
-  Tipo de mídia (text, image, video, audio, document, poll)
+  Tipo de mídia (image, video, audio, document)
 </ResponseField>
 
 <ResponseField name="mediaUrl" type="string">
   URL da mídia anexada (se houver)
 </ResponseField>
 
+<ResponseField name="fileName" type="string">
+  Nome do arquivo de mídia
+</ResponseField>
+
+<ResponseField name="evolutionInstance" type="string">
+  Instância Evolution configurada
+</ResponseField>
+
+<ResponseField name="minInterval" type="number">
+  Intervalo mínimo entre mensagens
+</ResponseField>
+
+<ResponseField name="maxInterval" type="number">
+  Intervalo máximo entre mensagens
+</ResponseField>
+
+<ResponseField name="notificationPhone" type="string">
+  Telefone para notificação
+</ResponseField>
+
 <ResponseField name="pollData" type="object">
   Dados da enquete (se for campanha de enquete)
+</ResponseField>
+
+<ResponseField name="evolutionConfig" type="object">
+  Configuração Evolution completa
 </ResponseField>
 
 ### Exemplos de Resposta
@@ -132,14 +191,37 @@ echo "Campanha duplicada: " . $campaign['name'];
 ```json
 {
   "id": 456,
-  "name": "Promoção Black Friday copy",
-  "description": "Campanha promocional",
+  "name": "Promoção Black Friday (cópia)",
+  "description": null,
   "status": "DRAFT",
-  "type": "IMMEDIATE",
+  "type": "TEXT",
+  "createdAt": "2024-01-20T16:00:00",
+  "scheduledFor": null,
+  "startedAt": null,
+  "completedAt": null,
+  "pausedAt": null,
   "totalContacts": 150,
+  "sentContacts": 0,
+  "failedContacts": 0,
+  "pendingContacts": 150,
+  "progressPercentage": 0,
+  "successRate": 0,
+  "estimatedCompletion": null,
   "messageContent": "🎉 Black Friday chegou! Descontos de até 70%!",
-  "mediaType": "text",
-  "createdAt": "2024-01-20T16:00:00"
+  "mediaType": null,
+  "mediaUrl": null,
+  "fileName": null,
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": 5,
+  "maxInterval": 10,
+  "notificationPhone": null,
+  "pollData": null,
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  }
 }
 ```
 
@@ -147,14 +229,37 @@ echo "Campanha duplicada: " . $campaign['name'];
 ```json
 {
   "id": 457,
-  "name": "Lançamento Produto copy",
+  "name": "Lançamento Produto (cópia)",
+  "description": null,
   "status": "DRAFT",
-  "type": "SCHEDULED",
+  "type": "MEDIA",
+  "createdAt": "2024-01-20T16:00:00",
+  "scheduledFor": null,
+  "startedAt": null,
+  "completedAt": null,
+  "pausedAt": null,
   "totalContacts": 200,
+  "sentContacts": 0,
+  "failedContacts": 0,
+  "pendingContacts": 200,
+  "progressPercentage": 0,
+  "successRate": 0,
+  "estimatedCompletion": null,
   "messageContent": "Conheça nosso novo produto!",
   "mediaType": "image",
   "mediaUrl": "https://api.disparador.com/media/files/produto.jpg",
-  "fileName": "produto.jpg"
+  "fileName": "produto.jpg",
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": 5,
+  "maxInterval": 10,
+  "notificationPhone": null,
+  "pollData": null,
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  }
 }
 ```
 
@@ -162,14 +267,40 @@ echo "Campanha duplicada: " . $campaign['name'];
 ```json
 {
   "id": 458,
-  "name": "Pesquisa Satisfação copy",
+  "name": "Pesquisa Satisfação (cópia)",
+  "description": null,
   "status": "DRAFT",
+  "type": "POLL",
+  "createdAt": "2024-01-20T16:00:00",
+  "scheduledFor": null,
+  "startedAt": null,
+  "completedAt": null,
+  "pausedAt": null,
   "totalContacts": 100,
-  "mediaType": "poll",
+  "sentContacts": 0,
+  "failedContacts": 0,
+  "pendingContacts": 100,
+  "progressPercentage": 0,
+  "successRate": 0,
+  "estimatedCompletion": null,
+  "messageContent": null,
+  "mediaType": null,
+  "mediaUrl": null,
+  "fileName": null,
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": 5,
+  "maxInterval": 10,
+  "notificationPhone": null,
   "pollData": {
     "name": "Como você avalia nosso atendimento?",
     "options": ["Excelente", "Bom", "Regular", "Ruim"],
     "selectableCount": 1
+  },
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
   }
 }
 ```
@@ -186,7 +317,7 @@ echo "Campanha duplicada: " . $campaign['name'];
 ### 403 Forbidden
 ```json
 {
-  "message": "Campanha não pertence à sua empresa"
+  "message": "Acesso negado"
 }
 ```
 
@@ -210,7 +341,8 @@ echo "Campanha duplicada: " . $campaign['name'];
   **Comportamento da Duplicação:**
   - A nova campanha sempre inicia com status DRAFT
   - Todos os contadores são zerados (mensagens enviadas, falhas, etc.)
-  - As mensagens template são copiadas, mas não as mensagens individuais já enviadas
+  - Os contatos são copiados integralmente
+  - As configurações de Evolution API são mantidas
   - O histórico de execução não é copiado
 </Note>
 
@@ -233,7 +365,8 @@ const newCampaign = await duplicateCampaign(lastYearCampaign.id);
 await updateCampaign(newCampaign.id, {
   name: 'Natal 2024',
   message: 'Feliz Natal 2024! 🎄',
-  scheduledFor: '2024-12-24T09:00:00'
+  scheduledFor: '2024-12-24T09:00:00',
+  isDraft: false
 });
 ```
 
@@ -247,12 +380,14 @@ const variantB = await duplicateCampaign(originalId);
 // Modificar mensagens para teste
 await updateCampaign(variantA.id, { 
   name: 'Teste A - Emoji',
-  message: '😍 Oferta Especial!' 
+  message: '😍 Oferta Especial!',
+  isDraft: true
 });
 
 await updateCampaign(variantB.id, { 
   name: 'Teste B - Urgência',
-  message: 'ÚLTIMAS HORAS! Oferta Especial!' 
+  message: 'ÚLTIMAS HORAS! Oferta Especial!',
+  isDraft: true
 });
 ```
 
@@ -266,7 +401,8 @@ for (const region of ['SP', 'RJ', 'MG']) {
   const camp = await duplicateCampaign(templateId);
   await updateCampaign(camp.id, {
     name: `Promoção ${region}`,
-    contacts: await getContactsByRegion(region)
+    contacts: await getContactsByRegion(region),
+    isDraft: true
   });
   campaigns.push(camp);
 }

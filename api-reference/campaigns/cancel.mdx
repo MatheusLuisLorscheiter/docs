@@ -47,7 +47,8 @@ if (confirm('Tem certeza que deseja cancelar esta campanha? Esta ação não pod
   
   if (result.id) {
     console.log(`Campanha ${result.name} cancelada permanentemente`);
-    console.log(`Total enviado antes do cancelamento: ${result.sentCount}`);
+    console.log(`Total enviado antes do cancelamento: ${result.sentContacts}`);
+    console.log(`Status final: ${result.status}`);
   } else {
     console.error('Erro:', result.message);
   }
@@ -72,7 +73,7 @@ if confirm.lower() == 's':
     
     if 'id' in result:
         print(f"Campanha '{result['name']}' cancelada permanentemente")
-        print(f"Mensagens enviadas antes do cancelamento: {result['sentCount']}")
+        print(f"Mensagens enviadas antes do cancelamento: {result['sentContacts']}")
         print(f"Status final: {result['status']}")
     else:
         print(f"Erro: {result.get('message')}")
@@ -105,7 +106,7 @@ if (strtolower($confirm) === 's') {
     
     if (isset($response['id'])) {
         echo "Campanha '{$response['name']}' cancelada permanentemente\n";
-        echo "Total enviado: {$response['sentCount']}\n";
+        echo "Total enviado: {$response['sentContacts']}\n";
         echo "Status: {$response['status']}\n";
     } else {
         echo "Erro: " . $response['message'] . "\n";
@@ -120,7 +121,9 @@ if (strtolower($confirm) === 's') {
 
 ## Response
 
-Retorna os dados finais da campanha após cancelamento.
+Retorna os dados completos finais da campanha após cancelamento.
+
+### Campos Principais
 
 <ResponseField name="id" type="number">
   ID da campanha
@@ -130,29 +133,65 @@ Retorna os dados finais da campanha após cancelamento.
   Nome da campanha
 </ResponseField>
 
+<ResponseField name="description" type="string">
+  Descrição da campanha
+</ResponseField>
+
 <ResponseField name="status" type="string">
   Novo status (será "CANCELLED")
 </ResponseField>
+
+<ResponseField name="type" type="string">
+  Tipo da campanha (TEXT, MEDIA, POLL)
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  Data/hora de criação
+</ResponseField>
+
+<ResponseField name="startedAt" type="string">
+  Data/hora que iniciou (se aplicável)
+</ResponseField>
+
+<ResponseField name="completedAt" type="string">
+  Data/hora do cancelamento (mesmo valor de cancelledAt)
+</ResponseField>
+
+### Estatísticas Finais
 
 <ResponseField name="totalContacts" type="number">
   Total de contatos que estavam na campanha
 </ResponseField>
 
-<ResponseField name="sentCount" type="number">
+<ResponseField name="sentContacts" type="number">
   Total de mensagens enviadas antes do cancelamento
 </ResponseField>
 
-<ResponseField name="failedCount" type="number">
+<ResponseField name="failedContacts" type="number">
   Total de falhas antes do cancelamento
 </ResponseField>
 
-<ResponseField name="cancelledAt" type="string">
-  Data/hora do cancelamento
+<ResponseField name="pendingContacts" type="number">
+  Contatos que não foram processados
 </ResponseField>
 
-<ResponseField name="cancelledBy" type="string">
-  Email do usuário que cancelou (baseado no token)
+<ResponseField name="progressPercentage" type="number">
+  Percentual de progresso no momento do cancelamento
 </ResponseField>
+
+<ResponseField name="successRate" type="number">
+  Taxa de sucesso final
+</ResponseField>
+
+### Outros Campos
+
+Todos os demais campos da estrutura CampaignResponse também são retornados, incluindo:
+- messageContent
+- mediaType
+- mediaUrl
+- evolutionInstance
+- evolutionConfig
+- etc.
 
 <ResponseField name="message" type="string">
   Mensagem de erro (apenas em caso de falha)
@@ -164,13 +203,36 @@ Retorna os dados finais da campanha após cancelamento.
 {
   "id": 123,
   "name": "Campanha de Vendas",
+  "description": null,
   "status": "CANCELLED",
-  "companyId": 1,
+  "type": "TEXT",
+  "createdAt": "2024-01-20T10:00:00",
+  "scheduledFor": null,
+  "startedAt": "2024-01-20T10:01:00",
+  "completedAt": "2024-01-20T17:00:00",
+  "pausedAt": null,
   "totalContacts": 500,
-  "sentCount": 234,
-  "failedCount": 5,
-  "cancelledAt": "2024-01-20T17:00:00",
-  "cancelledBy": "admin@empresa.com",
+  "sentContacts": 234,
+  "failedContacts": 5,
+  "pendingContacts": 261,
+  "progressPercentage": 46.8,
+  "successRate": 97.86,
+  "estimatedCompletion": null,
+  "messageContent": "Aproveite nossa promoção especial!",
+  "mediaType": null,
+  "mediaUrl": null,
+  "fileName": null,
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": 5,
+  "maxInterval": 10,
+  "notificationPhone": null,
+  "pollData": null,
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  },
   "message": null
 }
 ```
@@ -189,7 +251,7 @@ Retorna os dados finais da campanha após cancelamento.
 
 ```json 400 - Campanha Não Encontrada
 {
-  "message": "Campanha não encontrada ou não pertence à sua empresa"
+  "message": "Campanha não encontrada"
 }
 ```
 
@@ -255,7 +317,7 @@ async function evaluateCampaignAction(campaignId, accessToken) {
   );
   
   const campaign = await response.json();
-  const progress = (campaign.sentCount / campaign.totalContacts) * 100;
+  const progress = campaign.progressPercentage;
   
   if (progress < 10) {
     console.log('Menos de 10% enviado - considere cancelar');
@@ -274,8 +336,8 @@ async function evaluateCampaignAction(campaignId, accessToken) {
 
 <Note>
 Todos os cancelamentos são registrados com:
-- Data e hora exata
-- Usuário responsável (via token)
+- Data e hora exata (completedAt)
 - Estado da campanha no momento
-- Motivo (se implementado no futuro)
+- Estatísticas finais preservadas
+- Histórico completo para consulta futura
 </Note>

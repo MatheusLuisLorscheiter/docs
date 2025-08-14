@@ -1,12 +1,12 @@
 ---
 title: "Upload de Mídia"
-api: "POST /api/media/upload"
-description: "Faz upload de arquivos de mídia para uso em campanhas"
+api: "POST /media/upload"
+description: "Faz upload de arquivos de mídia para uso em campanhas e automações"
 ---
 
-## Visão Geral
-
-Este endpoint permite fazer upload de arquivos de mídia (imagens, vídeos, áudios e documentos) para serem usados em campanhas. Os arquivos são armazenados no servidor e retornam uma URL que pode ser utilizada nas campanhas.
+<Tip>
+Os arquivos são enviados para o MinIO (armazenamento de objetos) e retornam uma URL permanente para uso nas mensagens.
+</Tip>
 
 ## Tipos de Mídia Suportados
 
@@ -15,14 +15,14 @@ Este endpoint permite fazer upload de arquivos de mídia (imagens, vídeos, áud
 - PNG (`.png`)
 - GIF (`.gif`)
 - WebP (`.webp`)
-- Tamanho máximo: 50MB
+- MIME types: `image/*`
 
 ### Vídeos
 - MP4 (`.mp4`)
 - AVI (`.avi`)
 - MOV (`.mov`)
 - MKV (`.mkv`)
-- Tamanho máximo: 100MB
+- MIME types: `video/*`
 
 ### Áudios
 - MP3 (`.mp3`)
@@ -30,54 +30,55 @@ Este endpoint permite fazer upload de arquivos de mídia (imagens, vídeos, áud
 - OGG (`.ogg`)
 - M4A (`.m4a`)
 - AAC (`.aac`)
-- Tamanho máximo: 50MB
+- MIME types: `audio/*`
 
 ### Documentos
 - PDF (`.pdf`)
 - DOC/DOCX (`.doc`, `.docx`)
 - XLS/XLSX (`.xls`, `.xlsx`)
-- PPT/PPTX (`.ppt`, `.pptx`)
-- TXT (`.txt`)
-- CSV (`.csv`)
-- Tamanho máximo: 100MB
+- MIME types específicos aceitos
 
-## Requisitos
-
-- Token de acesso válido
-- Arquivo no formato multipart/form-data
-- Arquivo dentro dos limites de tamanho
-
-## Parâmetros
-
-<ParamField body="file" type="file" required>
-  Arquivo a ser enviado (campo do formulário)
-</ParamField>
-
-## Cabeçalhos
+## Headers
 
 <ParamField header="X-Access-Token" type="string" required>
   Token de acesso da empresa
 </ParamField>
 
 <ParamField header="Content-Type" type="string" required>
-  Deve ser `multipart/form-data`
+  Deve ser `multipart/form-data` (geralmente configurado automaticamente)
 </ParamField>
 
-## Exemplos de Uso
+## Body (Form Data)
 
-### JavaScript (com FormData)
-```javascript
-async function uploadMedia(file) {
+<ParamField body="file" type="file" required>
+  Arquivo a ser enviado (campo do formulário)
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST https://api.disparador.com/media/upload \
+  -H "X-Access-Token: seu-access-token" \
+  -F "file=@/caminho/para/arquivo.jpg"
+```
+
+```javascript JavaScript
+// Upload simples
+async function uploadMedia(file, accessToken) {
   const formData = new FormData();
   formData.append('file', file);
   
-  const response = await fetch('https://api.disparador.com/api/media/upload', {
+  const response = await fetch('https://api.disparador.com/media/upload', {
     method: 'POST',
     headers: {
-      'X-Access-Token': 'seu_token_aqui'
+      'X-Access-Token': accessToken
     },
     body: formData
   });
+  
+  if (!response.ok) {
+    throw new Error(`Upload falhou: ${response.status}`);
+  }
   
   const result = await response.json();
   console.log('URL da mídia:', result.url);
@@ -89,18 +90,21 @@ const fileInput = document.getElementById('file-input');
 fileInput.addEventListener('change', async (event) => {
   const file = event.target.files[0];
   if (file) {
-    const uploaded = await uploadMedia(file);
-    console.log('Arquivo enviado:', uploaded);
+    try {
+      const result = await uploadMedia(file, 'seu-access-token');
+      console.log('Upload concluído:', result);
+    } catch (error) {
+      console.error('Erro no upload:', error);
+    }
   }
 });
 ```
 
-### Python
-```python
+```python Python
 import requests
 
 def upload_media(file_path, access_token):
-    url = "https://api.disparador.com/api/media/upload"
+    url = "https://api.disparador.com/media/upload"
     headers = {
         "X-Access-Token": access_token
     }
@@ -109,22 +113,29 @@ def upload_media(file_path, access_token):
         files = {'file': file}
         response = requests.post(url, headers=headers, files=files)
     
+    if response.status_code != 200:
+        raise Exception(f"Upload falhou: {response.status_code}")
+    
     return response.json()
 
 # Exemplo de uso
-result = upload_media('/path/to/image.jpg', 'seu_token_aqui')
-print(f"URL da mídia: {result['url']}")
+try:
+    result = upload_media('/caminho/para/imagem.jpg', 'seu-access-token')
+    print(f"URL da mídia: {result['url']}")
+    print(f"Nome no bucket: {result['objectName']}")
+except Exception as e:
+    print(f"Erro: {e}")
 ```
 
-### PHP
-```php
+```php PHP
+<?php
 function uploadMedia($filePath, $accessToken) {
     $ch = curl_init();
     
     $cfile = new CURLFile($filePath);
     $data = array('file' => $cfile);
     
-    curl_setopt($ch, CURLOPT_URL, "https://api.disparador.com/api/media/upload");
+    curl_setopt($ch, CURLOPT_URL, "https://api.disparador.com/media/upload");
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
@@ -133,113 +144,104 @@ function uploadMedia($filePath, $accessToken) {
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     
     $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
+    
+    if ($httpCode !== 200) {
+        throw new Exception("Upload falhou: HTTP $httpCode");
+    }
     
     return json_decode($response, true);
 }
 
 // Exemplo
-$result = uploadMedia('/path/to/video.mp4', 'seu_token_aqui');
-echo "URL: " . $result['url'];
-```
-
-### cURL
-```bash
-curl -X POST https://api.disparador.com/api/media/upload \
-  -H "X-Access-Token: seu_token_aqui" \
-  -F "file=@/path/to/document.pdf"
-```
-
-## Resposta
-
-### Sucesso (200 OK)
-
-```json
-{
-  "success": true,
-  "url": "https://api.disparador.com/api/media/files/abc123def456.jpg",
-  "fileName": "imagem-produto.jpg",
-  "fileSize": 2458624,
-  "mimeType": "image/jpeg",
-  "mediaType": "image",
-  "uploadedAt": "2024-01-20T16:45:00Z"
+try {
+    $result = uploadMedia('/caminho/para/video.mp4', 'seu-access-token');
+    echo "URL: " . $result['url'] . "\n";
+    echo "Bucket: " . $result['bucket'] . "\n";
+} catch (Exception $e) {
+    echo "Erro: " . $e->getMessage();
 }
+?>
 ```
 
-### Campos da Resposta
+</RequestExample>
 
-<ResponseField name="success" type="boolean">
-  Indica se o upload foi bem-sucedido
-</ResponseField>
+## Response
 
 <ResponseField name="url" type="string">
-  URL pública do arquivo para uso em campanhas
+  URL pública permanente do arquivo no MinIO
 </ResponseField>
 
-<ResponseField name="fileName" type="string">
+<ResponseField name="filename" type="string">
   Nome original do arquivo
 </ResponseField>
 
-<ResponseField name="fileSize" type="number">
+<ResponseField name="size" type="number">
   Tamanho do arquivo em bytes
 </ResponseField>
 
-<ResponseField name="mimeType" type="string">
+<ResponseField name="type" type="string">
   Tipo MIME do arquivo
 </ResponseField>
 
-<ResponseField name="mediaType" type="string">
-  Categoria da mídia: image, video, audio, document
+<ResponseField name="bucket" type="string">
+  Nome do bucket no MinIO onde o arquivo foi armazenado
 </ResponseField>
 
-<ResponseField name="uploadedAt" type="string">
-  Data/hora do upload
+<ResponseField name="objectName" type="string">
+  Nome do objeto no MinIO (caminho interno)
 </ResponseField>
 
-## Erros Comuns
+<ResponseExample>
 
-### 400 Bad Request - Arquivo não fornecido
-```json
+```json 200 - Sucesso
 {
-  "success": false,
-  "error": "Nenhum arquivo fornecido"
+  "url": "https://minio.disparador.com/company-123/media/2024/01/abc123def456-imagem.jpg",
+  "filename": "imagem-produto.jpg",
+  "size": 2458624,
+  "type": "image/jpeg",
+  "bucket": "company-123",
+  "objectName": "media/2024/01/abc123def456-imagem.jpg"
 }
 ```
 
-### 413 Payload Too Large - Arquivo muito grande
-```json
+```json 400 - Arquivo Vazio
 {
-  "success": false,
-  "error": "Arquivo excede o tamanho máximo permitido (100MB)"
+  "error": "Arquivo vazio"
 }
 ```
 
-### 415 Unsupported Media Type - Tipo não suportado
-```json
+```json 400 - Tipo Não Suportado
 {
-  "success": false,
   "error": "Tipo de arquivo não suportado"
 }
 ```
 
-### 500 Internal Server Error
-```json
+```json 401 - Token Inválido
 {
-  "success": false,
-  "error": "Erro ao processar upload"
+  "error": "Token inválido ou expirado"
 }
 ```
 
-## Casos de Uso
+```json 500 - Erro no Upload
+{
+  "error": "Erro ao fazer upload do arquivo: [detalhes]"
+}
+```
 
-### 1. Upload com Progresso
+</ResponseExample>
+
+## Upload com Progresso
+
 ```javascript
-function uploadWithProgress(file, onProgress) {
+function uploadWithProgress(file, accessToken, onProgress) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
     formData.append('file', file);
     
+    // Monitorar progresso
     xhr.upload.addEventListener('progress', (e) => {
       if (e.lengthComputable) {
         const percentComplete = (e.loaded / e.total) * 100;
@@ -247,65 +249,107 @@ function uploadWithProgress(file, onProgress) {
       }
     });
     
+    // Manipular resposta
     xhr.addEventListener('load', () => {
       if (xhr.status === 200) {
         resolve(JSON.parse(xhr.responseText));
       } else {
-        reject(new Error('Upload failed'));
+        reject(new Error(`Upload falhou: ${xhr.status}`));
       }
     });
     
-    xhr.open('POST', 'https://api.disparador.com/api/media/upload');
-    xhr.setRequestHeader('X-Access-Token', 'seu_token_aqui');
+    xhr.addEventListener('error', () => {
+      reject(new Error('Erro de rede no upload'));
+    });
+    
+    xhr.open('POST', 'https://api.disparador.com/media/upload');
+    xhr.setRequestHeader('X-Access-Token', accessToken);
     xhr.send(formData);
   });
 }
 
 // Uso
-uploadWithProgress(file, (progress) => {
+const progressBar = document.getElementById('progress');
+
+uploadWithProgress(file, 'seu-token', (progress) => {
   console.log(`Upload: ${progress.toFixed(0)}%`);
-  updateProgressBar(progress);
+  progressBar.style.width = `${progress}%`;
+}).then(result => {
+  console.log('Upload completo:', result);
+}).catch(error => {
+  console.error('Erro:', error);
 });
 ```
 
-### 2. Validação Antes do Upload
+## Validação Prévia
+
 ```javascript
-function validateAndUpload(file) {
-  const maxSize = 100 * 1024 * 1024; // 100MB
+function validateFile(file) {
+  const MAX_SIZE = 100 * 1024 * 1024; // 100MB
+  
+  // Validações básicas
+  const validations = {
+    size: {
+      valid: file.size <= MAX_SIZE,
+      message: `Arquivo muito grande (máximo ${MAX_SIZE / 1024 / 1024}MB)`
+    },
+    type: {
+      valid: isValidFileType(file.type),
+      message: 'Tipo de arquivo não suportado'
+    }
+  };
+  
+  // Verificar todas as validações
+  for (const [key, validation] of Object.entries(validations)) {
+    if (!validation.valid) {
+      throw new Error(validation.message);
+    }
+  }
+  
+  return true;
+}
+
+function isValidFileType(mimeType) {
   const allowedTypes = [
-    'image/jpeg', 'image/png', 'image/gif',
-    'video/mp4', 'audio/mp3', 'application/pdf'
+    'image/', 'video/', 'audio/',
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   ];
   
-  // Validar tamanho
-  if (file.size > maxSize) {
-    throw new Error('Arquivo muito grande (máx. 100MB)');
-  }
-  
-  // Validar tipo
-  if (!allowedTypes.includes(file.type)) {
-    throw new Error('Tipo de arquivo não suportado');
-  }
-  
-  return uploadMedia(file);
+  return allowedTypes.some(type => mimeType.startsWith(type) || mimeType === type);
+}
+
+// Uso
+try {
+  validateFile(file);
+  const result = await uploadMedia(file, accessToken);
+} catch (error) {
+  alert(error.message);
 }
 ```
 
-### 3. Upload Múltiplo
+## Upload em Lote
+
 ```javascript
-async function uploadMultipleFiles(files) {
-  const uploads = [];
+async function uploadMultipleFiles(files, accessToken) {
+  const results = [];
+  const errors = [];
   
+  // Upload sequencial para evitar sobrecarga
   for (const file of files) {
     try {
-      const result = await uploadMedia(file);
-      uploads.push({
+      console.log(`Enviando ${file.name}...`);
+      const result = await uploadMedia(file, accessToken);
+      results.push({
         file: file.name,
         success: true,
         url: result.url
       });
     } catch (error) {
-      uploads.push({
+      errors.push({
         file: file.name,
         success: false,
         error: error.message
@@ -313,52 +357,69 @@ async function uploadMultipleFiles(files) {
     }
   }
   
-  return uploads;
+  return { results, errors };
 }
+
+// Uso
+const files = Array.from(document.getElementById('files').files);
+const { results, errors } = await uploadMultipleFiles(files, 'seu-token');
+
+console.log(`Sucesso: ${results.length}`);
+console.log(`Erros: ${errors.length}`);
 ```
 
-### 4. Integração com Galeria de Mídia
+## Integração com Campanhas
+
 ```javascript
-async function uploadToGallery(file, metadata = {}) {
-  // Fazer upload
-  const uploadResult = await uploadMedia(file);
+// Fazer upload e criar campanha com a mídia
+async function createCampaignWithMedia(campaignData, mediaFile, accessToken) {
+  // 1. Upload da mídia
+  const mediaResult = await uploadMedia(mediaFile, accessToken);
   
-  // Salvar na galeria (opcional)
-  if (uploadResult.success) {
-    await saveToGallery({
-      url: uploadResult.url,
-      fileName: uploadResult.fileName,
-      mediaType: uploadResult.mediaType,
-      tags: metadata.tags || [],
-      description: metadata.description || ''
-    });
-  }
+  // 2. Determinar tipo de mídia
+  const mediaType = mediaResult.type.split('/')[0]; // image, video, audio
   
-  return uploadResult;
+  // 3. Criar campanha com a URL da mídia
+  const campaign = {
+    ...campaignData,
+    mediaUrl: mediaResult.url,
+    mediaType: mediaType,
+    fileName: mediaResult.filename
+  };
+  
+  const response = await fetch('https://api.disparador.com/api/campaigns', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Access-Token': accessToken
+    },
+    body: JSON.stringify(campaign)
+  });
+  
+  return response.json();
 }
 ```
 
-## Observações Importantes
+## Observações
 
 <Note>
-  **Armazenamento:**
-  - Os arquivos são armazenados permanentemente no servidor
-  - URLs geradas são permanentes e públicas
-  - Recomenda-se usar a Galeria de Mídia para gerenciar arquivos
+**Armazenamento MinIO:**
+- Os arquivos são armazenados no MinIO (S3-compatible)
+- URLs são permanentes e públicas
+- Organização automática por empresa e data
+- Nomes de arquivo são únicos (UUID + nome original)
 </Note>
 
 <Warning>
-  **Segurança:**
-  - Arquivos são verificados contra malware
-  - Apenas extensões permitidas são aceitas
-  - Nomes de arquivo são sanitizados
-  - Considere implementar rate limiting para uploads
+**Limites e Segurança:**
+- Validação de tipo MIME no servidor
+- Arquivos são organizados por empresa (isolamento)
+- Considere implementar limites de quota por empresa
+- URLs públicas - não envie arquivos sensíveis
 </Warning>
 
-## Dicas de Performance
+## Compatibilidade
 
-1. **Comprimir imagens** antes do upload para economizar banda
-2. **Validar no cliente** antes de enviar ao servidor
-3. **Usar upload assíncrono** para não bloquear a UI
-4. **Implementar retry** para falhas de rede
-5. **Cachear URLs** retornadas para evitar re-uploads
+<Note>
+O endpoint `/media/files/{filename}` ainda existe para compatibilidade com arquivos antigos armazenados localmente. Novos uploads são direcionados ao MinIO.
+</Note>

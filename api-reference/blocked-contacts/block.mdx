@@ -152,6 +152,10 @@ if ($response['success']) {
       Número de telefone normalizado
     </ResponseField>
     
+    <ResponseField name="formattedPhoneNumber" type="string">
+      Número de telefone formatado para exibição
+    </ResponseField>
+    
     <ResponseField name="reason" type="string">
       Motivo do bloqueio
     </ResponseField>
@@ -179,6 +183,7 @@ if ($response['success']) {
   "data": {
     "id": 123,
     "phoneNumber": "5511999887766",
+    "formattedPhoneNumber": "+55 11 99988-7766",
     "reason": "Solicitação do cliente",
     "blockedAt": "2024-01-20T14:30:00",
     "blockedBy": "admin@empresa.com",

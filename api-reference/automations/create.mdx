@@ -5,7 +5,7 @@ description: "Cria uma automação por segmentação com filtros e configuraçã
 ---
 
 <Tip>
-Use automações para disparos recorrentes baseados em filtros dinâmicos. São independentes de campanhas.
+Use automações para disparos recorrentes baseados em filtros dinâmicos. São independentes de campanhas e executam automaticamente com base no agendamento configurado.
 </Tip>
 
 ## Headers
@@ -20,50 +20,169 @@ Use automações para disparos recorrentes baseados em filtros dinâmicos. São 
 
 ## Body
 
-<Expandable title="Campos principais">
-  <ParamField body="name" type="string" required>
-    Nome da automação
-  </ParamField>
-  <ParamField body="description" type="string">
-    Descrição opcional
-  </ParamField>
-  <ParamField body="isActive" type="boolean" default="true">
-    Define se a automação inicia ativa
-  </ParamField>
-  <ParamField body="scheduleType" type="string" enum={["DAILY", "WEEKLY", "MONTHLY", "CRON"]} required>
-    Tipo de agendamento
-  </ParamField>
-  <ParamField body="schedule" type="object">
-    Configuração do agendamento (ex.: timeOfDay, timezone, weekdays)
-  </ParamField>
-  <ParamField body="databaseConfigId" type="number" required>
-    ID da configuração de banco de dados externo
-  </ParamField>
-  <ParamField body="filters" type="array">
-    Filtros dinâmicos (ex.: birthday, segment, etc.)
-  </ParamField>
-  <ParamField body="messageConfig" type="object">
-    Configuração da mensagem (message, mediaUrl, caption, pollData)
-  </ParamField>
-  <ParamField body="evolutionConfigId" type="number" required>
-    ID da configuração da Evolution API
-  </ParamField>
-  <ParamField body="intervalMinSeconds" type="number" default="5">
-    Intervalo mínimo entre mensagens
-  </ParamField>
-  <ParamField body="intervalMaxSeconds" type="number" default="12">
-    Intervalo máximo entre mensagens
-  </ParamField>
-  <ParamField body="dedupStrategy" type="string" enum={["NEVER", "ONCE", "COOLDOWN_DAYS"]} default="ONCE">
-    Estratégia de deduplicação
-  </ParamField>
-  <ParamField body="dedupCooldownDays" type="number">
-    Dias de cooldown para deduplicação
-  </ParamField>
-  <ParamField body="sendLimitPerRun" type="number">
-    Limite de envios por execução (run)
-  </ParamField>
-</Expandable>
+### Campos principais
+
+<ParamField body="name" type="string" required>
+  Nome da automação
+</ParamField>
+
+<ParamField body="description" type="string" optional>
+  Descrição da automação
+</ParamField>
+
+<ParamField body="isActive" type="boolean" default="true">
+  Define se a automação inicia ativa
+</ParamField>
+
+### Agendamento
+
+<ParamField body="scheduleType" type="string" required>
+  Tipo de agendamento
+  
+  Valores aceitos:
+  - `DAILY` - Execução diária
+  - `WEEKLY` - Execução semanal
+  - `MONTHLY` - Execução mensal
+  - `CRON` - Expressão cron customizada
+</ParamField>
+
+<ParamField body="schedule" type="object" required>
+  Configuração do agendamento
+  
+  <Expandable title="Campos do schedule">
+    <ParamField body="timeOfDay" type="string">
+      Horário de execução (formato HH:mm)
+    </ParamField>
+    
+    <ParamField body="timezone" type="string">
+      Fuso horário (ex: America/Sao_Paulo)
+    </ParamField>
+    
+    <ParamField body="weekdays" type="array">
+      Dias da semana para execução (1=Dom, 2=Seg, ..., 7=Sáb)
+      Usado com DAILY ou WEEKLY
+    </ParamField>
+    
+    <ParamField body="dayOfMonth" type="number">
+      Dia do mês para execução (1-31)
+      Usado com MONTHLY
+    </ParamField>
+    
+    <ParamField body="cronExpression" type="string">
+      Expressão cron customizada
+      Usado com CRON
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Segmentação
+
+<ParamField body="databaseConfigId" type="number" required>
+  ID da configuração de banco de dados externo
+</ParamField>
+
+<ParamField body="filters" type="array" optional>
+  Filtros dinâmicos para segmentação
+  
+  <Expandable title="Estrutura do filtro">
+    <ParamField body="filterId" type="string">
+      ID do filtro (ex: birthday, segment, city)
+    </ParamField>
+    
+    <ParamField body="value" type="any">
+      Valor do filtro
+    </ParamField>
+    
+    <ParamField body="operator" type="string">
+      Operador de comparação (equals, contains, etc)
+    </ParamField>
+    
+    <ParamField body="ignoreYear" type="boolean">
+      Para filtros de data, ignora o ano (útil para aniversários)
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+### Configuração da Mensagem
+
+<ParamField body="messageConfig" type="object" required>
+  Configuração da mensagem a ser enviada
+  
+  <Expandable title="Campos do messageConfig">
+    <ParamField body="message" type="string">
+      Texto da mensagem (suporta variáveis como {PrimeiroNome})
+    </ParamField>
+    
+    <ParamField body="mediaUrl" type="string">
+      URL da mídia anexada
+    </ParamField>
+    
+    <ParamField body="mediaType" type="string">
+      Tipo de mídia (image, video, audio, document)
+    </ParamField>
+    
+    <ParamField body="fileName" type="string">
+      Nome do arquivo (para documentos)
+    </ParamField>
+    
+    <ParamField body="caption" type="string">
+      Legenda da mídia
+    </ParamField>
+    
+    <ParamField body="pollData" type="object">
+      Dados da enquete
+      
+      <Expandable title="Campos do pollData">
+        <ParamField body="name" type="string">
+          Pergunta da enquete
+        </ParamField>
+        
+        <ParamField body="selectableCount" type="number">
+          Quantidade de opções selecionáveis
+        </ParamField>
+        
+        <ParamField body="options" type="array">
+          Array de strings com as opções
+        </ParamField>
+      </Expandable>
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="evolutionConfigId" type="number" required>
+  ID da configuração da Evolution API
+</ParamField>
+
+### Comportamento de Envio
+
+<ParamField body="intervalMinSeconds" type="number" default="5">
+  Intervalo mínimo entre mensagens em segundos
+</ParamField>
+
+<ParamField body="intervalMaxSeconds" type="number" default="12">
+  Intervalo máximo entre mensagens em segundos
+</ParamField>
+
+<ParamField body="notificationPhone" type="string" optional>
+  Telefone para notificação ao término
+</ParamField>
+
+<ParamField body="dedupStrategy" type="string" default="ONCE">
+  Estratégia de deduplicação
+  
+  Valores aceitos:
+  - `NEVER` - Nunca deduplica (permite reenvios)
+  - `ONCE` - Deduplica sempre (evita qualquer reenvio)
+  - `COOLDOWN_DAYS` - Deduplica por período (requer dedupCooldownDays)
+</ParamField>
+
+<ParamField body="dedupCooldownDays" type="number" optional>
+  Dias de cooldown para deduplicação (quando dedupStrategy = COOLDOWN_DAYS)
+</ParamField>
+
+<ParamField body="sendLimitPerRun" type="number" optional>
+  Limite de envios por execução (útil para controlar volume)
+</ParamField>
 
 <RequestExample>
 
@@ -72,13 +191,27 @@ curl -X POST https://api.disparador.com/api/automations \
   -H "Content-Type: application/json" \
   -H "X-Access-Token: seu-access-token" \
   -d '{
-    "name": "Aniversariantes Diário",
+    "name": "Aniversariantes do Dia",
+    "description": "Envia mensagem de parabéns para aniversariantes",
     "isActive": true,
     "scheduleType": "DAILY",
-    "schedule": { "timeOfDay": "09:00", "timezone": "America/Sao_Paulo", "weekdays": [2,3,4,5,6] },
+    "schedule": {
+      "timeOfDay": "09:00",
+      "timezone": "America/Sao_Paulo",
+      "weekdays": [2, 3, 4, 5, 6]
+    },
     "databaseConfigId": 1,
-    "filters": [{ "filterId": "birthday", "value": "2025-08-13", "ignoreYear": true }],
-    "messageConfig": { "message": "Parabéns {PrimeiroNome}!" },
+    "filters": [
+      {
+        "filterId": "birthday",
+        "value": "2025-08-13",
+        "operator": "equals",
+        "ignoreYear": true
+      }
+    ],
+    "messageConfig": {
+      "message": "🎉 Parabéns {PrimeiroNome}! 🎂\n\nDesejamos um dia muito especial!"
+    },
     "evolutionConfigId": 2,
     "intervalMinSeconds": 5,
     "intervalMaxSeconds": 12,
@@ -87,28 +220,271 @@ curl -X POST https://api.disparador.com/api/automations \
   }'
 ```
 
+```javascript JavaScript
+const automation = {
+  name: "Promoção Semanal",
+  description: "Envia promoção toda segunda-feira",
+  isActive: true,
+  scheduleType: "WEEKLY",
+  schedule: {
+    timeOfDay: "10:00",
+    timezone: "America/Sao_Paulo",
+    weekdays: [2] // Segunda-feira
+  },
+  databaseConfigId: 1,
+  filters: [
+    {
+      filterId: "segment",
+      value: "VIP",
+      operator: "equals"
+    }
+  ],
+  messageConfig: {
+    message: "Olá {PrimeiroNome}! Confira as ofertas especiais da semana!",
+    mediaUrl: "https://exemplo.com/promo.jpg",
+    mediaType: "image"
+  },
+  evolutionConfigId: 1,
+  intervalMinSeconds: 10,
+  intervalMaxSeconds: 20,
+  dedupStrategy: "COOLDOWN_DAYS",
+  dedupCooldownDays: 7
+};
+
+const response = await fetch('https://api.disparador.com/api/automations', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Access-Token': 'seu-access-token'
+  },
+  body: JSON.stringify(automation)
+});
+```
+
+```python Python
+import requests
+
+automation = {
+    "name": "Lembrete Mensal",
+    "isActive": True,
+    "scheduleType": "MONTHLY",
+    "schedule": {
+        "timeOfDay": "14:00",
+        "timezone": "America/Sao_Paulo",
+        "dayOfMonth": 15
+    },
+    "databaseConfigId": 1,
+    "filters": [
+        {
+            "filterId": "payment_status",
+            "value": "pending",
+            "operator": "equals"
+        }
+    ],
+    "messageConfig": {
+        "message": "Olá {PrimeiroNome}, seu pagamento está pendente."
+    },
+    "evolutionConfigId": 1,
+    "intervalMinSeconds": 5,
+    "intervalMaxSeconds": 10,
+    "dedupStrategy": "ONCE"
+}
+
+response = requests.post(
+    'https://api.disparador.com/api/automations',
+    json=automation,
+    headers={
+        'X-Access-Token': 'seu-access-token'
+    }
+)
+```
+
 </RequestExample>
 
 ## Response
 
-<ResponseField name="id" type="number">ID da automação criada</ResponseField>
-<ResponseField name="name" type="string">Nome</ResponseField>
-<ResponseField name="isActive" type="boolean">Se está ativa</ResponseField>
-<ResponseField name="scheduleType" type="string">Tipo de agendamento</ResponseField>
-<ResponseField name="nextRunAt" type="string">Próxima execução prevista</ResponseField>
+<ResponseField name="id" type="number">
+  ID da automação criada
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  Nome da automação
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Descrição da automação
+</ResponseField>
+
+<ResponseField name="isActive" type="boolean">
+  Se está ativa
+</ResponseField>
+
+<ResponseField name="scheduleType" type="string">
+  Tipo de agendamento
+</ResponseField>
+
+<ResponseField name="schedule" type="object">
+  Configuração completa do agendamento
+</ResponseField>
+
+<ResponseField name="databaseConfigId" type="number">
+  ID da configuração de banco
+</ResponseField>
+
+<ResponseField name="evolutionConfigId" type="number">
+  ID da configuração Evolution
+</ResponseField>
+
+<ResponseField name="intervalMinSeconds" type="number">
+  Intervalo mínimo configurado
+</ResponseField>
+
+<ResponseField name="intervalMaxSeconds" type="number">
+  Intervalo máximo configurado
+</ResponseField>
+
+<ResponseField name="notificationPhone" type="string">
+  Telefone de notificação
+</ResponseField>
+
+<ResponseField name="dedupStrategy" type="string">
+  Estratégia de deduplicação
+</ResponseField>
+
+<ResponseField name="dedupCooldownDays" type="number">
+  Dias de cooldown
+</ResponseField>
+
+<ResponseField name="sendLimitPerRun" type="number">
+  Limite por execução
+</ResponseField>
+
+<ResponseField name="lastRunAt" type="string">
+  Data/hora da última execução
+</ResponseField>
+
+<ResponseField name="nextRunAt" type="string">
+  Próxima execução prevista
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  Data/hora de criação
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string">
+  Data/hora da última atualização
+</ResponseField>
 
 <ResponseExample>
 
-```json 201 - Criada
+```json 200 - Sucesso
 {
   "id": 10,
-  "name": "Aniversariantes Diário",
+  "name": "Aniversariantes do Dia",
+  "description": "Envia mensagem de parabéns para aniversariantes",
   "isActive": true,
   "scheduleType": "DAILY",
-  "nextRunAt": "2025-08-14T09:00:00"
+  "schedule": {
+    "timeOfDay": "09:00",
+    "timezone": "America/Sao_Paulo",
+    "weekdays": [2, 3, 4, 5, 6]
+  },
+  "databaseConfigId": 1,
+  "evolutionConfigId": 2,
+  "intervalMinSeconds": 5,
+  "intervalMaxSeconds": 12,
+  "notificationPhone": null,
+  "dedupStrategy": "ONCE",
+  "dedupCooldownDays": null,
+  "sendLimitPerRun": 100,
+  "lastRunAt": null,
+  "nextRunAt": "2024-01-22T09:00:00",
+  "createdAt": "2024-01-21T15:30:00",
+  "updatedAt": "2024-01-21T15:30:00"
+}
+```
+
+```json 400 - Erro de Validação
+{
+  "message": "Nome é obrigatório"
+}
+```
+
+```json 401 - Token Inválido
+{
+  "message": "Access token inválido"
 }
 ```
 
 </ResponseExample>
+
+## Exemplos de Automações
+
+### Aniversariantes
+```json
+{
+  "name": "Parabéns Aniversariantes",
+  "scheduleType": "DAILY",
+  "schedule": {
+    "timeOfDay": "09:00",
+    "timezone": "America/Sao_Paulo"
+  },
+  "filters": [
+    {
+      "filterId": "birthday",
+      "ignoreYear": true
+    }
+  ],
+  "messageConfig": {
+    "message": "Parabéns {PrimeiroNome}! 🎉"
+  },
+  "dedupStrategy": "ONCE"
+}
+```
+
+### Lembrete de Pagamento
+```json
+{
+  "name": "Cobrança Semanal",
+  "scheduleType": "WEEKLY",
+  "schedule": {
+    "timeOfDay": "10:00",
+    "weekdays": [2]
+  },
+  "filters": [
+    {
+      "filterId": "payment_status",
+      "value": "overdue",
+      "operator": "equals"
+    }
+  ],
+  "messageConfig": {
+    "message": "Olá {PrimeiroNome}, seu pagamento está em atraso."
+  },
+  "dedupStrategy": "COOLDOWN_DAYS",
+  "dedupCooldownDays": 7
+}
+```
+
+### Enquete Mensal
+```json
+{
+  "name": "Pesquisa de Satisfação",
+  "scheduleType": "MONTHLY",
+  "schedule": {
+    "dayOfMonth": 1,
+    "timeOfDay": "14:00"
+  },
+  "messageConfig": {
+    "pollData": {
+      "name": "Como você avalia nosso serviço?",
+      "selectableCount": 1,
+      "options": ["Excelente", "Bom", "Regular", "Ruim"]
+    }
+  },
+  "dedupStrategy": "COOLDOWN_DAYS",
+  "dedupCooldownDays": 30
+}
+```
 
 

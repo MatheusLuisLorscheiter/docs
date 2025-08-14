@@ -4,10 +4,252 @@ api: "DELETE /api/automations/{id}"
 description: "Remove definitivamente uma automação"
 ---
 
+<Warning>
+Esta ação é irreversível. A automação e todo seu histórico de execução serão permanentemente removidos.
+</Warning>
+
 ## Path Parameters
 
 <ParamField path="id" type="number" required>
   ID da automação
 </ParamField>
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X DELETE https://api.disparador.com/api/automations/10 \
+  -H "X-Access-Token: seu-access-token"
+```
+
+```javascript JavaScript
+// Função para excluir com confirmação
+async function deleteAutomation(automationId, accessToken) {
+  const confirmDelete = confirm(
+    'Tem certeza que deseja excluir esta automação? Esta ação não pode ser desfeita.'
+  );
+  
+  if (!confirmDelete) {
+    console.log('Exclusão cancelada');
+    return false;
+  }
+  
+  const response = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}`,
+    {
+      method: 'DELETE',
+      headers: {
+        'X-Access-Token': accessToken
+      }
+    }
+  );
+  
+  if (response.status === 204) {
+    console.log('Automação excluída com sucesso');
+    return true;
+  } else {
+    console.error('Erro ao excluir automação');
+    return false;
+  }
+}
+
+// Excluir automação
+await deleteAutomation(10, 'seu-access-token');
+```
+
+```python Python
+import requests
+
+def delete_automation(automation_id, access_token):
+    # Confirmar antes de excluir
+    confirm = input(f"Excluir automação {automation_id}? (s/n): ")
+    
+    if confirm.lower() != 's':
+        print("Exclusão cancelada")
+        return False
+    
+    url = f"https://api.disparador.com/api/automations/{automation_id}"
+    headers = {"X-Access-Token": access_token}
+    
+    response = requests.delete(url, headers=headers)
+    
+    if response.status_code == 204:
+        print("Automação excluída com sucesso")
+        return True
+    else:
+        print(f"Erro ao excluir: {response.status_code}")
+        return False
+
+# Excluir
+delete_automation(10, "seu-access-token")
+```
+
+```php PHP
+<?php
+function deleteAutomation($automationId, $accessToken) {
+    // Confirmar exclusão
+    echo "Tem certeza que deseja excluir a automação {$automationId}? (s/n): ";
+    $handle = fopen("php://stdin", "r");
+    $confirm = trim(fgets($handle));
+    fclose($handle);
+    
+    if (strtolower($confirm) !== 's') {
+        echo "Exclusão cancelada\n";
+        return false;
+    }
+    
+    $url = "https://api.disparador.com/api/automations/{$automationId}";
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'X-Access-Token: ' . $accessToken
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode === 204) {
+        echo "Automação excluída com sucesso\n";
+        return true;
+    } else {
+        echo "Erro ao excluir: {$httpCode}\n";
+        return false;
+    }
+}
+
+// Excluir
+deleteAutomation(10, 'seu-access-token');
+?>
+```
+
+</RequestExample>
+
+## Response
+
+<ResponseExample>
+
+```json 204 - Sucesso
+// Sem conteúdo (No Content)
+```
+
+```json 404 - Não Encontrada
+{
+  "message": "Automação não encontrada"
+}
+```
+
+```json 401 - Token Inválido
+{
+  "message": "Access token inválido"
+}
+```
+
+```json 403 - Sem Permissão
+{
+  "message": "Sem permissão para excluir esta automação"
+}
+```
+
+</ResponseExample>
+
+## O que é Excluído
+
+<Note>
+Ao excluir uma automação, os seguintes dados são removidos permanentemente:
+
+1. **Configuração da Automação**
+   - Nome, descrição e agendamento
+   - Filtros e segmentação
+   - Configuração de mensagem
+
+2. **Histórico de Execução**
+   - Registros de todas as execuções (runs)
+   - Logs de envio de mensagens
+   - Estatísticas acumuladas
+
+3. **Configurações Relacionadas**
+   - Deduplicação de contatos
+   - Configurações de intervalo
+   - Notificações configuradas
+</Note>
+
+## Quando Excluir
+
+<CardGroup cols={2}>
+  <Card title="Automação Obsoleta" icon="clock-rotate-left" color="#6b7280">
+    Automações antigas que não são mais necessárias
+  </Card>
+  <Card title="Erro de Configuração" icon="triangle-exclamation" color="#ef4444">
+    Automação criada incorretamente que precisa ser refeita
+  </Card>
+  <Card title="Mudança de Estratégia" icon="lightbulb" color="#3b82f6">
+    Alteração completa na abordagem de comunicação
+  </Card>
+  <Card title="Limpeza de Testes" icon="flask" color="#8b5cf6">
+    Remover automações criadas para teste
+  </Card>
+</CardGroup>
+
+## Alternativas à Exclusão
+
+Antes de excluir, considere:
+
+1. **Desativar**: Use o endpoint toggle para pausar temporariamente
+2. **Arquivar**: Adicione prefixo "[ARQUIVADA]" no nome e desative
+3. **Exportar**: Salve a configuração antes de excluir
+
+```javascript
+// Arquivar ao invés de excluir
+async function archiveAutomation(automationId, accessToken) {
+  // Obter dados atuais
+  const getResponse = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}`,
+    {
+      headers: { 'X-Access-Token': accessToken }
+    }
+  );
+  
+  const automation = await getResponse.json();
+  
+  // Atualizar nome e desativar
+  const updateResponse = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}`,
+    {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Access-Token': accessToken
+      },
+      body: JSON.stringify({
+        name: `[ARQUIVADA] ${automation.name}`,
+        isActive: false
+      })
+    }
+  );
+  
+  if (updateResponse.ok) {
+    console.log('Automação arquivada com sucesso');
+  }
+}
+```
+
+## Segurança
+
+<Warning>
+**Boas Práticas:**
+- Sempre confirme antes de excluir
+- Faça backup da configuração se necessário
+- Considere desativar ao invés de excluir
+- Verifique se não há dependências
+</Warning>
 
 

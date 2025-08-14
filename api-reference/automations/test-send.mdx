@@ -1,13 +1,314 @@
 ---
 title: "Enviar Teste"
 api: "POST /api/automations/{id}/test-send"
-description: "Enfileira um envio de teste (unitário) baseado na configuração atual da automação"
+description: "Envia um teste da mensagem configurada para um número específico"
 ---
+
+<Tip>
+Ideal para testar a mensagem e mídia antes de executar a automação completa. O envio é feito diretamente, sem criar um run ou aplicar filtros.
+</Tip>
+
+## Path Parameters
+
+<ParamField path="id" type="number" required>
+  ID da automação
+</ParamField>
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
 
 ## Query Parameters
 
 <ParamField query="phone" type="string" required>
-  Número de telefone para envio do teste (E.164)
+  Número de telefone para envio do teste
+  
+  Formatos aceitos:
+  - Com código país: `5511999999999`
+  - Com mais: `+5511999999999`
+  - Formato E.164 recomendado
 </ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://api.disparador.com/api/automations/10/test-send?phone=5511999999999" \
+  -H "X-Access-Token: seu-access-token"
+```
+
+```javascript JavaScript
+async function sendTestMessage(automationId, phoneNumber, accessToken) {
+  const response = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}/test-send?phone=${phoneNumber}`,
+    {
+      method: 'POST',
+      headers: {
+        'X-Access-Token': accessToken
+      }
+    }
+  );
+  
+  if (response.status === 202) {
+    console.log(`Teste enviado para ${phoneNumber}`);
+    console.log('Mensagem está sendo processada');
+  } else {
+    console.error('Erro ao enviar teste');
+  }
+}
+
+// Enviar teste
+await sendTestMessage(10, '5511999999999', 'seu-access-token');
+
+// Testar com múltiplos números
+const testNumbers = ['5511999999999', '5511888888888', '5511777777777'];
+for (const number of testNumbers) {
+  await sendTestMessage(10, number, 'seu-access-token');
+  console.log(`Teste enviado para ${number}`);
+  // Aguardar um pouco entre envios
+  await new Promise(resolve => setTimeout(resolve, 2000));
+}
+```
+
+```python Python
+import requests
+import time
+
+def send_test_message(automation_id, phone_number, access_token):
+    url = f"https://api.disparador.com/api/automations/{automation_id}/test-send"
+    params = {"phone": phone_number}
+    headers = {"X-Access-Token": access_token}
+    
+    response = requests.post(url, params=params, headers=headers)
+    
+    if response.status_code == 202:
+        print(f"Teste enviado para {phone_number}")
+        print("Processando...")
+    else:
+        print(f"Erro: {response.status_code}")
+        if response.text:
+            print(response.text)
+
+# Enviar um teste
+send_test_message(10, "5511999999999", "seu-access-token")
+
+# Testar com lista de números
+test_numbers = ["5511999999999", "5511888888888", "5511777777777"]
+for number in test_numbers:
+    send_test_message(10, number, "seu-access-token")
+    time.sleep(2)  # Intervalo entre envios
+```
+
+```php PHP
+<?php
+function sendTestMessage($automationId, $phoneNumber, $accessToken) {
+    $url = "https://api.disparador.com/api/automations/{$automationId}/test-send";
+    $url .= "?phone=" . urlencode($phoneNumber);
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'X-Access-Token: ' . $accessToken
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode === 202) {
+        echo "Teste enviado para {$phoneNumber}\n";
+        echo "Mensagem sendo processada\n";
+    } else {
+        echo "Erro ao enviar: {$httpCode}\n";
+    }
+}
+
+// Enviar teste
+sendTestMessage(10, '5511999999999', 'seu-access-token');
+
+// Testar múltiplos números
+$testNumbers = ['5511999999999', '5511888888888', '5511777777777'];
+foreach ($testNumbers as $number) {
+    sendTestMessage(10, $number, 'seu-access-token');
+    sleep(2); // Intervalo entre envios
+}
+?>
+```
+
+</RequestExample>
+
+## Response
+
+<ResponseExample>
+
+```json 202 - Aceito
+// Sem conteúdo - Mensagem enfileirada para envio
+```
+
+```json 404 - Não Encontrada
+{
+  "message": "Automação não encontrada"
+}
+```
+
+```json 400 - Parâmetro Inválido
+{
+  "message": "Número de telefone inválido"
+}
+```
+
+```json 401 - Token Inválido
+{
+  "message": "Access token inválido"
+}
+```
+
+</ResponseExample>
+
+## Comportamento do Teste
+
+<Note>
+**Características do envio de teste:**
+
+1. **Sem Run**: Não cria um registro de execução (run)
+2. **Sem Filtros**: Ignora filtros de segmentação
+3. **Sem Deduplicação**: Ignora estratégia de deduplicação
+4. **Mensagem Atual**: Usa a configuração de mensagem salva
+5. **Processamento Rápido**: Enviado diretamente à fila
+6. **Variáveis**: Não substitui variáveis como {PrimeiroNome}
+
+O teste usa a configuração Evolution API e mensagem exatamente como estão salvas na automação.
+</Note>
+
+## Casos de Uso
+
+### 1. Validar Configuração
+```javascript
+// Testar após criar/atualizar automação
+async function validateAutomationConfig(automationId, accessToken) {
+  const myTestNumber = '5511999999999';
+  
+  console.log('Enviando teste de validação...');
+  
+  const response = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}/test-send?phone=${myTestNumber}`,
+    {
+      method: 'POST',
+      headers: { 'X-Access-Token': accessToken }
+    }
+  );
+  
+  if (response.ok) {
+    console.log('✓ Configuração validada - verifique o WhatsApp');
+  } else {
+    console.error('✗ Erro na configuração');
+  }
+}
+```
+
+### 2. Testar Diferentes Tipos
+```javascript
+// Testar automação com diferentes tipos de mídia
+async function testMediaTypes(accessToken) {
+  const testConfigs = [
+    { id: 1, type: 'Texto simples' },
+    { id: 2, type: 'Imagem com legenda' },
+    { id: 3, type: 'Vídeo' },
+    { id: 4, type: 'Enquete' }
+  ];
+  
+  const testPhone = '5511999999999';
+  
+  for (const config of testConfigs) {
+    console.log(`Testando: ${config.type}`);
+    
+    await fetch(
+      `https://api.disparador.com/api/automations/${config.id}/test-send?phone=${testPhone}`,
+      {
+        method: 'POST',
+        headers: { 'X-Access-Token': accessToken }
+      }
+    );
+    
+    // Aguardar entre testes
+    await new Promise(resolve => setTimeout(resolve, 5000));
+  }
+}
+```
+
+### 3. Teste de Aprovação
+```javascript
+// Enviar para aprovação antes de ativar
+async function sendForApproval(automationId, approverPhone, accessToken) {
+  // Enviar teste para aprovador
+  const response = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}/test-send?phone=${approverPhone}`,
+    {
+      method: 'POST',
+      headers: { 'X-Access-Token': accessToken }
+    }
+  );
+  
+  if (response.ok) {
+    console.log(`Teste enviado para aprovação: ${approverPhone}`);
+    console.log('Aguardando confirmação para ativar a automação');
+    
+    // Aqui você poderia implementar lógica para aguardar aprovação
+    // e então ativar a automação
+  }
+}
+```
+
+## Limitações
+
+<Warning>
+- Não substitui variáveis dinâmicas (ex: {PrimeiroNome})
+- Não aplica filtros ou segmentação
+- Não respeita limites de envio por run
+- Não cria registro de histórico
+- Número deve ser válido e estar no WhatsApp
+</Warning>
+
+## Diferença do Run Now
+
+<Table>
+  <TableHead>
+    <TableRow>
+      <TableHeaderCell>Característica</TableHeaderCell>
+      <TableHeaderCell>Test Send</TableHeaderCell>
+      <TableHeaderCell>Run Now</TableHeaderCell>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    <TableRow>
+      <TableCell>Cria Run</TableCell>
+      <TableCell>Não</TableCell>
+      <TableCell>Sim</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Aplica Filtros</TableCell>
+      <TableCell>Não</TableCell>
+      <TableCell>Sim</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Deduplicação</TableCell>
+      <TableCell>Não</TableCell>
+      <TableCell>Sim</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Substitui Variáveis</TableCell>
+      <TableCell>Não</TableCell>
+      <TableCell>Sim</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Destinatários</TableCell>
+      <TableCell>Um número específico</TableCell>
+      <TableCell>Todos os filtrados</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
 
 

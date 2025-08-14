@@ -1,13 +1,354 @@
 ---
 title: "Listar Execuções (Runs)"
 api: "GET /api/automations/{automationId}/runs"
-description: "Lista as execuções realizadas pela automação"
+description: "Lista o histórico de execuções de uma automação"
 ---
+
+<Tip>
+Use este endpoint para monitorar o histórico e performance das execuções da automação.
+</Tip>
 
 ## Path Parameters
 
 <ParamField path="automationId" type="number" required>
   ID da automação
 </ParamField>
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X GET https://api.disparador.com/api/automations/10/runs \
+  -H "X-Access-Token: seu-access-token"
+```
+
+```javascript JavaScript
+async function getAutomationRuns(automationId, accessToken) {
+  const response = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}/runs`,
+    {
+      headers: {
+        'X-Access-Token': accessToken
+      }
+    }
+  );
+  
+  const runs = await response.json();
+  
+  console.log(`Total de execuções: ${runs.length}`);
+  
+  // Analisar execuções recentes
+  runs.slice(0, 5).forEach(run => {
+    console.log(`Run #${run.id}:`);
+    console.log(`  Status: ${run.status}`);
+    console.log(`  Enviados: ${run.sentCount}/${run.matchedContacts}`);
+    console.log(`  Iniciado: ${run.startedAt}`);
+  });
+  
+  return runs;
+}
+
+// Listar runs
+const runs = await getAutomationRuns(10, 'seu-access-token');
+```
+
+```python Python
+import requests
+from datetime import datetime
+
+def get_automation_runs(automation_id, access_token):
+    url = f"https://api.disparador.com/api/automations/{automation_id}/runs"
+    headers = {"X-Access-Token": access_token}
+    
+    response = requests.get(url, headers=headers)
+    
+    if response.status_code == 200:
+        runs = response.json()
+        print(f"Total de execuções: {len(runs)}")
+        
+        for run in runs[:5]:  # Últimas 5
+            print(f"\nRun #{run['id']}:")
+            print(f"  Status: {run['status']}")
+            print(f"  Contatos: {run['matchedContacts']}")
+            print(f"  Enviados: {run['sentCount']}")
+            print(f"  Falhas: {run['failedCount']}")
+            
+        return runs
+    else:
+        print(f"Erro: {response.status_code}")
+        return []
+
+# Listar
+runs = get_automation_runs(10, "seu-access-token")
+```
+
+```php PHP
+<?php
+function getAutomationRuns($automationId, $accessToken) {
+    $url = "https://api.disparador.com/api/automations/{$automationId}/runs";
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'X-Access-Token: ' . $accessToken
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode === 200) {
+        $runs = json_decode($response, true);
+        echo "Total de execuções: " . count($runs) . "\n\n";
+        
+        // Mostrar últimas 5
+        foreach (array_slice($runs, 0, 5) as $run) {
+            echo "Run #{$run['id']}:\n";
+            echo "  Status: {$run['status']}\n";
+            echo "  Enviados: {$run['sentCount']}/{$run['matchedContacts']}\n";
+            echo "  Iniciado: {$run['startedAt']}\n\n";
+        }
+        
+        return $runs;
+    }
+    
+    return [];
+}
+
+// Listar
+$runs = getAutomationRuns(10, 'seu-access-token');
+?>
+```
+
+</RequestExample>
+
+## Response
+
+Array de objetos de execução (runs), ordenados por ID descendente (mais recentes primeiro):
+
+<ResponseField name="id" type="number">
+  ID único da execução
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Status da execução
+  
+  Valores possíveis:
+  - `PENDING` - Aguardando início
+  - `RUNNING` - Em execução
+  - `COMPLETED` - Concluída com sucesso
+  - `FAILED` - Falhou
+  - `CANCELLED` - Cancelada
+</ResponseField>
+
+<ResponseField name="scheduledFor" type="string">
+  Data/hora agendada para execução
+</ResponseField>
+
+<ResponseField name="startedAt" type="string">
+  Data/hora de início real
+</ResponseField>
+
+<ResponseField name="finishedAt" type="string">
+  Data/hora de término
+</ResponseField>
+
+<ResponseField name="matchedContacts" type="number">
+  Total de contatos que passaram pelos filtros
+</ResponseField>
+
+<ResponseField name="sentCount" type="number">
+  Quantidade de mensagens enviadas com sucesso
+</ResponseField>
+
+<ResponseField name="failedCount" type="number">
+  Quantidade de falhas no envio
+</ResponseField>
+
+<ResponseField name="errorMessage" type="string">
+  Mensagem de erro (quando aplicável)
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  Data/hora de criação do run
+</ResponseField>
+
+<ResponseExample>
+
+```json 200 - Sucesso
+[
+  {
+    "id": 150,
+    "status": "COMPLETED",
+    "scheduledFor": "2024-01-21T09:00:00",
+    "startedAt": "2024-01-21T09:00:05",
+    "finishedAt": "2024-01-21T09:15:32",
+    "matchedContacts": 45,
+    "sentCount": 45,
+    "failedCount": 0,
+    "errorMessage": null,
+    "createdAt": "2024-01-21T09:00:00"
+  },
+  {
+    "id": 149,
+    "status": "COMPLETED",
+    "scheduledFor": "2024-01-20T09:00:00",
+    "startedAt": "2024-01-20T09:00:03",
+    "finishedAt": "2024-01-20T09:08:17",
+    "matchedContacts": 32,
+    "sentCount": 30,
+    "failedCount": 2,
+    "errorMessage": null,
+    "createdAt": "2024-01-20T09:00:00"
+  },
+  {
+    "id": 148,
+    "status": "FAILED",
+    "scheduledFor": "2024-01-19T09:00:00",
+    "startedAt": "2024-01-19T09:00:02",
+    "finishedAt": "2024-01-19T09:00:15",
+    "matchedContacts": 0,
+    "sentCount": 0,
+    "failedCount": 0,
+    "errorMessage": "Erro ao conectar com banco de dados",
+    "createdAt": "2024-01-19T09:00:00"
+  }
+]
+```
+
+```json 404 - Não Encontrada
+{
+  "message": "Automação não encontrada"
+}
+```
+
+```json 403 - Sem Permissão
+{
+  "message": "Sem permissão para acessar esta automação"
+}
+```
+
+```json 401 - Token Inválido
+{
+  "message": "Access token inválido"
+}
+```
+
+</ResponseExample>
+
+## Análise de Performance
+
+```javascript
+// Função para analisar performance das execuções
+async function analyzeAutomationPerformance(automationId, accessToken) {
+  const response = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}/runs`,
+    {
+      headers: { 'X-Access-Token': accessToken }
+    }
+  );
+  
+  const runs = await response.json();
+  
+  // Filtrar apenas runs completos
+  const completedRuns = runs.filter(r => r.status === 'COMPLETED');
+  
+  if (completedRuns.length === 0) {
+    console.log('Nenhuma execução completa encontrada');
+    return;
+  }
+  
+  // Calcular métricas
+  const metrics = {
+    totalRuns: completedRuns.length,
+    totalSent: 0,
+    totalFailed: 0,
+    avgMatchedContacts: 0,
+    avgDuration: 0,
+    successRate: 0
+  };
+  
+  completedRuns.forEach(run => {
+    metrics.totalSent += run.sentCount;
+    metrics.totalFailed += run.failedCount;
+    metrics.avgMatchedContacts += run.matchedContacts;
+    
+    // Calcular duração
+    if (run.startedAt && run.finishedAt) {
+      const start = new Date(run.startedAt);
+      const end = new Date(run.finishedAt);
+      metrics.avgDuration += (end - start) / 1000; // segundos
+    }
+  });
+  
+  // Calcular médias
+  metrics.avgMatchedContacts /= completedRuns.length;
+  metrics.avgDuration /= completedRuns.length;
+  metrics.successRate = (metrics.totalSent / (metrics.totalSent + metrics.totalFailed)) * 100;
+  
+  // Exibir relatório
+  console.log('📊 Relatório de Performance');
+  console.log('─'.repeat(40));
+  console.log(`Total de execuções: ${metrics.totalRuns}`);
+  console.log(`Mensagens enviadas: ${metrics.totalSent}`);
+  console.log(`Falhas: ${metrics.totalFailed}`);
+  console.log(`Taxa de sucesso: ${metrics.successRate.toFixed(2)}%`);
+  console.log(`Média de contatos: ${Math.round(metrics.avgMatchedContacts)}`);
+  console.log(`Duração média: ${Math.round(metrics.avgDuration)}s`);
+  
+  return metrics;
+}
+```
+
+## Monitoramento de Falhas
+
+```javascript
+// Detectar e alertar sobre falhas recorrentes
+async function monitorFailures(automationId, accessToken) {
+  const response = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}/runs`,
+    {
+      headers: { 'X-Access-Token': accessToken }
+    }
+  );
+  
+  const runs = await response.json();
+  
+  // Verificar últimas 5 execuções
+  const recentRuns = runs.slice(0, 5);
+  const failures = recentRuns.filter(r => r.status === 'FAILED');
+  
+  if (failures.length >= 3) {
+    console.error('⚠️ ALERTA: Múltiplas falhas detectadas!');
+    
+    failures.forEach(fail => {
+      console.error(`Run #${fail.id}: ${fail.errorMessage}`);
+    });
+    
+    // Aqui você poderia:
+    // - Enviar notificação
+    // - Desativar automação
+    // - Criar ticket de suporte
+  }
+  
+  return failures;
+}
+```
+
+## Observações
+
+<Note>
+- As execuções são retornadas em ordem decrescente (mais recentes primeiro)
+- Não há paginação - todas as execuções são retornadas
+- Runs manuais (via run-now) também aparecem na lista
+- O campo `errorMessage` só é preenchido quando há falha
+- Execuções canceladas podem não ter `finishedAt`
+</Note>
 
 

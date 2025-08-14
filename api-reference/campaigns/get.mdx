@@ -40,10 +40,8 @@ const campaign = await response.json();
 if (campaign.id) {
   console.log(`Campanha: ${campaign.name}`);
   console.log(`Status: ${campaign.status}`);
-  console.log(`Progresso: ${campaign.sentCount}/${campaign.totalContacts}`);
-  
-  const progress = (campaign.sentCount / campaign.totalContacts * 100).toFixed(2);
-  console.log(`${progress}% concluída`);
+  console.log(`Progresso: ${campaign.sentContacts}/${campaign.totalContacts}`);
+  console.log(`Taxa de sucesso: ${campaign.successRate}%`);
 } else {
   console.error('Erro:', campaign.message);
 }
@@ -65,12 +63,10 @@ if 'id' in campaign:
     print(f"Campanha: {campaign['name']}")
     print(f"Status: {campaign['status']}")
     print(f"Total de contatos: {campaign['totalContacts']}")
-    print(f"Enviadas: {campaign['sentCount']}")
-    print(f"Falhas: {campaign['failedCount']}")
-    
-    if campaign['totalContacts'] > 0:
-        progress = (campaign['sentCount'] / campaign['totalContacts']) * 100
-        print(f"Progresso: {progress:.2f}%")
+    print(f"Enviadas: {campaign['sentContacts']}")
+    print(f"Falhas: {campaign['failedContacts']}")
+    print(f"Progresso: {campaign['progressPercentage']}%")
+    print(f"Taxa de sucesso: {campaign['successRate']}%")
 else:
     print(f"Erro: {campaign.get('message')}")
 ```
@@ -97,12 +93,8 @@ $campaign = json_decode($result, true);
 if (isset($campaign['id'])) {
     echo "Campanha: " . $campaign['name'] . "\n";
     echo "Status: " . $campaign['status'] . "\n";
-    echo "Progresso: " . $campaign['sentCount'] . "/" . $campaign['totalContacts'] . "\n";
-    
-    if ($campaign['totalContacts'] > 0) {
-        $progress = ($campaign['sentCount'] / $campaign['totalContacts']) * 100;
-        echo number_format($progress, 2) . "% concluída\n";
-    }
+    echo "Progresso: " . $campaign['sentContacts'] . "/" . $campaign['totalContacts'] . "\n";
+    echo "Taxa de sucesso: " . $campaign['successRate'] . "%\n";
 } else {
     echo "Erro: " . $campaign['message'] . "\n";
 }
@@ -113,12 +105,20 @@ if (isset($campaign['id'])) {
 
 ## Response
 
+A estrutura de resposta inclui todos os detalhes da campanha:
+
+### Campos Principais
+
 <ResponseField name="id" type="number">
   ID único da campanha
 </ResponseField>
 
 <ResponseField name="name" type="string">
   Nome da campanha
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Descrição da campanha
 </ResponseField>
 
 <ResponseField name="status" type="string">
@@ -132,48 +132,16 @@ if (isset($campaign['id'])) {
   - `FAILED` - Falhou
 </ResponseField>
 
-<ResponseField name="companyId" type="number">
-  ID da empresa proprietária
-</ResponseField>
-
-<ResponseField name="totalContacts" type="number">
-  Total de contatos na campanha
-</ResponseField>
-
-<ResponseField name="sentCount" type="number">
-  Quantidade de mensagens enviadas com sucesso
-</ResponseField>
-
-<ResponseField name="failedCount" type="number">
-  Quantidade de envios que falharam
-</ResponseField>
-
-<ResponseField name="message" type="string">
-  Texto da mensagem enviada
-</ResponseField>
-
-<ResponseField name="mediaUrl" type="string">
-  URL da mídia anexada (se houver)
-</ResponseField>
-
-<ResponseField name="mediaType" type="string">
-  Tipo de mídia (image, video, audio, document)
-</ResponseField>
-
-<ResponseField name="pollData" type="object">
-  Dados da enquete (se for campanha de enquete)
-</ResponseField>
-
-<ResponseField name="scheduledFor" type="string">
-  Data/hora de agendamento (se aplicável)
+<ResponseField name="type" type="string">
+  Tipo da campanha (TEXT, MEDIA, POLL)
 </ResponseField>
 
 <ResponseField name="createdAt" type="string">
   Data/hora de criação
 </ResponseField>
 
-<ResponseField name="updatedAt" type="string">
-  Data/hora da última atualização
+<ResponseField name="scheduledFor" type="string">
+  Data/hora de agendamento (se aplicável)
 </ResponseField>
 
 <ResponseField name="startedAt" type="string">
@@ -188,8 +156,80 @@ if (isset($campaign['id'])) {
   Data/hora que foi pausada (se aplicável)
 </ResponseField>
 
-<ResponseField name="cancelledAt" type="string">
-  Data/hora que foi cancelada (se aplicável)
+### Estatísticas
+
+<ResponseField name="totalContacts" type="number">
+  Total de contatos na campanha
+</ResponseField>
+
+<ResponseField name="sentContacts" type="number">
+  Quantidade de mensagens enviadas com sucesso
+</ResponseField>
+
+<ResponseField name="failedContacts" type="number">
+  Quantidade de envios que falharam
+</ResponseField>
+
+<ResponseField name="pendingContacts" type="number">
+  Quantidade de contatos pendentes
+</ResponseField>
+
+<ResponseField name="progressPercentage" type="number">
+  Percentual de progresso (0-100)
+</ResponseField>
+
+<ResponseField name="successRate" type="number">
+  Taxa de sucesso em percentual
+</ResponseField>
+
+<ResponseField name="estimatedCompletion" type="string">
+  Estimativa de conclusão (se em execução)
+</ResponseField>
+
+### Dados da Campanha
+
+<ResponseField name="messageContent" type="string">
+  Conteúdo da mensagem enviada
+</ResponseField>
+
+<ResponseField name="mediaType" type="string">
+  Tipo de mídia (image, video, audio, document)
+</ResponseField>
+
+<ResponseField name="mediaUrl" type="string">
+  URL da mídia anexada
+</ResponseField>
+
+<ResponseField name="fileName" type="string">
+  Nome do arquivo de mídia
+</ResponseField>
+
+<ResponseField name="evolutionInstance" type="string">
+  Instância Evolution usada
+</ResponseField>
+
+<ResponseField name="minInterval" type="number">
+  Intervalo mínimo entre mensagens (segundos)
+</ResponseField>
+
+<ResponseField name="maxInterval" type="number">
+  Intervalo máximo entre mensagens (segundos)
+</ResponseField>
+
+<ResponseField name="notificationPhone" type="string">
+  Telefone para notificação de conclusão
+</ResponseField>
+
+<ResponseField name="pollData" type="object">
+  Dados da enquete (se for campanha de enquete)
+</ResponseField>
+
+<ResponseField name="evolutionConfig" type="object">
+  Configuração Evolution completa usada
+</ResponseField>
+
+<ResponseField name="message" type="string">
+  Mensagem de erro (apenas em caso de falha)
 </ResponseField>
 
 <ResponseExample>
@@ -198,22 +238,36 @@ if (isset($campaign['id'])) {
 {
   "id": 123,
   "name": "Promoção Black Friday",
+  "description": null,
   "status": "ACTIVE",
-  "companyId": 1,
-  "totalContacts": 500,
-  "sentCount": 234,
-  "failedCount": 5,
-  "message": "🎉 Black Friday chegou! Até 70% OFF em todos os produtos. Acesse: www.exemplo.com",
-  "mediaUrl": "https://exemplo.com/black-friday.jpg",
-  "mediaType": "image",
-  "pollData": null,
-  "scheduledFor": null,
+  "type": "MEDIA",
   "createdAt": "2024-01-20T14:00:00",
-  "updatedAt": "2024-01-20T14:45:00",
+  "scheduledFor": null,
   "startedAt": "2024-01-20T14:01:00",
   "completedAt": null,
   "pausedAt": null,
-  "cancelledAt": null
+  "totalContacts": 500,
+  "sentContacts": 234,
+  "failedContacts": 5,
+  "pendingContacts": 261,
+  "progressPercentage": 46.8,
+  "successRate": 97.86,
+  "estimatedCompletion": "2024-01-20T16:30:00",
+  "messageContent": "🎉 Black Friday chegou! Até 70% OFF em todos os produtos. Acesse: www.exemplo.com",
+  "mediaType": "image",
+  "mediaUrl": "https://exemplo.com/black-friday.jpg",
+  "fileName": "black-friday-promo.jpg",
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": 5,
+  "maxInterval": 10,
+  "notificationPhone": "5511999999999",
+  "pollData": null,
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  }
 }
 ```
 
@@ -221,26 +275,40 @@ if (isset($campaign['id'])) {
 {
   "id": 124,
   "name": "Pesquisa de Satisfação",
+  "description": null,
   "status": "COMPLETED",
-  "companyId": 1,
+  "type": "POLL",
+  "createdAt": "2024-01-20T10:00:00",
+  "scheduledFor": null,
+  "startedAt": "2024-01-20T10:01:00",
+  "completedAt": "2024-01-20T11:30:00",
+  "pausedAt": null,
   "totalContacts": 100,
-  "sentCount": 98,
-  "failedCount": 2,
-  "message": null,
-  "mediaUrl": null,
+  "sentContacts": 98,
+  "failedContacts": 2,
+  "pendingContacts": 0,
+  "progressPercentage": 100,
+  "successRate": 97.96,
+  "estimatedCompletion": null,
+  "messageContent": null,
   "mediaType": null,
+  "mediaUrl": null,
+  "fileName": null,
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": 10,
+  "maxInterval": 20,
+  "notificationPhone": null,
   "pollData": {
     "name": "Como você avalia nosso atendimento?",
     "options": ["Excelente", "Bom", "Regular", "Ruim"],
     "selectableCount": 1
   },
-  "scheduledFor": null,
-  "createdAt": "2024-01-20T10:00:00",
-  "updatedAt": "2024-01-20T11:30:00",
-  "startedAt": "2024-01-20T10:01:00",
-  "completedAt": "2024-01-20T11:30:00",
-  "pausedAt": null,
-  "cancelledAt": null
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  }
 }
 ```
 
@@ -248,28 +316,42 @@ if (isset($campaign['id'])) {
 {
   "id": 125,
   "name": "Lembrete Consultas",
+  "description": null,
   "status": "SCHEDULED",
-  "companyId": 1,
-  "totalContacts": 50,
-  "sentCount": 0,
-  "failedCount": 0,
-  "message": "Olá {PrimeiroNome}! Lembramos que sua consulta está agendada para amanhã às 10h.",
-  "mediaUrl": null,
-  "mediaType": null,
-  "pollData": null,
-  "scheduledFor": "2024-01-25T09:00:00",
+  "type": "TEXT",
   "createdAt": "2024-01-20T15:00:00",
-  "updatedAt": "2024-01-20T15:00:00",
+  "scheduledFor": "2024-01-25T09:00:00",
   "startedAt": null,
   "completedAt": null,
   "pausedAt": null,
-  "cancelledAt": null
+  "totalContacts": 50,
+  "sentContacts": 0,
+  "failedContacts": 0,
+  "pendingContacts": 50,
+  "progressPercentage": 0,
+  "successRate": 0,
+  "estimatedCompletion": null,
+  "messageContent": "Olá {PrimeiroNome}! Lembramos que sua consulta está agendada para amanhã às 10h.",
+  "mediaType": null,
+  "mediaUrl": null,
+  "fileName": null,
+  "evolutionInstance": "whatsapp-01",
+  "minInterval": 5,
+  "maxInterval": 10,
+  "notificationPhone": null,
+  "pollData": null,
+  "evolutionConfig": {
+    "id": 1,
+    "name": "WhatsApp Principal",
+    "url": "https://evolution-api.exemplo.com",
+    "instance": "whatsapp-01"
+  }
 }
 ```
 
 ```json 400 - Campanha Não Encontrada
 {
-  "message": "Campanha não encontrada ou não pertence à sua empresa"
+  "message": "Campanha não encontrada"
 }
 ```
 
@@ -297,17 +379,20 @@ async function monitorCampaign(campaignId, accessToken) {
     const campaign = await response.json();
     
     if (campaign.status === 'ACTIVE') {
-      const progress = (campaign.sentCount / campaign.totalContacts * 100).toFixed(2);
       console.log(`[${new Date().toLocaleTimeString()}] ${campaign.name}`);
       console.log(`Status: ${campaign.status}`);
-      console.log(`Progresso: ${progress}% (${campaign.sentCount}/${campaign.totalContacts})`);
-      console.log(`Falhas: ${campaign.failedCount}`);
+      console.log(`Progresso: ${campaign.progressPercentage}% (${campaign.sentContacts}/${campaign.totalContacts})`);
+      console.log(`Taxa de sucesso: ${campaign.successRate}%`);
+      console.log(`Falhas: ${campaign.failedContacts}`);
+      console.log(`Estimativa de conclusão: ${campaign.estimatedCompletion || 'Calculando...'}`);
       console.log('---');
       
       // Continuar monitorando
       setTimeout(checkProgress, 30000); // 30 segundos
     } else {
       console.log(`Campanha finalizada com status: ${campaign.status}`);
+      console.log(`Total enviado: ${campaign.sentContacts}`);
+      console.log(`Taxa de sucesso final: ${campaign.successRate}%`);
     }
   };
   
@@ -323,24 +408,25 @@ monitorCampaign(123, 'seu-access-token');
 ```javascript
 function calculateCampaignMetrics(campaign) {
   const metrics = {
-    successRate: 0,
+    successRate: campaign.successRate || 0,
     failureRate: 0,
-    progress: 0,
+    progress: campaign.progressPercentage || 0,
     estimatedTimeRemaining: null,
     messagesPerMinute: 0
   };
   
-  if (campaign.totalContacts > 0) {
-    metrics.progress = (campaign.sentCount / campaign.totalContacts * 100).toFixed(2);
-    metrics.successRate = ((campaign.sentCount - campaign.failedCount) / campaign.sentCount * 100).toFixed(2);
-    metrics.failureRate = (campaign.failedCount / campaign.sentCount * 100).toFixed(2);
+  // Taxa de falha
+  if (campaign.sentContacts > 0) {
+    metrics.failureRate = (campaign.failedContacts / campaign.sentContacts * 100).toFixed(2);
   }
   
-  if (campaign.startedAt && campaign.sentCount > 0) {
+  // Velocidade de envio
+  if (campaign.startedAt && campaign.sentContacts > 0) {
     const elapsedMinutes = (new Date() - new Date(campaign.startedAt)) / 60000;
-    metrics.messagesPerMinute = (campaign.sentCount / elapsedMinutes).toFixed(2);
+    metrics.messagesPerMinute = (campaign.sentContacts / elapsedMinutes).toFixed(2);
     
-    const remaining = campaign.totalContacts - campaign.sentCount;
+    // Tempo restante estimado
+    const remaining = campaign.pendingContacts;
     if (metrics.messagesPerMinute > 0) {
       metrics.estimatedTimeRemaining = Math.ceil(remaining / metrics.messagesPerMinute);
     }
@@ -348,6 +434,11 @@ function calculateCampaignMetrics(campaign) {
   
   return metrics;
 }
+
+// Exemplo de uso
+const metrics = calculateCampaignMetrics(campaign);
+console.log(`Mensagens por minuto: ${metrics.messagesPerMinute}`);
+console.log(`Tempo restante estimado: ${metrics.estimatedTimeRemaining} minutos`);
 ```
 
 ## Observações
@@ -356,4 +447,5 @@ function calculateCampaignMetrics(campaign) {
 - A campanha deve pertencer à empresa do token para ser acessada
 - As estatísticas são atualizadas em tempo real durante o envio
 - Campanhas antigas mantêm o histórico completo de execução
+- A estimativa de conclusão é calculada com base na velocidade média de envio
 </Note>

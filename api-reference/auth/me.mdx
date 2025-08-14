@@ -86,6 +86,8 @@ if (isset($response['companyId'])) {
 
 ## Response
 
+### Campos Principais
+
 <ResponseField name="accessToken" type="string">
   O mesmo token de acesso enviado na requisição
 </ResponseField>
@@ -106,6 +108,16 @@ if (isset($response['companyId'])) {
   Email da empresa
 </ResponseField>
 
+<ResponseField name="expiresAt" type="string" nullable>
+  Data de expiração do token. Sempre null (tokens não expiram)
+</ResponseField>
+
+<ResponseField name="message" type="string" nullable>
+  Mensagem de erro. Null em caso de sucesso
+</ResponseField>
+
+### Funcionalidades Habilitadas
+
 <ResponseField name="blockedContactsEnabled" type="boolean">
   Indica se a funcionalidade de bloqueio inteligente está habilitada
 </ResponseField>
@@ -114,12 +126,62 @@ if (isset($response['companyId'])) {
   Indica se a funcionalidade de enquetes está habilitada
 </ResponseField>
 
-<ResponseField name="expiresAt" type="string" nullable>
-  Data de expiração do token. Sempre null (tokens não expiram)
+<ResponseField name="automationsEnabled" type="boolean">
+  Indica se a funcionalidade de automações está habilitada
 </ResponseField>
 
-<ResponseField name="message" type="string" nullable>
-  Mensagem de erro. Null em caso de sucesso
+<ResponseField name="automationLimit" type="number" nullable>
+  Limite de automações permitidas para a empresa
+</ResponseField>
+
+### Informações de Assinatura
+
+<ResponseField name="subscriptionId" type="string" nullable>
+  ID da assinatura ativa (se houver)
+</ResponseField>
+
+<ResponseField name="payerId" type="string" nullable>
+  ID do pagador da assinatura
+</ResponseField>
+
+<ResponseField name="subscriptionStatus" type="string" nullable>
+  Status atual da assinatura (active, paused, cancelled, etc.)
+</ResponseField>
+
+<ResponseField name="subscriptionReason" type="string" nullable>
+  Motivo ou descrição da assinatura
+</ResponseField>
+
+<ResponseField name="externalReference" type="string" nullable>
+  Referência externa da assinatura
+</ResponseField>
+
+<ResponseField name="preapprovalPlanId" type="string" nullable>
+  ID do plano de assinatura
+</ResponseField>
+
+<ResponseField name="subscriptionStartDate" type="string" nullable>
+  Data de início da assinatura
+</ResponseField>
+
+<ResponseField name="nextPaymentDate" type="string" nullable>
+  Data do próximo pagamento
+</ResponseField>
+
+<ResponseField name="collectorId" type="string" nullable>
+  ID do coletor de pagamento
+</ResponseField>
+
+<ResponseField name="subscriptionInitPoint" type="string" nullable>
+  Ponto de início da assinatura
+</ResponseField>
+
+<ResponseField name="transactionAmount" type="string" nullable>
+  Valor da transação
+</ResponseField>
+
+<ResponseField name="frequencyType" type="string" nullable>
+  Tipo de frequência de pagamento (monthly, yearly, etc.)
 </ResponseField>
 
 <ResponseExample>
@@ -133,6 +195,20 @@ if (isset($response['companyId'])) {
   "companyEmail": "contato@minhaempresa.com",
   "blockedContactsEnabled": true,
   "pollCampaignsEnabled": true,
+  "automationsEnabled": true,
+  "automationLimit": 10,
+  "subscriptionId": "SUB123456",
+  "payerId": "PAY789012",
+  "subscriptionStatus": "active",
+  "subscriptionReason": "Plano Profissional",
+  "externalReference": "REF345678",
+  "preapprovalPlanId": "PLAN901234",
+  "subscriptionStartDate": "2024-01-15T10:00:00",
+  "nextPaymentDate": "2024-02-15T10:00:00",
+  "collectorId": "COL567890",
+  "subscriptionInitPoint": "point_initial_charge",
+  "transactionAmount": "99.90",
+  "frequencyType": "monthly",
   "expiresAt": null,
   "message": null
 }
@@ -147,6 +223,8 @@ if (isset($response['companyId'])) {
   "companyEmail": null,
   "blockedContactsEnabled": null,
   "pollCampaignsEnabled": null,
+  "automationsEnabled": null,
+  "automationLimit": null,
   "expiresAt": null,
   "message": "Access token inválido"
 }
@@ -161,6 +239,8 @@ if (isset($response['companyId'])) {
   "companyEmail": null,
   "blockedContactsEnabled": null,
   "pollCampaignsEnabled": null,
+  "automationsEnabled": null,
+  "automationLimit": null,
   "expiresAt": null,
   "message": "X-Access-Token é obrigatório"
 }
@@ -175,6 +255,8 @@ if (isset($response['companyId'])) {
   "companyEmail": null,
   "blockedContactsEnabled": null,
   "pollCampaignsEnabled": null,
+  "automationsEnabled": null,
+  "automationLimit": null,
   "expiresAt": null,
   "message": "Empresa não encontrada"
 }

@@ -1,13 +1,233 @@
 ---
 title: "Ativar/Desativar Automação"
 api: "PATCH /api/automations/{id}/toggle"
-description: "Alterna o estado ativo da automação"
+description: "Alterna o estado ativo de uma automação"
 ---
+
+<Tip>
+Use este endpoint para rapidamente ativar ou desativar uma automação sem precisar atualizar outros campos.
+</Tip>
+
+## Path Parameters
+
+<ParamField path="id" type="number" required>
+  ID da automação
+</ParamField>
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
 
 ## Query Parameters
 
 <ParamField query="active" type="boolean" required>
-  Define o estado desejado (true/false)
+  Define o estado desejado
+  - `true` - Ativa a automação
+  - `false` - Desativa a automação
 </ParamField>
+
+<RequestExample>
+
+```bash cURL
+# Ativar automação
+curl -X PATCH "https://api.disparador.com/api/automations/10/toggle?active=true" \
+  -H "X-Access-Token: seu-access-token"
+
+# Desativar automação
+curl -X PATCH "https://api.disparador.com/api/automations/10/toggle?active=false" \
+  -H "X-Access-Token: seu-access-token"
+```
+
+```javascript JavaScript
+// Função para alternar estado
+async function toggleAutomation(automationId, active, accessToken) {
+  const response = await fetch(
+    `https://api.disparador.com/api/automations/${automationId}/toggle?active=${active}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'X-Access-Token': accessToken
+      }
+    }
+  );
+  
+  if (response.ok) {
+    console.log(`Automação ${active ? 'ativada' : 'desativada'} com sucesso`);
+  }
+}
+
+// Ativar
+await toggleAutomation(10, true, 'seu-access-token');
+
+// Desativar
+await toggleAutomation(10, false, 'seu-access-token');
+```
+
+```python Python
+import requests
+
+def toggle_automation(automation_id, active, access_token):
+    url = f"https://api.disparador.com/api/automations/{automation_id}/toggle"
+    params = {"active": str(active).lower()}
+    headers = {"X-Access-Token": access_token}
+    
+    response = requests.patch(url, params=params, headers=headers)
+    
+    if response.status_code == 200:
+        status = "ativada" if active else "desativada"
+        print(f"Automação {status} com sucesso")
+    else:
+        print(f"Erro: {response.status_code}")
+
+# Ativar automação
+toggle_automation(10, True, "seu-access-token")
+
+# Desativar automação
+toggle_automation(10, False, "seu-access-token")
+```
+
+```php PHP
+<?php
+function toggleAutomation($automationId, $active, $accessToken) {
+    $activeStr = $active ? 'true' : 'false';
+    $url = "https://api.disparador.com/api/automations/{$automationId}/toggle?active={$activeStr}";
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        'X-Access-Token: ' . $accessToken
+    ]);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode === 200) {
+        $status = $active ? 'ativada' : 'desativada';
+        echo "Automação {$status} com sucesso\n";
+    }
+}
+
+// Ativar
+toggleAutomation(10, true, 'seu-access-token');
+
+// Desativar
+toggleAutomation(10, false, 'seu-access-token');
+?>
+```
+
+</RequestExample>
+
+## Response
+
+<ResponseExample>
+
+```json 200 - Sucesso
+{
+  // Resposta vazia com status 200
+}
+```
+
+```json 404 - Não Encontrada
+{
+  "message": "Automação não encontrada"
+}
+```
+
+```json 401 - Token Inválido
+{
+  "message": "Access token inválido"
+}
+```
+
+```json 400 - Parâmetro Inválido
+{
+  "message": "Parâmetro 'active' é obrigatório"
+}
+```
+
+</ResponseExample>
+
+## Comportamento
+
+<Note>
+**Ao Ativar:**
+- A automação volta a executar conforme o agendamento
+- O campo `nextRunAt` é recalculado
+- Execuções perdidas não são compensadas
+
+**Ao Desativar:**
+- Execuções em andamento são concluídas
+- Próximas execuções são canceladas
+- O campo `nextRunAt` fica null
+</Note>
+
+## Casos de Uso
+
+### 1. Pausar Durante Manutenção
+```javascript
+// Desativar antes da manutenção
+await toggleAutomation(10, false, token);
+
+// Fazer manutenção...
+
+// Reativar após manutenção
+await toggleAutomation(10, true, token);
+```
+
+### 2. Gerenciamento em Massa
+```javascript
+// Desativar todas as automações de uma vez
+async function disableAllAutomations(accessToken) {
+  // Listar todas
+  const automations = await fetch('/api/automations', {
+    headers: { 'X-Access-Token': accessToken }
+  }).then(r => r.json());
+  
+  // Desativar apenas as ativas
+  const activeAutomations = automations.filter(a => a.isActive);
+  
+  for (const automation of activeAutomations) {
+    await toggleAutomation(automation.id, false, accessToken);
+    console.log(`Desativada: ${automation.name}`);
+  }
+  
+  return activeAutomations.length;
+}
+```
+
+### 3. Agendamento de Ativação
+```javascript
+// Agendar ativação para horário específico
+function scheduleActivation(automationId, activateAt, accessToken) {
+  const now = new Date();
+  const targetTime = new Date(activateAt);
+  const delay = targetTime - now;
+  
+  if (delay > 0) {
+    setTimeout(() => {
+      toggleAutomation(automationId, true, accessToken);
+      console.log(`Automação ${automationId} ativada em ${targetTime}`);
+    }, delay);
+  }
+}
+
+// Ativar amanhã às 8h
+const tomorrow8am = new Date();
+tomorrow8am.setDate(tomorrow8am.getDate() + 1);
+tomorrow8am.setHours(8, 0, 0, 0);
+
+scheduleActivation(10, tomorrow8am, 'seu-token');
+```
+
+## Alternativa
+
+<Note>
+Você também pode usar o endpoint PUT /api/automations/{id} enviando apenas o campo `isActive`. O resultado é o mesmo, mas o PUT retorna o objeto completo da automação.
+</Note>
 
 

@@ -79,9 +79,9 @@ const response = await fetch('https://api.disparador.com/api/companies/1/blocked
 });
 
 const result = await response.json();
-console.log(`Importados: ${result.imported}`);
+console.log(`Importados: ${result.successfullyBlocked}`);
 console.log(`Já bloqueados: ${result.alreadyBlocked}`);
-console.log(`Inválidos: ${result.invalid}`);
+console.log(`Falharam: ${result.failed}`);
 ```
 
 ```python Python
@@ -105,10 +105,10 @@ response = requests.post(url, json=data, headers=headers)
 result = response.json()
 
 if result['success']:
-    print(f"Total processados: {result['totalProcessed']}")
-    print(f"Importados com sucesso: {result['imported']}")
+    print(f"Total fornecidos: {result['totalProvided']}")
+    print(f"Importados com sucesso: {result['successfullyBlocked']}")
     print(f"Já estavam bloqueados: {result['alreadyBlocked']}")
-    print(f"Números inválidos: {result['invalid']}")
+    print(f"Falharam: {result['failed']}")
 ```
 
 ```php PHP
@@ -137,9 +137,9 @@ $result = file_get_contents($url, false, $context);
 $response = json_decode($result, true);
 
 if ($response['success']) {
-    echo "Importados: " . $response['imported'] . "\n";
+    echo "Importados: " . $response['successfullyBlocked'] . "\n";
     echo "Já bloqueados: " . $response['alreadyBlocked'] . "\n";
-    echo "Inválidos: " . $response['invalid'] . "\n";
+    echo "Falharam: " . $response['failed'] . "\n";
 }
 ?>
 ```
@@ -152,15 +152,15 @@ if ($response['success']) {
   Indica se a operação foi bem-sucedida
 </ResponseField>
 
-<ResponseField name="message" type="string">
-  Mensagem de resultado da operação
+<ResponseField name="error" type="string" optional>
+  Mensagem de erro (quando falha)
 </ResponseField>
 
-<ResponseField name="totalProcessed" type="number">
-  Total de números processados
+<ResponseField name="totalProvided" type="number">
+  Total de números fornecidos
 </ResponseField>
 
-<ResponseField name="imported" type="number">
+<ResponseField name="successfullyBlocked" type="number">
   Quantidade de números bloqueados com sucesso
 </ResponseField>
 
@@ -168,17 +168,15 @@ if ($response['success']) {
   Quantidade de números que já estavam bloqueados
 </ResponseField>
 
-<ResponseField name="invalid" type="number">
-  Quantidade de números inválidos
+<ResponseField name="failed" type="number">
+  Quantidade de números que falharam
 </ResponseField>
 
-<ResponseField name="details" type="object" optional>
-  Detalhes sobre números inválidos (quando houver)
+<ResponseField name="failedNumbers" type="object" optional>
+  Mapa de números que falharam com seus respectivos motivos
   
-  <Expandable title="Detalhes dos erros">
-    <ResponseField name="invalidNumbers" type="array">
-      Lista dos números que foram considerados inválidos
-    </ResponseField>
+  <Expandable title="Estrutura do objeto">
+    Objeto onde a chave é o número de telefone e o valor é o motivo da falha
   </Expandable>
 </ResponseField>
 
@@ -187,24 +185,22 @@ if ($response['success']) {
 ```json 200 - Sucesso Total
 {
   "success": true,
-  "message": "Importação concluída com sucesso",
-  "totalProcessed": 3,
-  "imported": 3,
+  "totalProvided": 3,
+  "successfullyBlocked": 3,
   "alreadyBlocked": 0,
-  "invalid": 0
+  "failed": 0
 }
 ```
 
 ```json 200 - Sucesso Parcial
 {
   "success": true,
-  "message": "Importação concluída com avisos",
-  "totalProcessed": 5,
-  "imported": 2,
+  "totalProvided": 5,
+  "successfullyBlocked": 2,
   "alreadyBlocked": 2,
-  "invalid": 1,
-  "details": {
-    "invalidNumbers": ["123"]
+  "failed": 1,
+  "failedNumbers": {
+    "123": "Número de telefone inválido"
   }
 }
 ```
@@ -263,9 +259,9 @@ async function importLargeBlocklist(allNumbers, companyId, token, reason) {
     
     const result = await response.json();
     if (result.success) {
-      results.totalImported += result.imported;
+      results.totalImported += result.successfullyBlocked;
       results.totalAlreadyBlocked += result.alreadyBlocked;
-      results.totalInvalid += result.invalid;
+      results.totalInvalid += result.failed;
     }
     
     // Aguardar um pouco entre lotes para não sobrecarregar
