@@ -8,9 +8,29 @@ description: "Registra uma nova empresa com autorização de administrador"
 Este endpoint requer autenticação de administrador. Você precisa fornecer o token de administrador no header ACCESS_TOKEN.
 </Warning>
 
+<Info>
+**Novo método de registro disponível!** Empresas também podem ser criadas automaticamente ao contratar um plano através do checkout Stripe. Veja [Contratar Plano](/api-reference/subscriptions/checkout) para mais detalhes.
+</Info>
+
 <Note>
 Após obter o access token da empresa, use-o no header X-Access-Token em todos os outros endpoints.
 </Note>
+
+## Métodos de Registro
+
+Existem duas formas de registrar uma empresa no sistema:
+
+1. **Via Token Admin** (este endpoint) - Para parceiros e integradores com acesso administrativo
+2. **Via Contratação de Plano** - Usuários finais podem criar uma conta ao contratar um plano via Stripe
+
+### Diferenças entre os métodos:
+
+| Método | Token Admin | Contratação de Plano |
+|--------|-------------|---------------------|
+| Requer senha admin | Sim | Não |
+| Requer pagamento | Não | Sim |
+| Tipo de registro | admin_password | stripe_subscription |
+| Acesso ao sistema | Ilimitado | Requer assinatura ativa |
 
 ## Headers
 
