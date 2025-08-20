@@ -28,16 +28,7 @@
               "concepts",
               "media-features",
               "campaign-status-reference",
-              "blocked-contacts-concept",
-              "deployment",
-              "configuration",
-              "monitoring"
-            ]
-          },
-          {
-            "group": "Troubleshooting",
-            "pages": [
-              "troubleshooting"
+              "blocked-contacts-concept"
             ]
           }
         ]

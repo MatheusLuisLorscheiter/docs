@@ -225,60 +225,6 @@ Siga estes passos para começar a usar o sistema:
   </Card>
 </CardGroup>
 
-## Configuração Rápida
-
-Para desenvolvedores que desejam executar o sistema localmente:
-
-<CodeGroup>
-
-```bash Docker Compose
-# Clone o repositório
-git clone https://github.com/matheusluislorscheiter/api-disparador
-
-# Configure as variáveis de ambiente
-cp .env.example .env
-
-# Execute com Docker Compose
-docker-compose up -d
-```
-
-```bash Execução Manual
-# Backend
-cd backend
-./mvnw spring-boot:run
-
-# Frontend (em outro terminal)
-cd frontend
-npm install
-npm run dev
-```
-
-</CodeGroup>
-
-<Note>
-- Backend: `http://localhost:8080`
-- Frontend: `http://localhost:5173`
-- PostgreSQL: `localhost:5432`
-- Redis: `localhost:6379`
-</Note>
-
-## Recursos Avançados
-
-<CardGroup cols={2}>
-  <Card title="Restrições por Empresa" icon="lock" color="#ef4444">
-    Configure funcionalidades disponíveis por empresa
-  </Card>
-  <Card title="Integração N8N" icon="workflow" color="#f59e0b">
-    Automações avançadas com N8N
-  </Card>
-  <Card title="Múltiplas Instâncias" icon="layers" color="#6366f1">
-    Suporte a múltiplas instâncias Evolution API
-  </Card>
-  <Card title="Bancos de Dados Externos" icon="database" color="#16a34a">
-    Importe contatos de bancos externos
-  </Card>
-</CardGroup>
-
 ## Próximos Passos
 
 Explore a documentação para começar:
@@ -292,9 +238,6 @@ Explore a documentação para começar:
   </Card>
   <Card title="API Reference" icon="book" href="/api-reference/auth/register">
     Documentação completa de todos os endpoints
-  </Card>
-  <Card title="Troubleshooting" icon="help-circle" href="/troubleshooting">
-    Solução de problemas comuns
   </Card>
 </CardGroup>
 
