@@ -63,34 +63,6 @@ A API Disparador é construída com tecnologias modernas para garantir performan
   </Card>
 </CardGroup>
 
-## Pré-requisitos
-
-<Warning>
-Certifique-se de ter todos os pré-requisitos configurados antes de começar.
-</Warning>
-
-Para usar a API Disparador, você precisa:
-
-<ParamField body="evolutionApi" type="instance" required>
-  Uma instância da Evolution API configurada e funcionando
-</ParamField>
-
-<ParamField body="credentials" type="object" required>
-  API Key e URL da sua Evolution API para autenticação
-</ParamField>
-
-<ParamField body="whatsappInstance" type="string" required>
-  Nome da instância do WhatsApp conectada na Evolution API
-</ParamField>
-
-<ParamField body="database" type="postgresql" required>
-  PostgreSQL 13+ para persistência de dados
-</ParamField>
-
-<ParamField body="redis" type="redis" required>
-  Redis 6+ para gerenciamento de filas
-</ParamField>
-
 ## Autenticação
 
 A API utiliza um sistema de autenticação baseado em tokens por empresa:
