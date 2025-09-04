@@ -132,7 +132,7 @@ A barra de progresso mostra:
     - **Enquete** - Configuração de opções
   </Tab>
   <Tab title="Configurações">
-    - **Intervalos** - Min/Máx entre mensagens
+    - **Intervalo de envio** - Aleatório entre 5 e 12 segundos (fixo)
     - **Agendamento** - Data/hora de início (opcional)
     - **Notificação** - Número para receber alertas (opcional)
     - **Modo Teste** - Envia para pequena amostra
@@ -295,8 +295,8 @@ POST /api/campaigns/{id}/duplicate
   <Card title="Testes" icon="flask" color="#16a34a">
     Sempre teste com poucos contatos antes de campanhas grandes
   </Card>
-  <Card title="Intervalos" icon="clock" color="#8b5cf6">
-    Configure intervalos adequados para evitar bloqueios
+  <Card title="Intervalo Fixo" icon="clock" color="#8b5cf6">
+    O envio usa intervalo aleatório entre 5–12s (não configurável)
   </Card>
   <Card title="Monitoramento" icon="eye" color="#f59e0b">
     Acompanhe o progresso para identificar problemas rapidamente
@@ -309,6 +309,7 @@ POST /api/campaigns/{id}/duplicate
   - Exclusão de campanhas ainda não está implementada no backend e não está disponível na interface
   - O limite de contatos por campanha depende da configuração do servidor
   - Campanhas em execução não podem ser editadas
+  - Intervalo de envio não é configurável pelo usuário
 </Warning>
 
 ## Próximas Funcionalidades

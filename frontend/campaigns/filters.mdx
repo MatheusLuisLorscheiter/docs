@@ -27,9 +27,7 @@ Os filtros permitem segmentar contatos com precisão a partir dos bancos de dado
 
 ## Datas Dinâmicas
 
-Aceita palavras-chave:
-- `HOJE`, `AMANHA`, `ONTEM`
-- Interpretadas no backend para `YYYY-MM-DD`
+Além de datas específicas, o seletor aceita valores dinâmicos (por exemplo, "Hoje", "Ontem", "Amanhã"), com rótulos exibidos na interface. Esses valores são enviados como códigos interpretados pelo backend para montar a query corretamente.
 
 ## Ignorar Ano (Datas)
 
@@ -55,7 +53,7 @@ AND cidade ILIKE '%Sebastião%'
 ## Visualizando a Prévia
 
 Após aplicar filtros na criação da campanha:
-1. Clique em **Buscar Contatos/Prévia**
+1. Clique em **Buscar Contatos/Prévia** (para banco do sistema) ou **Buscar Contatos** (quando usando "Meus Bancos")
 2. Revise a lista de contatos
 3. Remova (desmarque) contatos específicos, se necessário
 

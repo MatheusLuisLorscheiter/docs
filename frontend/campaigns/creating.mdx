@@ -14,16 +14,20 @@ Este guia detalha todos os recursos disponíveis para criar campanhas poderosas 
 ## Tipos de Campanha
 
 <CardGroup cols={3}>
-  <Card title="Texto" icon="message" color="#16a34a">
-    Mensagem simples
+  <Card title="WhatsApp: Texto" icon="message" color="#16a34a">
+    Mensagem simples via WhatsApp
   </Card>
-  <Card title="Mídia" icon="image" color="#2563eb">
+  <Card title="WhatsApp: Mídia" icon="image" color="#2563eb">
     Com arquivos (imagem, vídeo, documento, áudio)
   </Card>
-  <Card title="Enquete" icon="poll" color="#7c3aed">
+  <Card title="WhatsApp: Enquete" icon="poll" color="#7c3aed">
     Pesquisas no WhatsApp (com opções configuráveis)
   </Card>
 </CardGroup>
+
+<Info>
+  O sistema também suporta campanhas de **E-mail** na página de **Automações** (card "E-Mails"). A criação de WhatsApp acontece na página **Campanhas**.
+</Info>
 
 ## Configurações Detalhadas
 
@@ -41,7 +45,7 @@ Escolha entre:
 - **Banco do Sistema**: queries e filtros pré-configurados
 - **Meus Bancos**: bases próprias (CSV/SQL) criadas em "Meus Bancos"
 
-### Seleção de Instância
+### Seleção de Instância (WhatsApp)
 
 Considere ao escolher:
 - **Status**: Sempre verde (conectada)
@@ -49,7 +53,7 @@ Considere ao escolher:
 - **Histórico**: Taxa de sucesso
 - **Limites**: Mensagens restantes hoje
 
-### Templates de Mensagem
+### Templates de Mensagem (WhatsApp)
 
 Crie templates reutilizáveis:
 
@@ -63,7 +67,7 @@ Use o código PROMO2024 para garantir seu desconto.
 Acesse agora: www.exemplo.com
 ```
 
-## Recursos Avançados de Mensagem
+## Recursos Avançados de Mensagem (WhatsApp)
 
 ### Formatação Rica
 
@@ -154,36 +158,17 @@ O sistema automaticamente:
 - ✅ Corrige código país
 - ✅ Identifica inválidos
 
-## Configuração de Intervalos
+## Intervalo de Envio (WhatsApp)
 
-### Estratégias de Intervalo
+<Info>
+  O intervalo entre mensagens é aleatório entre 5 e 12 segundos.
+</Info>
 
-<Tip>
-  **Fórmula sugerida:**
-  - Base: 5 segundos
-  - +2s para cada 100 contatos
-  - Máximo: 30 segundos
-</Tip>
+## Agendamento
 
-### Intervalos por Tipo
-
-1. **Mensagens Promocionais**
-   - Min: 5s, Max: 20s
-   - Evita parecer spam
-
-2. **Comunicados Importantes**
-   - Min: 3s, Max: 10s
-   - Entrega rápida
-
-3. **Enquetes/Pesquisas**
-   - Min: 10s, Max: 30s
-   - Tempo para responder
-
-### Agendamento
-
-- Opcional, com data e hora
+- Opcional (data e hora específicas)
 - Requer antecedência mínima de 5 minutos em relação ao horário atual
-- O sistema exibe aviso quando o horário não atende a regra
+- O sistema bloqueia o agendamento abaixo do limite e exibe aviso
 
 ## Mídia e Arquivos
 
@@ -272,30 +257,6 @@ Organize campanhas com tags:
 - `#marketing`
 - `#urgente`
 
-## Automação e Agendamento
-
-### Campanhas Recorrentes
-
-Configure para repetir:
-- Diariamente
-- Semanalmente
-- Mensalmente
-- Personalizado
-
-### Gatilhos de Início
-
-<CardGroup cols={3}>
-  <Card title="Por Horário" icon="clock">
-    Data e hora específicas
-  </Card>
-  <Card title="Por Evento" icon="bolt">
-    Webhook ou API
-  </Card>
-  <Card title="Por Condição" icon="code-branch">
-    Lista atingir X contatos
-  </Card>
-</CardGroup>
-
 ## Boas Práticas
 
 <Tip>
@@ -303,8 +264,7 @@ Configure para repetir:
   1. Personalize sempre que possível
   2. Teste com grupo pequeno primeiro
   3. Monitore as primeiras 100 mensagens
-  4. Ajuste intervalos se necessário
-  5. Documente o que funciona
+  4. Documente o que funciona
 </Tip>
 
 ## Próximos Passos

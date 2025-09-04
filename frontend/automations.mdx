@@ -48,7 +48,7 @@ A página apresenta cards para diferentes tipos de automação:
 4. Defina os destinatários:
    - Manual (lista de e-mails, um por linha)
    - Banco de dados (selecionar base com template de e-mail e aplicar filtros)
-5. Opicional: **Agendar** (data e hora; mínimo 5 minutos de antecedência)
+5. Opcional: **Agendar** (data e hora; mínimo 5 minutos de antecedência)
 6. Clique em **Iniciar Campanha** (ou **Agendar Campanha**)
 
 #### Regras e validações
@@ -105,6 +105,8 @@ Ao clicar no card N8N, um modal é aberto mostrando:
     - Nome e ID do workflow
     - Toggle para ativar/desativar
     - Indicador visual de status
+    - Botão "Acionar" quando o workflow possui webhook e está ativo
+    - Exibição do cron (quando configurado) com descrição legível
   </Tab>
 </Tabs>
 
@@ -135,12 +137,38 @@ Cada workflow é exibido em um card com:
 2. Busca lista de workflows da empresa
 3. Para cada workflow, busca status atualizado
 4. Exibe com indicadores visuais apropriados
+5. Mostra cron em linguagem natural quando disponível
 
 #### Ativação/Desativação
 - **Click no Toggle** - Alterna estado do workflow
 - **Feedback Visual** - Toggle animado e mudança de cores
 - **Atualização** - Lista recarrega automaticamente
 - **Desabilitado** - Durante processamento da requisição
+
+### Acionar Workflow (Webhook)
+- Disponível quando o workflow tem webhook e está ativo
+- Dispara a execução pelo botão "Acionar"
+- Exibe confirmação com aviso de processamento em segundo plano
+
+## Automações por Segmentação
+
+Permite configurar mensagens automáticas recorrentes para WhatsApp, com filtros e recorrência.
+
+### Tipos de Agendamento
+- Diário: horário fixo
+- Semanal: um ou mais dias da semana + horário
+- Mensal: dia do mês + horário
+- CRON: expressão personalizada (minuto hora dia mês diaSemana)
+
+### Intervalo de Envio
+- Intervalo aleatório entre os valores mínimo e máximo definidos
+- Configurável no formulário da automação (campos "Intervalo mínimo (s)" e "Intervalo máximo (s)")
+- Padrão inicial: 6–12 segundos
+
+### Outras Configurações
+- Deduplicação: Nunca, Apenas uma vez, Esperar X dias
+- Limite por execução: máximo de envios por rodada
+- Prévia de contatos baseada em filtros ou query SQL
 
 ## Estados e Feedback
 
@@ -229,26 +257,16 @@ POST /api/n8n/workflows/{workflowId}/deactivate
   - Analytics de abertura
 </Note>
 
-## Configuração Evolution API
+## Conexão WhatsApp (Evolution API)
 
-<Warning>
-  A configuração das instâncias Evolution API (WhatsApp) foi movida para a área administrativa e não está mais nesta página.
-</Warning>
+Para conectar e gerenciar o WhatsApp, utilize a página de **Configurações**:
 
-### Onde Configurar Evolution API
-
-As instâncias Evolution API são configuradas em:
-- **Admin Geral**: `/admin` > Selecionar empresa > Aba "Evolution API"
-- **Admin da Empresa**: `/company-admin` > Aba "Evolution API"
-- **Super Admin**: Acesso direto às configurações
-
-### O que é Possível Configurar
-
-- Adicionar múltiplas instâncias
-- Definir nome e URL da API
-- Configurar API Key
-- Testar conexão
-- Ativar/desativar instâncias
+- Acesse `Configurações` > seção "Conexões Evolution API"
+- Em cada cartão de instância você pode:
+  - "Gerar QR Code" para conectar
+  - Ver o status: Conectado, Desconectado ou Conectando
+  - "Desconectar" quando necessário
+  - Atualizar o status com o botão de refresh
 
 ## Dicas de Uso
 
