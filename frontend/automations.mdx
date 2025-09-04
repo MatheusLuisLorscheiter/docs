@@ -25,11 +25,42 @@ A página apresenta cards para diferentes tipos de automação:
     **Em Breve** - Assistente inteligente para atendimento automatizado
   </Card>
   <Card title="E-Mails" icon="mail" color="#3b82f6">
-    **Em Breve** - Automação de campanhas e respostas por e-mail
+    **Disponível** - Criação de campanhas de e-mail, anexos e filtros
   </Card>
 </CardGroup>
 
-## Integração N8N
+## Automações Disponíveis
+
+### E-mails (Campanhas de E-mail)
+
+<Info>
+  Disponível quando a funcionalidade de e-mail estiver habilitada para sua empresa.
+</Info>
+
+#### Como criar uma campanha de e-mail
+1. Acesse a página **Automações**
+2. Clique no card **E-Mails**
+3. Preencha os dados:
+   - **Nome da campanha**
+   - **Configuração de e-mail** (SMTP/RESEND ativos)
+   - **Assunto** e **Corpo** (suporte a texto e HTML)
+   - **Anexos** (upload ou galeria)
+4. Defina os destinatários:
+   - Manual (lista de e-mails, um por linha)
+   - Banco de dados (selecionar base com template de e-mail e aplicar filtros)
+5. Opicional: **Agendar** (data e hora; mínimo 5 minutos de antecedência)
+6. Clique em **Iniciar Campanha** (ou **Agendar Campanha**)
+
+#### Regras e validações
+- Nome, configuração, assunto e corpo são obrigatórios
+- Em origem "Banco de dados": é necessário selecionar uma base ativa e, se houver prévia, selecionar contatos
+- Agendamento exige data e hora válidas, com antecedência mínima de 5 minutos
+- Anexos por upload limitados a 25MB cada
+
+#### Enviar e-mail de teste
+- Use o botão "Enviar Teste" no passo de conteúdo (requer configuração selecionada)
+
+### N8N (Workflows)
 
 ### Sobre o N8N
 

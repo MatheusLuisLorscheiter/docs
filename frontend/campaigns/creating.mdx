@@ -13,18 +13,15 @@ Este guia detalha todos os recursos disponíveis para criar campanhas poderosas 
 
 ## Tipos de Campanha
 
-<CardGroup cols={4}>
+<CardGroup cols={3}>
   <Card title="Texto" icon="message" color="#16a34a">
     Mensagem simples
   </Card>
   <Card title="Mídia" icon="image" color="#2563eb">
-    Com arquivos
+    Com arquivos (imagem, vídeo, documento, áudio)
   </Card>
   <Card title="Enquete" icon="poll" color="#7c3aed">
-    Pesquisas
-  </Card>
-  <Card title="Lista" icon="list" color="#ea580c">
-    Múltiplas opções
+    Pesquisas no WhatsApp (com opções configuráveis)
   </Card>
 </CardGroup>
 
@@ -37,6 +34,12 @@ Este guia detalha todos os recursos disponíveis para criar campanhas poderosas 
   - [TIPO] - [OBJETIVO] - [DATA]
   - Ex: "PROMO - Black Friday - Nov2024"
 </Tip>
+
+### Seleção de Fonte de Dados
+
+Escolha entre:
+- **Banco do Sistema**: queries e filtros pré-configurados
+- **Meus Bancos**: bases próprias (CSV/SQL) criadas em "Meus Bancos"
 
 ### Seleção de Instância
 
@@ -92,20 +95,34 @@ Use placeholders para personalização:
    - Colunas da query SQL
    - Definidos na configuração do banco
 
-### Botões e Interatividade
+### Enquetes (Poll)
 
-<Warning>
-  Botões requerem WhatsApp Business API. Use com moderação.
-</Warning>
+#### Regras
+- Pergunta (mensagem) obrigatória
+- Pelo menos 2 opções válidas
+- Número de opções selecionáveis não pode exceder o total de opções
+- Se enquetes estiverem desabilitadas para a empresa, a criação é bloqueada
 
-```
-Escolha uma opção:
-1️⃣ Ver catálogo
-2️⃣ Falar com vendedor
-3️⃣ Localização da loja
-```
+#### Dica
+- Ao editar uma campanha com enquete salva, as opções e a pergunta são carregadas automaticamente.
 
-## Upload de Contatos Avançado
+## Prévia e Seleção de Contatos
+
+### Prévia
+- Veja a lista de contatos retornados pelos filtros
+- O sistema remove automaticamente bloqueados e duplicados
+- Você pode desmarcar contatos individualmente
+
+### Seleção Manual
+1. Abra a **Prévia de Contatos**
+2. Selecione/Deselecione contatos específicos
+3. Confirme para salvar a seleção
+
+<Note>
+  Se não selecionar manualmente, todos os contatos válidos serão usados.
+</Note>
+
+## Upload de Contatos Avançado (Meus Bancos)
 
 ### Formato CSV Avançado
 
@@ -162,12 +179,11 @@ O sistema automaticamente:
    - Min: 10s, Max: 30s
    - Tempo para responder
 
-### Horários Inteligentes
+### Agendamento
 
-Configure janelas de envio:
-- **Comercial**: 09:00 - 18:00
-- **Extended**: 08:00 - 20:00
-- **24/7**: Sem restrições
+- Opcional, com data e hora
+- Requer antecedência mínima de 5 minutos em relação ao horário atual
+- O sistema exibe aviso quando o horário não atende a regra
 
 ## Mídia e Arquivos
 
@@ -176,19 +192,15 @@ Configure janelas de envio:
 <CardGroup cols={4}>
   <Card title="Imagens" icon="image">
     JPG, PNG, GIF
-    Max: 5MB
   </Card>
   <Card title="Vídeos" icon="video">
-    MP4, AVI
-    Max: 16MB
+    MP4 (recomendado)
   </Card>
   <Card title="Áudios" icon="microphone">
     MP3, OGG, AAC
-    Max: 16MB
   </Card>
   <Card title="Documentos" icon="file-pdf">
     PDF, DOC, XLS
-    Max: 100MB
   </Card>
 </CardGroup>
 
@@ -199,9 +211,9 @@ Configure janelas de envio:
 </Warning>
 
 **Recomendações:**
-- Imagens: 1280x720px, <1MB
-- Vídeos: 720p, <5MB
-- Áudios: 128kbps, <2MB
+- Imagens: 1280x720px
+- Vídeos: 720p
+- Áudios: 128kbps
 
 ### URLs vs Upload
 
@@ -220,13 +232,10 @@ Configure janelas de envio:
 
 ## Testes e Validação
 
-### Campanha de Teste
+### Campanha de Teste (WhatsApp)
 
 <Tip>
-  Sempre teste antes de enviar para todos:
-  1. Crie campanha com seus números
-  2. Marque como "Teste"
-  3. Valide conteúdo e formato
+  Use o botão de envio de teste informando um número para validar conteúdo, mídia e enquete.
 </Tip>
 
 ### Checklist Pré-envio

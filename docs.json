@@ -113,7 +113,8 @@
               "frontend/campaigns",
               "frontend/automations",
               "frontend/settings",
-              "frontend/settings/blocked-contacts"
+              "frontend/settings/blocked-contacts",
+              "frontend/user-databases"
             ]
           },
           {
@@ -123,12 +124,15 @@
               "frontend/campaigns/scheduling",
               "frontend/campaigns/media",
               "frontend/campaigns/polls",
-              "frontend/campaigns/managing"
+              "frontend/campaigns/managing",
+              "frontend/campaigns/filters",
+              "frontend/campaigns/contacts-preview"
             ]
           },
           {
             "group": "Automações",
             "pages": [
+              "frontend/automations",
               "frontend/automations/whatsapp-setup",
               "frontend/automations/instance-management",
               "frontend/automations/qr-code"

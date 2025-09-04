@@ -20,20 +20,14 @@ A página apresenta:
 - **Botão Atualizar**: Recarrega a lista de campanhas
 - **Botão Nova Campanha**: Abre o modal de criação
 
-### Filtro de Status
+### Filtros da Lista
 
 <Info>
-  Logo abaixo do cabeçalho, há um filtro dropdown para visualizar campanhas por status específico.
+  Logo abaixo do cabeçalho, há filtros para refinar a listagem.
 </Info>
 
-Opções disponíveis:
-- **Todos os status** - Visualiza todas as campanhas
-- **Rascunho** - Campanhas salvas mas não iniciadas
-- **Agendada** - Campanhas programadas para execução futura
-- **Em Execução** - Campanhas ativamente enviando mensagens
-- **Pausada** - Campanhas temporariamente interrompidas
-- **Concluída** - Campanhas finalizadas com sucesso
-- **Cancelada** - Campanhas interrompidas permanentemente
+- **Status**: dropdown com os estados (Rascunho, Agendada, Em Execução, Pausada, Concluída, Cancelada, Erro)
+- **Tipo**: WhatsApp, E-mail ou Todos
 
 ## Lista de Campanhas
 
@@ -87,29 +81,32 @@ A barra de progresso mostra:
     - **Ver Detalhes** 👁️
     - **Pausar** ⏸️
     - **Cancelar** ❌
+    - **Duplicar** 📄
   </Card>
   <Card title="Pausada" icon="pause" color="#eab308">
     - **Ver Detalhes** 👁️
     - **Retomar** ▶️
     - **Cancelar** ❌
+    - **Duplicar** 📄
   </Card>
   <Card title="Agendada" icon="clock" color="#8b5cf6">
     - **Ver Detalhes** 👁️
     - **Cancelar** ❌
+    - **Duplicar** 📄
   </Card>
   <Card title="Finalizada" icon="check" color="#3b82f6">
     - **Ver Detalhes** 👁️
-    - **Excluir** 🗑️
+    - **Duplicar** 📄
   </Card>
 </CardGroup>
 
 ### Descrição das Ações
 
-- **Ver Detalhes** 👁️ - Abre modal com informações completas
+- **Ver Detalhes** 👁️ - Abre modal com informações completas (WhatsApp e E-mail)
 - **Pausar** ⏸️ - Interrompe temporariamente o envio
 - **Retomar** ▶️ - Continua do ponto onde parou
 - **Cancelar** ❌ - Interrompe permanentemente
-- **Excluir** 🗑️ - Remove campanha do sistema (apenas finalizadas)
+- **Duplicar** 📄 - Cria uma cópia em rascunho da campanha
 
 ## Modal de Nova Campanha
 
@@ -118,13 +115,15 @@ A barra de progresso mostra:
 <Tabs>
   <Tab title="Dados Básicos">
     - **Nome da Campanha** - Identificação única
-    - **Banco de Dados** - Seleção da fonte de contatos
-    - **Evolution API** - Instância WhatsApp para envio
+    - **Fonte de Dados** - Banco do sistema ou **Meus Bancos** (do usuário)
+    - **Instância WhatsApp** - Evolution para envio (se WhatsApp)
   </Tab>
   <Tab title="Filtros">
-    - **Filtros Dinâmicos** - Baseados no banco selecionado
-    - **Prévia de Contatos** - Quantidade que será alcançada
-    - **Validação** - Remoção automática de bloqueados
+    - **Filtros Dinâmicos** - De acordo com o template do banco
+    - **Operadores** - Igual, Maior que, Menor que, Entre, Contém, IN, etc.
+    - **Datas Dinâmicas** - Suporte a HOJE, AMANHA, ONTEM
+    - **Ignorar ano** - Para datas como aniversários (compara MM-DD)
+    - **Prévia de Contatos** - Visualize e selecione contatos
   </Tab>
   <Tab title="Mensagem">
     - **Tipo** - Texto, mídia ou enquete
@@ -133,10 +132,10 @@ A barra de progresso mostra:
     - **Enquete** - Configuração de opções
   </Tab>
   <Tab title="Configurações">
-    - **Intervalos** - Tempo entre mensagens
-    - **Agendamento** - Data/hora de início
-    - **Notificação** - WhatsApp para avisos
-    - **Modo Teste** - Limita a 10 contatos
+    - **Intervalos** - Min/Máx entre mensagens
+    - **Agendamento** - Data/hora de início (opcional)
+    - **Notificação** - Número para receber alertas (opcional)
+    - **Modo Teste** - Envia para pequena amostra
   </Tab>
 </Tabs>
 
@@ -146,6 +145,18 @@ Use variáveis para personalizar mensagens:
 - `{PrimeiroNome}` - Primeiro nome do contato
 - `{NomeCompleto}` - Nome completo do contato
 - Campos customizados do banco de dados
+
+<CardGroup cols={3}>
+  <Card title="Filtros e Operadores" icon="filter" href="/frontend/campaigns/filters">
+    Guia completo de filtros
+  </Card>
+  <Card title="Prévia de Contatos" icon="users" href="/frontend/campaigns/contacts-preview">
+    Como revisar e selecionar
+  </Card>
+  <Card title="Meus Bancos" icon="database" href="/frontend/user-databases">
+    Bases próprias do usuário
+  </Card>
+</CardGroup>
 
 ### Validações
 
@@ -169,7 +180,7 @@ O sistema valida automaticamente:
 - Botão de atualização manual
 
 #### Estatísticas
-- **Total de Contatos** - Quantidade na lista
+- **Total de Contatos** - Quantidade final após filtros/bloqueios
 - **Enviados** - Mensagens entregues com sucesso
 - **Falhas** - Erros no envio
 - **Progresso** - Percentual e barra visual
@@ -254,7 +265,7 @@ Ao excluir, um diálogo de confirmação aparece:
 
 ```typescript
 // Listar campanhas
-GET /api/campaigns?companyId={companyId}&status={status}
+GET /api/campaigns?status={status}
 
 // Detalhes da campanha
 GET /api/campaigns/{id}
@@ -271,8 +282,8 @@ PUT /api/campaigns/{id}/resume
 // Cancelar campanha
 PUT /api/campaigns/{id}/cancel
 
-// Excluir campanha (não implementado no backend ainda)
-DELETE /api/campaigns/{id}
+// Duplicar campanha
+POST /api/campaigns/{id}/duplicate
 ```
 
 ## Dicas de Uso
@@ -295,7 +306,7 @@ DELETE /api/campaigns/{id}
 ## Limitações Conhecidas
 
 <Warning>
-  - Exclusão de campanhas ainda não está implementada no backend
+  - Exclusão de campanhas ainda não está implementada no backend e não está disponível na interface
   - O limite de contatos por campanha depende da configuração do servidor
   - Campanhas em execução não podem ser editadas
 </Warning>
@@ -304,7 +315,6 @@ DELETE /api/campaigns/{id}
 
 <Note>
   Recursos planejados para futuras versões:
-  - Duplicação de campanhas
   - Exportação de relatórios
   - Templates de mensagens
   - Análise de performance

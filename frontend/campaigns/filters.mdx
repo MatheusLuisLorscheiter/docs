@@ -1,0 +1,62 @@
+---
+title: "Filtros e Segmentação"
+description: "Como usar filtros, operadores e datas dinâmicas"
+---
+
+## Visão Geral
+
+Os filtros permitem segmentar contatos com precisão a partir dos bancos de dados conectados.
+
+## Tipos de Filtros
+
+- **text**: nomes, cidades, etc.
+- **number**: valores numéricos (usa CAST para compatibilidade)
+- **date**: datas únicas (YYYY-MM-DD)
+- **daterange**: intervalo de datas (via operador "between")
+- **select**: opção única
+- **multiselect**: múltiplas opções → converte para `IN (...)`
+- **boolean**: verdadeiro/falso
+
+## Operadores
+
+- **equals / not_equals**: igualdade/ diferença
+- **contains / not_contains**: busca textual (ILIKE)
+- **greater_than / less_than**: maior/menor (número/data)
+- **between**: intervalos (data/número)
+- **in / not_in**: listas (multiselect)
+
+## Datas Dinâmicas
+
+Aceita palavras-chave:
+- `HOJE`, `AMANHA`, `ONTEM`
+- Interpretadas no backend para `YYYY-MM-DD`
+
+## Ignorar Ano (Datas)
+
+Para comparar apenas mês e dia (ex.: aniversários):
+- Marque **Ignorar Ano**
+- A condição vira `TO_CHAR(campo, 'MM-DD') = 'MM-DD'`
+
+## Boas Práticas
+
+- Prefira filtros específicos ao invés de texto genérico
+- Em `multiselect`, use poucas opções para performance
+- Combine filtros de `vendas` e `contatos` conforme a necessidade
+
+## Exemplo
+
+```sql
+-- Exemplo de condição gerada
+sexo IN ('F','M')
+AND data_pedido BETWEEN '2025-01-01'::date AND '2025-01-31'::date
+AND cidade ILIKE '%Sebastião%'
+```
+
+## Visualizando a Prévia
+
+Após aplicar filtros na criação da campanha:
+1. Clique em **Buscar Contatos/Prévia**
+2. Revise a lista de contatos
+3. Remova (desmarque) contatos específicos, se necessário
+
+

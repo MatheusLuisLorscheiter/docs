@@ -9,7 +9,7 @@ Controle total sobre suas campanhas ativas e histórico.
 
 ## Ações Disponíveis
 
-<CardGroup cols={3}>
+<CardGroup cols={4}>
   <Card title="Pausar" icon="pause">
     Interrompe temporariamente
   </Card>
@@ -19,14 +19,49 @@ Controle total sobre suas campanhas ativas e histórico.
   <Card title="Cancelar" icon="stop">
     Para permanentemente
   </Card>
+  <Card title="Duplicar" icon="copy">
+    Cria uma cópia em rascunho
+  </Card>
 </CardGroup>
 
 ## Monitoramento
 
-- Progresso em tempo real
-- Taxa de entrega
-- Mensagens por minuto
+- Progresso em tempo real (enviadas/total)
+- Taxa de entrega e falhas
+- Mensagens por minuto (estimado)
 - Estimativa de conclusão
+- Histórico de estados (rascunho, agendada, execução, pausada, concluída)
+
+## Pausar, Retomar e Cancelar (Passo a passo)
+
+### Pausar
+1. Abra a página **Campanhas**
+2. Localize uma campanha com status "Em Execução"
+3. Clique em **Pausar** (ícone ⏸️)
+4. Confirme na caixa de diálogo
+
+### Retomar
+1. Encontre a campanha com status "Pausada"
+2. Clique em **Retomar** (ícone ▶️)
+3. Acompanhe o progresso voltar a subir
+4. Observação: campanhas pausadas há mais de 24h podem não ser retomáveis
+
+### Cancelar
+1. Para campanhas em execução ou pausadas
+2. Clique em **Cancelar** (❌)
+3. Confirme a ação (irreversível)
+
+<Warning>
+  Cancelar é permanente: a campanha não será retomada depois.
+</Warning>
+
+## Modal de Detalhes
+
+Abra os detalhes (👁️) para ver:
+- Mensagem enviada e mídia (se houver)
+- Intervalos configurados
+- Instância WhatsApp utilizada (ou configuração de e-mail para campanhas de e-mail)
+- Timestamps: criado, agendado, iniciado, pausado, concluído
 
 <Tip>
   Monitore as primeiras 100 mensagens para detectar problemas cedo.
