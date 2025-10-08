@@ -1,0 +1,154 @@
+---
+title: 'Importar Contatos via Push (sync e async)'
+api: 'POST /api/companies/{companyId}/imports/contacts'
+description: 'Importa contatos para dentro do sistema via webhook/push. Suporta envio síncrono (cria UserDatabase imediatamente) ou assíncrono (cria Job para processamento em background).'
+---
+
+<Note>
+  Use este endpoint para integrar fontes externas (n8n, Zapier, CRMs) que empurram contatos para o Disparador.
+</Note>
+
+## Headers
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token de acesso da empresa
+</ParamField>
+
+<ParamField header="Content-Type" type="string" required>
+  application/json
+</ParamField>
+
+## Path Parameters
+
+<ParamField path="companyId" type="number" required>
+  ID da empresa (deve corresponder ao token)
+</ParamField>
+
+## Body (simples)
+
+<ParamField body="name" type="string" optional>
+  Nome do UserDatabase que será criado (se omitido, um nome padrão será gerado)
+</ParamField>
+
+<ParamField body="description" type="string" optional>
+  Descrição do banco
+</ParamField>
+
+<ParamField body="dedupe" type="boolean" optional>
+  Se true, telefones duplicados serão removidos
+</ParamField>
+
+<ParamField body="contacts" type="array" required>
+  Array de objetos com os contatos com pelo menos o campo `phoneNumber`.
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST https://api.disparador.com/api/companies/1/imports/contacts \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: seu-access-token" \
+  -d '{
+    "name": "Import via Push",
+    "description": "Importada via webhook",
+    "dedupe": true,
+    "contacts": [
+      { "phoneNumber": "+5511999999999", "name": "Alice" },
+      { "phoneNumber": "+5511888888888", "name": "Bob" }
+    ]
+  }'
+```
+
+```javascript JavaScript
+const payload = {
+  name: 'Import via Push',
+  description: 'Importada via webhook',
+  dedupe: true,
+  contacts: [
+    { phoneNumber: '+5511999999999', name: 'Alice' },
+    { phoneNumber: '+5511888888888', name: 'Bob' }
+  ]
+};
+
+const res = await fetch('https://api.disparador.com/api/companies/1/imports/contacts', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Access-Token': 'seu-access-token'
+  },
+  body: JSON.stringify(payload)
+});
+const data = await res.json();
+console.log(data);
+```
+
+</RequestExample>
+
+## Body (genérico)
+
+<ParamField body="rows" type="array" required>
+  Array de objetos, cada objeto representa uma linha (mapa de coluna -> valor). Garanta que exista uma coluna de telefone (ex.: `phone` ou `phoneNumber`) para que o sistema normalize e valide.
+</ParamField>
+
+<RequestExample>
+
+```bash cURL
+curl -X POST "https://api.disparador.com/api/companies/1/imports/contacts/generic?async=true" \
+  -H "Content-Type: application/json" \
+  -H "X-Access-Token: seu-access-token" \
+  -d '{
+    "name": "Import genérico",
+    "description": "import gen",
+    "dedupe": true,
+    "rows": [
+      { "phone": "+5511999999999", "name": "Alice", "cidade": "SP" },
+      { "phone": "+5511888888888", "name": "Bob", "cidade": "RJ" }
+    ]
+  }'
+```
+
+</RequestExample>
+
+## Responses
+
+<ResponseField name="jobId" type="number" optional>
+  Quando `?async=true` o endpoint retorna o `jobId` persistido.
+</ResponseField>
+
+<ResponseField name="status" type="string" optional>
+  Status inicial do job (PENDING) quando submetido async.
+</ResponseField>
+
+<ResponseField name="error" type="string" optional>
+  Mensagem de erro quando aplicável
+</ResponseField>
+
+<ResponseExample>
+
+```json
+{
+  "jobId": 123,
+  "status": "PENDING",
+  "submittedAt": "2025-10-08T12:00:00Z"
+}
+```
+
+```json
+// Exemplo sync (retorna UserDatabase DTO)
+{
+  "id": 45,
+  "name": "Import via Push",
+  "description": "Importada via webhook",
+  "rowCount": 2,
+  "status": "ACTIVE",
+  "columns": [ /* ... */ ]
+}
+```
+
+</ResponseExample>
+
+## Observações e boas práticas
+
+- Para envios assíncronos, consulte a tabela `import_jobs` para verificar progresso e possíveis erros.
+- Limites e validações de número: todas as entradas de telefone passam por normalização (use `+55` quando aplicável).
+- Se sua integração enviar grandes volumes, prefira usar `async=true` e submeter em lotes.
