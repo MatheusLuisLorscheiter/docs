@@ -71,6 +71,12 @@
             ]
           },
           {
+            "group": "Importar Contatos",
+            "pages": [
+              "api-reference/contacts-import/create"
+            ]
+          },
+          {
             "group": "Automações",
             "pages": [
               "api-reference/automations/create",
