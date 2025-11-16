@@ -77,6 +77,14 @@
             ]
           },
           {
+            "group": "Meus Bancos",
+            "pages": [
+              "api-reference/user-databases/list",
+              "api-reference/user-databases/create",
+              "api-reference/user-databases/records"
+            ]
+          },
+          {
             "group": "Automações",
             "pages": [
               "api-reference/automations/create",

@@ -1,0 +1,153 @@
+---
+title: "Criar ou sincronizar bancos"
+api: "POST /api/user-databases"
+description: "Fluxos para analisar arquivos, criar bancos via upload e sincronizar contatos da Evolution."
+---
+
+<Warning>
+  Todos os endpoints abaixo exigem **X-Access-Token** válido. O tamanho máximo do arquivo depende do plano contratado.
+</Warning>
+
+## Analisar arquivo
+
+`POST /api/user-databases/analyze`
+
+Use este endpoint antes do upload definitivo para mapear colunas automaticamente.
+
+### Headers
+
+<ParamField header="Content-Type" type="string" required>
+  multipart/form-data
+</ParamField>
+
+### Body
+
+<ParamField body="file" type="file" required>
+  Arquivo CSV ou XLSX com cabeçalho na primeira linha
+</ParamField>
+
+### Response
+
+<ResponseField name="columns" type="array">
+  Nomes detectados no cabeçalho
+</ResponseField>
+<ResponseField name="rowCount" type="number">
+  Número estimado de linhas válidas
+</ResponseField>
+<ResponseField name="sampleData" type="object">
+  Até 5 amostras por coluna para ajudar no mapeamento
+</ResponseField>
+<ResponseField name="warnings" type="array">
+  Alertas (colunas repetidas, formatos desconhecidos etc.)
+</ResponseField>
+
+## Criar banco via upload
+
+`POST /api/user-databases`
+
+Envie o arquivo final e a configuração de colunas no mesmo multipart. O campo `config` deve ser um JSON.
+
+### Body
+
+<ParamField body="file" type="file" required>
+  Arquivo CSV/XLSX definitivo
+</ParamField>
+
+<ParamField body="config" type="object" required>
+  JSON com as opções abaixo
+</ParamField>
+
+<ParamField body="config.name" type="string" required>
+  Nome exibido na UI
+</ParamField>
+
+<ParamField body="config.description" type="string">
+  Texto auxiliar sobre o objetivo do banco
+</ParamField>
+
+<ParamField body="config.columnMappings" type="array" required>
+  Lista de colunas e metadados
+  <Expandable title="Estrutura da coluna">
+    <ParamField body="originalName" type="string" required>
+      Nome vindo do arquivo
+    </ParamField>
+    <ParamField body="displayName" type="string">
+      Rótulo amigável exibido na UI
+    </ParamField>
+    <ParamField body="dataType" type="string" enum={["text", "numeric", "date", "boolean"]} required>
+      Tipo esperado para formatação
+    </ParamField>
+    <ParamField body="isPhoneColumn" type="boolean">
+      Marque uma coluna como telefone (necessária para campanhas)
+    </ParamField>
+    <ParamField body="isNameColumn" type="boolean">
+      Opcional, usado para variáveis {NomeCompleto}/{PrimeiroNome}
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+<RequestExample>
+
+```bash multipart
+curl -X POST https://api.disparador.com/api/user-databases \\
+  -H "X-Access-Token: seu-access-token" \\
+  -F "file=@clientes.xlsx" \\
+  -F 'config={"name":"Clientes VIP","description":"Renovações","columnMappings":[{"originalName":"telefone","displayName":"Telefone","dataType":"text","isPhoneColumn":true}]};type=application/json'
+```
+
+</RequestExample>
+
+## Sincronizar com Evolution
+
+`POST /api/user-databases/evolution/sync`
+
+Cria um novo banco ou atualiza um existente a partir da Evolution API.
+
+<ParamField body="databaseId" type="number">
+  Informe para atualizar um banco existente; omita para criar um novo
+</ParamField>
+<ParamField body="evolutionConfigId" type="number" required>
+  Configuração Evolution previamente salva (contém URL/API Key/instância)
+</ParamField>
+<ParamField body="name" type="string">
+  Nome do banco; obrigatório ao criar um novo
+</ParamField>
+<ParamField body="description" type="string">
+  Observações sobre o sincronismo
+</ParamField>
+<ParamField body="includeGroups" type="boolean">
+  Importa grupos e não apenas contatos individuais
+</ParamField>
+<ParamField body="includeGroupMembers" type="boolean">
+  Importa membros dos grupos selecionados
+</ParamField>
+<ParamField body="includeUnsavedContacts" type="boolean">
+  Captura contatos não salvos na agenda
+</ParamField>
+<ParamField body="includeContactsWithoutPhone" type="boolean">
+  Mantém registros mesmo sem telefone (útil para enriquecimento)
+</ParamField>
+<ParamField body="deduplicate" type="boolean" default="true">
+  Remove duplicados automaticamente
+</ParamField>
+
+<ResponseExample>
+
+```json 200
+{
+  "id": 77,
+  "name": "Contatos Evolution",
+  "origin": "EVOLUTION",
+  "status": "ACTIVE",
+  "rowCount": 982,
+  "lastSyncedAt": "2025-02-10T14:20:00Z",
+  "lastSyncSummary": {
+    "totalFetched": 1200,
+    "processed": 982,
+    "duplicatesSkipped": 38,
+    "filteredByPhone": 80
+  }
+}
+```
+
+</ResponseExample>

@@ -5,43 +5,93 @@ description: "Crie, importe e use suas próprias bases de contatos"
 
 ## Visão Geral
 
-Além dos bancos do sistema, você pode criar bases próprias para segmentações específicas.
+"Meus Bancos" permite que cada empresa mantenha suas próprias bases de contatos — separadas dos bancos do sistema — para segmentações, campanhas pontuais e automações. Cada banco possui:
 
-## Formas de criação
+- **Origem** (upload manual, sincronização Evolution, Push Import ou sistema)
+- **Colunas configuráveis** com metadados (telefone, nome, datas, booleanos etc.)
+- **Status** (Ativo/Inativo) que controla se o banco pode ser utilizado nas telas de campanha
+- **Gerenciador de registros** completo com busca, ordenação e CRUD direto na interface
 
-- **Upload CSV**: importe números e campos adicionais
-- **Construtor de Query**: monte filtros e salve como template
+## Tipos de origem
 
-## Upload CSV
-
-1. Acesse **Meus Bancos**
-2. Clique em **Novo** > **Upload CSV**
-3. Selecione o arquivo (.csv)
-4. Mapeie as colunas (telefone, nome, etc.)
-5. Salve a base
+| Origem | Como funciona |
+| --- | --- |
+| **Upload CSV/XLSX** | Importação manual de planilhas. Você escolhe o arquivo, mapeia as colunas e o sistema normaliza telefones automaticamente. |
+| **Sincronização Evolution** | Conecta diretamente em uma instância Evolution para buscar contatos/grupos a cada sincronização. Salva métricas como processados, duplicados e última execução. |
+| **Push Import (Webhook/API)** | Recebe dados via API (`/api/companies/{companyId}/imports/...`). Ideal para integrações server-to-server. |
+| **Sistema** | Bancos provisionados pelo time Chave Mestra. São visíveis para consulta, mas não editáveis. |
 
 <Tip>
-  O sistema normaliza números automaticamente (só dígitos). 
+  Use o campo **Descrição** para registrar a finalidade da base (ex: "Clientes com assinatura ativa") e facilitar auditorias.
 </Tip>
 
-## Construtor de Query (Query Builder)
+## Criando um banco
 
-1. Acesse **Meus Bancos** > **Novo** > **Query**
-2. Defina **Base SQL** e **Filtros** (arraste para ordenar)
-3. Configure **Operadores** e **Opções**
-4. Salve como template ativo
+### Upload CSV ou XLSX
 
-## Usando na Campanha
+1. Abra **Meus Bancos** e clique em **Novo → Upload**.
+2. Faça upload do arquivo `.csv` ou `.xlsx`.
+3. Revise a pré-análise (colunas detectadas, quantidade de linhas, amostras).
+4. Mapeie as colunas marcando qual representa telefone, nome, datas etc.
+5. Confirme para criar o banco já ativo.
 
-1. Na criação da campanha, em **Fonte de Dados**, escolha **Meus Bancos**
-2. Selecione a base desejada
-3. Preencha os **Filtros** definidos pela base
-4. Clique em **Prévia** e selecione os contatos
+### Sincronização com Evolution
 
-## Boas Práticas
+1. Clique em **WhatsApp (Evolution)**.
+2. Escolha a configuração Evolution previamente salva (ou informe URL/API Key/Instância).
+3. Defina se deve incluir grupos, participantes e contatos sem telefone.
+4. Inicie a sincronização. A tela mostrará o resumo da última execução (processados, duplicados e horário).
 
-- Mantenha nomes descritivos para suas bases
-- Evite colunas desnecessárias em CSV
-- Revise periodicamente e arquive bases antigas
+### Push Import (API/Webhook)
+
+1. Exija que um admin habilite **Push Import** na empresa.
+2. Clique no botão **Push (BETA)** para obter o endpoint e o schema esperado.
+3. Dispare uma requisição HTTP contendo os contatos. Cada import gera ou atualiza um banco dedicado.
+
+<Note>
+  O construtor de queries avançadas continua disponível para cenários em que você deseja derivar contatos a partir de filtros SQL e salvar o resultado como nova base.
+</Note>
+
+## Gerenciando registros
+
+Cada cartão da listagem possui o atalho **Gerenciar registros**. Ao clicar nele você é enviado para `/databases/:id`, onde encontra:
+
+### Barra superior
+
+- **Resumo** com nome, descrição, quantidade de registros, colunas e status.
+- Botões **Atualizar** (recarrega a tabela) e **Novo registro** (abre modal com os campos do banco).
+- Aviso quando o banco está inativo (CRUDes ficam bloqueados até reativar a base).
+
+### Tabela dinâmica
+
+- Busca textual que verifica qualquer coluna e o ID.
+- Ordenação por ID, datas de criação/atualização ou qualquer coluna customizada.
+- Controle de paginação (10, 25, 50 ou 100 itens por página) com indicador de faixa exibida.
+- Colunas exibidas de acordo com o mapeamento original, incluindo formatação amigável para datas, números e booleanos.
+
+### Ações por registro
+
+- **Editar**: abre o mesmo modal utilizado na criação, já preenchido com os valores atuais.
+- **Excluir**: confirma a remoção definitiva do contato.
+- Todas as ações respeitam o status do banco — se estiver inativo, os botões ficam desabilitados.
+
+### Modal de registro
+
+- Campos gerados dinamicamente com base nas colunas.
+- Suporte a máscaras leves: telefones são normalizados, datas recebem formatação ISO, booleanos usam toggles.
+- Mostra o resultado da API em tempo real e atualiza a tabela automaticamente ao salvar.
+
+## Usando um banco em Campanhas
+
+1. Abra o criador de campanha e selecione **Fonte de Dados → Meus Bancos**.
+2. Escolha o banco desejado (apenas os ativos são listados).
+3. Combine com filtros e pré-visualize os contatos antes do disparo.
+
+## Boas práticas
+
+- Prefira nomes descritivos ("Leads Inbound Janeiro/2025") para facilitar a busca.
+- Reative/desative bancos conforme o ciclo de vida da campanha para evitar uso acidental.
+- Revise periodicamente as colunas. Caso adicione novos campos, use o modal de registros para preencher os valores.
+- Para grandes atualizações, utilize o Push Import ou reenvie um arquivo atualizado — isso evita centenas de edições manuais.
 
 

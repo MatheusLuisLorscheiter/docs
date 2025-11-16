@@ -1,0 +1,127 @@
+---
+title: "Listar bancos do usuário"
+api: "GET /api/user-databases"
+description: "Retorna todos os bancos de contatos criados pela empresa e permite consultar detalhes individuais."
+---
+
+<Tip>
+  Esses endpoints exigem um **X-Access-Token** válido. Apenas bancos pertencentes à mesma empresa do token são retornados.
+</Tip>
+
+## Headers
+
+<ParamField header="Content-Type" type="string">
+  application/json
+</ParamField>
+
+<ParamField header="X-Access-Token" type="string" required>
+  Token obtido no login
+</ParamField>
+
+## Listar todos os bancos
+
+`GET /api/user-databases`
+
+Retorna todos os bancos customizados e do sistema visíveis para a empresa.
+
+<ResponseField name="id" type="number">
+  ID interno do banco
+</ResponseField>
+<ResponseField name="name" type="string">
+  Nome legível configurado pelo usuário
+</ResponseField>
+<ResponseField name="description" type="string">
+  Descrição opcional exibida no painel
+</ResponseField>
+<ResponseField name="status" type="string">
+  `ACTIVE`, `INACTIVE`, `PROCESSING` ou `ERROR`
+</ResponseField>
+<ResponseField name="origin" type="string">
+  `UPLOAD`, `EVOLUTION`, `PUSH_IMPORT` ou `SYSTEM`
+</ResponseField>
+<ResponseField name="rowCount" type="number">
+  Total de registros persistidos
+</ResponseField>
+<ResponseField name="columns" type="array">
+  Metadados com `columnName`, `displayName`, `dataType`, flags de telefone/nome e posição
+</ResponseField>
+<ResponseField name="evolution*" type="mixed">
+  Campos exclusivos de sincronizações Evolution (configId, includeGroups, lastSyncSummary, etc.)
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X GET https://api.disparador.com/api/user-databases \\
+  -H "X-Access-Token: seu-access-token"
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+[
+  {
+    "id": 42,
+    "name": "Clientes Ativos",
+    "description": "Renovações 2025",
+    "origin": "UPLOAD",
+    "status": "ACTIVE",
+    "rowCount": 1345,
+    "columns": [
+      { "columnName": "phone", "displayName": "Telefone", "dataType": "text", "isPhoneColumn": true }
+    ],
+    "createdAt": "2025-01-12T15:22:00Z",
+    "updatedAt": "2025-02-01T10:00:00Z"
+  }
+]
+```
+
+</ResponseExample>
+
+## Buscar um banco específico
+
+`GET /api/user-databases/{id}`
+
+Mesma estrutura do endpoint de listagem, retornando apenas o banco solicitado.
+
+<RequestExample>
+
+```bash
+curl -X GET https://api.disparador.com/api/user-databases/42 \\
+  -H "X-Access-Token: seu-access-token"
+```
+
+</RequestExample>
+
+## Contagem e limites
+
+`GET /api/user-databases/count`
+
+Retorna estatísticas usadas na UI:
+
+<ResponseField name="userDatabases" type="number">
+  Quantos bancos customizados pertencem à empresa
+</ResponseField>
+<ResponseField name="systemDatabases" type="number">
+  Bancos provisionados pelo sistema e compartilhados
+</ResponseField>
+<ResponseField name="totalDatabases" type="number">
+  Soma total
+</ResponseField>
+<ResponseField name="limit" type="number">
+  Limite contratado para criação de bancos
+</ResponseField>
+<ResponseField name="remaining" type="number">
+  Quantos bancos ainda podem ser criados antes de atingir o limite
+</ResponseField>
+
+## Status e exclusão
+
+- `PATCH /api/user-databases/{id}/toggle-status` alterna entre **ACTIVE** e **INACTIVE**.
+- `DELETE /api/user-databases/{id}` remove definitivamente o banco e todos os registros.
+
+<Warning>
+  Não existe lixeira para bancos removidos. Faça backup antes de deletar.
+</Warning>

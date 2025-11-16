@@ -1,0 +1,114 @@
+---
+title: "Gerenciar registros do banco"
+api: "GET /api/user-databases/{id}/records"
+description: "Endpoints de paginação, criação, edição e exclusão de registros dentro de um banco do usuário."
+---
+
+## Listar registros
+
+`GET /api/user-databases/{databaseId}/records`
+
+### Query params
+
+<ParamField query="page" type="number" default="0">
+  Página (0-index)
+</ParamField>
+<ParamField query="size" type="number" default="25">
+  Quantidade de itens por página (10, 25, 50 ou 100 são recomendados)
+</ParamField>
+<ParamField query="sortBy" type="string" default="id">
+  `id`, `created_at`, `updated_at` ou qualquer `columnName` existente
+</ParamField>
+<ParamField query="sortDirection" type="string" default="DESC" enum={["ASC","DESC"]}>
+  Direção da ordenação
+</ParamField>
+<ParamField query="search" type="string">
+  Busca textual aplicada ao ID e a todas as colunas textuais
+</ParamField>
+
+<ResponseField name="content" type="array">
+  Lista de registros, cada um com `id`, `values`, `createdAt` e `updatedAt`
+</ResponseField>
+<ResponseField name="totalElements" type="number">
+  Quantidade total de registros no banco
+</ResponseField>
+<ResponseField name="totalPages" type="number">
+  Total de páginas baseado em `size`
+</ResponseField>
+<ResponseField name="size" type="number">
+  Itens por página retornados nesta chamada
+</ResponseField>
+<ResponseField name="number" type="number">
+  Página atual (0-index)
+</ResponseField>
+
+## Buscar um registro
+
+`GET /api/user-databases/{databaseId}/records/{recordId}` retorna o registro completo, útil para preencher o modal de edição.
+
+## Criar ou atualizar registros
+
+### Criar
+
+`POST /api/user-databases/{databaseId}/records`
+
+<ParamField body="values" type="object" required>
+  Objeto dinâmico onde cada chave precisa corresponder a um `columnName` do banco. Exemplos: `{"phone":"5511999999999","name":"Cliente"}`.
+</ParamField>
+
+### Atualizar
+
+`PUT /api/user-databases/{databaseId}/records/{recordId}` usa a mesma estrutura de body. Campos omitidos permanecem com o valor anterior.
+
+<RequestExample>
+
+```bash Create
+curl -X POST https://api.disparador.com/api/user-databases/42/records \\
+  -H "Content-Type: application/json" \\
+  -H "X-Access-Token: seu-access-token" \\
+  -d '{
+    "values": {
+      "phone": "+5511999999999",
+      "name": "João da Silva",
+      "origem": "Landing Page"
+    }
+  }'
+```
+
+```bash Update
+curl -X PUT https://api.disparador.com/api/user-databases/42/records/5 \\
+  -H "Content-Type: application/json" \\
+  -H "X-Access-Token: seu-access-token" \\
+  -d '{
+    "values": {
+      "origem": "Formulário WhatsApp"
+    }
+  }'
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json 200
+{
+  "id": 5,
+  "values": {
+    "phone": "+5511999999999",
+    "name": "João da Silva",
+    "origem": "Formulário WhatsApp"
+  },
+  "createdAt": "2025-02-10T12:00:00Z",
+  "updatedAt": "2025-02-12T09:30:00Z"
+}
+```
+
+</ResponseExample>
+
+## Excluir registro
+
+`DELETE /api/user-databases/{databaseId}/records/{recordId}` remove permanentemente o contato.
+
+<Warning>
+  Não há histórico ou desfazer. Certifique-se de exportar os dados antes de exclusões em massa.
+</Warning>
